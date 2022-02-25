@@ -1,16 +1,14 @@
+from distutils.command.config import config
 import mysql.connector
-from mysql.connector import cursor
-DB_NAME = 'romance_radar_users'
+
+config = {
+    'user': 'root',
+    'password': '#Evangelina090',
+    'auth_plugin': 'mysql_native_password',
+    'host': 'localhost'
+}
 
 # Establishing the connection to the database
-db = mysql.connector.connect()
+db = mysql.connector.connect(**config)
 
-
-# Create a function to create a database if it doesn't exist already
-def create_database():
-    cursor.execute(
-        "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
-    # Notify that the database was created
-    print("Database {} created successfully.".format(DB_NAME))
-                
-            
+cursor = db.cursor()  
