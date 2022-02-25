@@ -10,4 +10,5 @@ config = {
 # Establishing the connection to the database
 db = mysql.connector.connect(**config)
 
+# Creating a cursor 
 cursor = db.cursor()  
