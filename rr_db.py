@@ -4,7 +4,8 @@ config = {
     'user': 'root',
     'password': '#Evangelina090',
     'auth_plugin': 'mysql_native_password',
-    'host': 'localhost'
+    'host': 'localhost',
+    'database': 'romance_radar',
 }
 
 # Establishing the connection to the database

@@ -1,5 +1,6 @@
 import mysql.connector
 from rr_db import cursor
+from mysql.connector import errorcode
 
 DB_NAME = 'romance_radar'
 
@@ -11,8 +12,6 @@ TABLES = {}
 # email: the user's email
 # password: the user's password
 # phone_number: the user's phone number stored as a string of digits
-# profile_pic: the user's profile picture stored as a blob image
-# preferences: the user's preferences stored as json 
 
 TABLES['users'] = (
     "CREATE TABLE `users` ("
@@ -21,9 +20,7 @@ TABLES['users'] = (
     "  `email` varchar(255) NOT NULL,"
     "  `password` varchar(255) NOT NULL,"
     "  `phone_number` varchar(255) NOT NULL,"
-    "  `profile_pic` blob NOT NULL,"
-    "  `preferences` json NOT NULL,"
-    "  PRIMARY KEY (`id`)"
+    "  PRIMARY KEY (`name`)"
     ") ENGINE=InnoDB")
 
 
@@ -35,4 +32,18 @@ def create_db():
     cursor.execute("USE {}".format(DB_NAME))
     print("Database {} created".format(DB_NAME))
 
+def create_tables():
+    cursor.execute("USE {}".format(DB_NAME))
+
+    for name in TABLES:
+        try:
+            print("Creating table {}: ".format(name), end='')
+            cursor.execute(TABLES[name])
+            print("OK")
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+            else:
+                print(err.msg)
 create_db()
+create_tables()
