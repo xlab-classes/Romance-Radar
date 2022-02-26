@@ -20,7 +20,15 @@ TABLES['users'] = (
     "  `email` varchar(255) NOT NULL,"
     "  `password` varchar(255) NOT NULL,"
     "  `phone_number` varchar(255) NOT NULL,"
-    "  PRIMARY KEY (`name`)"
+    "  PRIMARY KEY (`id`)"
+    ") ENGINE=InnoDB")
+
+TABLES['online_users'] = (
+    "CREATE TABLE `online_users` ("
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,"
+    "  `name` varchar(255) NOT NULL,"
+    "  `password` varchar(255) NOT NULL,"
+    "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
 
