@@ -17,7 +17,7 @@ TABLES = {}
 # preferences: json encoded string, user's preferences
 # connections: json encoded string, user's that this user is connected to
 # pending_connections: json encoded string, users that need to reply to a req for connection
-# connection_requests: json encoded string, users that have send an invitation to connect
+# connection_requests: json encoded string, users that have sent an invitation to connect
 
 TABLES['users'] = (
     "CREATE TABLE `users` ("
