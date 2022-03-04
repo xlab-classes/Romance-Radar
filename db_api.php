@@ -29,6 +29,7 @@ function create_db() {
         echo "Error creating database: " . $conn->error;
     }
     $conn->close();
+    return 1;
 }
 ?>
 
@@ -68,6 +69,7 @@ function create_table() {
         echo "Error creating table: " . $conn->error;
         }
     $conn->close();
+    return 1;
     }
 ?>
 
@@ -83,6 +85,7 @@ function destroy_db() {
     }
     $connection->query("DROP DATABASE IF EXISTS " . DB_NAME);
     $connection->close();
+    return 1;
 }
 ?>
 
@@ -97,6 +100,7 @@ function destroy_table() {
     }
     $connection->query("DROP TABLE IF EXISTS users");
     $connection->close();
+    return 1;
 
 }
 ?>
@@ -115,8 +119,12 @@ function user_exists($user_id) {
     $query = "SELECT * FROM users WHERE user_id = '$user_id'";
     $result = $connection->query($query);
     $connection->close();
-    return $result->num_rows > 0;
-}
+     if ($result->num_rows > 0) {
+        return 1;
+    } 
+    else return -1;
+    }
+    
 ?>
 
 <?php
@@ -171,6 +179,7 @@ function sign_in($email, $password) {
     $query = "UPDATE users SET online = TRUE WHERE email = '$email'";
     $connection->query($query);
     $connection->close();
+    return 1;
 }
 ?>
 
@@ -194,6 +203,7 @@ function sign_out($user_id) {
     $query = "UPDATE users SET online = FALSE WHERE user_id = '$user_id'";
     $db->query($query);
     $db->close();
+    return 1;
 }
 ?>
 
@@ -244,6 +254,7 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     $query = "UPDATE users SET password = '$new_pwd' WHERE user_id = '$user_id'";
     $db->query($query);
     $db->close();
+    return 1;
 }
 ?>
 
@@ -273,7 +284,8 @@ function create_user($name, $email, $pwd, $phone) {
     $query = "INSERT INTO users (name, email, password, phone) VALUES ('$name', '$email', '$pwd', '$phone')";
     $db->query($query);
     $db->close();
-    return $user_id;
+    echo "User {$name} created successfully! Thank you!";
+    return 1;
     }
 ?>
 
@@ -294,7 +306,7 @@ function delete_user($user_id) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not exist");
+        echo "User does not exist";
         return -1;
     }
 
@@ -302,6 +314,7 @@ function delete_user($user_id) {
     $query = "DELETE FROM users WHERE user_id = '$user_id'";
     $db->query($query);
     $db->close();
+    return 1;
 }
 ?>
 
@@ -309,6 +322,8 @@ function delete_user($user_id) {
 # Attempt to connect the users with IDs `user_id_a` and `user_id_b`. This
 # requires that one of the users has sent a connection request and the other
 # one has a pending request from the sender
+# TODO(Jordan): This function is not yet implemented
+
 function add_connection($user_id_a, $user_id_b) {
     # Connect to database
     $db = new mysqli($host, $user, $password, $name);
@@ -316,7 +331,7 @@ function add_connection($user_id_a, $user_id_b) {
     # Error check connection
     if ($db->connect_errno) {
         echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+        return -1;
     }
 
     # Check if user exists by seeing if user_id is in the database
@@ -333,7 +348,7 @@ function add_connection($user_id_a, $user_id_b) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not exist");
+        echo ("User does not exist");
         return -1;
     }
 
@@ -342,7 +357,7 @@ function add_connection($user_id_a, $user_id_b) {
     $result = $db->query($query);
     if ($result->num_rows > 0) {
         $db->close();
-        print("Users are already connected");
+        echo ("Users are already connected");
         return -1;
     }
 
@@ -351,7 +366,7 @@ function add_connection($user_id_a, $user_id_b) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not have a pending connection");
+        echo ("User does not have a pending connection");
         return -1;
     }
     # Ensure that user_id b is in user_id_a's connection_requests (reverse of above)
@@ -359,7 +374,7 @@ function add_connection($user_id_a, $user_id_b) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not have a pending connection");
+        echo ("User does not have a pending connection");
         return -1;
     }
 
@@ -375,12 +390,15 @@ function add_connection($user_id_a, $user_id_b) {
     $query = "INSERT INTO connections (user_id_a, user_id_b) VALUES ('$user_id_b', '$user_id_a')";
     $db->query($query);
     db.close();
+    return 1;
     }
 ?>
 
 <?php
 # Add a request to connect to the user with ID `user_id_rx`. Add the pending
 # connection to the user with ID `user_id_tx`
+# TODO(Jordan): This function is not yet implemented
+
 function add_connection_request($user_id_tx, $user_id_rx) {
 
 }
@@ -389,6 +407,7 @@ function add_connection_request($user_id_tx, $user_id_rx) {
 <?php
 # Attempt to disconnect the users with IDs `user_id_a` and `user_id_b`. This
 # requires that a connection exists between these users
+# TODO(Jordan): This function is not yet implemented
 function remove_connection($user_id_a, $user_id_b) {
 
 }
@@ -396,11 +415,12 @@ function remove_connection($user_id_a, $user_id_b) {
 
 <?php
 # Get a JSON-formatted string of connections for the user with ID `user_id`
+# TODO(Jordan): Take a second look at this function
+
 function get_connections($user_id) {
     # Check if user exists
     if (user_exists($user_id) == -1) {
-        print("User does not exist");
-        return -1;
+        echo("User does not exist");
     }
     # get connections
     $db = new mysqli($host, $user, $password, $name);
@@ -415,6 +435,8 @@ function get_connections($user_id) {
         }
     }
     $db->close();
+    return json_encode($connections);
+    
 }
 ?>
 
@@ -450,6 +472,7 @@ function update_preferences($user_id, $preferences) {
 
     # if preferences is not a valid JSON string, return -1
     if (json_decode($preferences) == NULL) {
+        echo("Invalid JSON");
         return -1;
     }
 
@@ -467,7 +490,7 @@ function update_preferences($user_id, $preferences) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not exist");
+        echo("User does not exist");
         return -1;
     }
     # Try / Catch to update the preferences
@@ -480,7 +503,7 @@ function update_preferences($user_id, $preferences) {
         return -1;
     }
     $db->close();
-    return 0;
+    return 1;
 }
 ?>
 
@@ -494,7 +517,7 @@ function get_requests($user_id) {
     # Error check connection
     if ($db->connect_errno) {
         echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+        exit();    
     }
 
     # Check if user exists by seeing if user_id is in the database
@@ -502,8 +525,7 @@ function get_requests($user_id) {
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        print("User does not exist");
-        exit();
+        echo("User does not exist");
     }
     # Get the connection requests for the user with ID user_id and return them as a JSON string
     $query = "SELECT * FROM connection_requests WHERE user_id_b = '" . $user_id . "'";
