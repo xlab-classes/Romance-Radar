@@ -1,3 +1,5 @@
+import mysql
+
 config = {
     'user': 'root',
     'password': 'diuFTC7#',

@@ -21,6 +21,20 @@ def user_exists(user_id):
 
 
 
+# Get this user's ID by their email
+def get_user_id(email):
+    cur = db.cursor()
+    cur.execute("SELECT user_id FROM users WHERE email=%s", (email,))
+    answer = cur.fetchone()
+    cur.close()
+    
+    if answer is None:
+        return -1
+    else:
+        return answer[0]
+
+
+
 # Attempt to sign in the user whose email is `email` and whose password is
 # `password`
 def sign_in(email, password):
