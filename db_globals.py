@@ -1,5 +1,3 @@
-import mysql.connector
-
 config = {
     'user': 'root',
     'password': 'diuFTC7#',
@@ -12,4 +10,4 @@ config = {
 db = mysql.connector.connect(**config)
 
 # Creating a cursor
-cursor = db.cursor()  
+# cursor = db.cursor()  
