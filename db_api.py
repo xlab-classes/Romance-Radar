@@ -11,6 +11,8 @@ connection = pymysql.connect(host='localhost',
                      password='diuFTC7#',
                      charset='utf8mb4')
 
+kDB = "rrdb"
+
 # A table to store the users of Romance Radar. The table has the following columns:
 # user_id: a unique ID for this user
 # name: the user's name    
@@ -23,11 +25,14 @@ connection = pymysql.connect(host='localhost',
 # pending_connections: json encoded string, users that need to reply to a req for connection
 # connection_requests: json encoded string, users that have sent an invitation to connect
 
+
+
+# TODO: Add this to API documentation
 # Created database if it doesn't exist
-def create_db(name):
+def create_db():
     cur = connection.cursor()
     try:
-        cur.execute(f"CREATE DATABASE IF NOT EXISTS {name}")
+        cur.execute(f"CREATE DATABASE IF NOT EXISTS {kDB}")
     except:
         print("There was a problem creating a new database")
     cur.close()
@@ -35,14 +40,15 @@ def create_db(name):
 
 
 
-# Create a table called 'name' in database 'db' if it doesn't exist
-def create_table(db, name):
+# TODO: Add this to API documentation
+# Create a table called 'users' in database 'db' if it doesn't exist
+def create_table():
     cur = connection.cursor()
-    cur.execute(f"USE {db}")
+    cur.execute(f"USE {kDB}")
 
     try:
         create_table_sql = (
-            f"CREATE TABLE IF NOT EXISTS {name} ("
+            f"CREATE TABLE IF NOT EXISTS users ("
             "user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
             "name varchar(255) NOT NULL,"
             "email varchar(255) NOT NULL,"
@@ -64,11 +70,12 @@ def create_table(db, name):
 
 
 
+# TODO: Add this to API documentation
 # Destroy database called 'name' if it exists
-def destroy_db(name):
+def destroy_db():
     cur = connection.cursor()
     try:
-        cur.execute(f"DROP DATABASE IF EXISTS {name}")
+        cur.execute(f"DROP DATABASE IF EXISTS {kDB}")
     except:
         print("Couldn't delete database")
     cur.close()
@@ -76,11 +83,12 @@ def destroy_db(name):
 
 
 
-# Destroy table called 'name' in database 'db' if it exists
-def destroy_table(db, name):
+# TODO: Add this to API documentation
+# Destroy table 'users' in database 'db' if it exists
+def destroy_table():
     cur = connection.cursor()
     try:
-        cur.execute(f"DROP TABLE IF EXISTS {name}")
+        cur.execute(f"DROP TABLE IF EXISTS users")
     except:
         print("Couldn't delete table")
     cur.close()
@@ -298,7 +306,7 @@ def get_preferences(user_id):
         return ""
     else:
         cur = connection.cursor()
-        cur.execute("SELECT preferences FROM users WHERE user_id=%s", (user_id,))
+        cur.execute("SELECT preferences FROM users WHERE user_id=%s", (user_id))
         answer = cur.fetchone()
         cur.close()
         return answer[0]
@@ -341,3 +349,24 @@ def update_preferences(user_id, preferences):
         print("Error updating preferences")
         return 0
                 
+
+
+# TODO: Add this to API documentation
+# Get the connection requests that this user needs to respond to
+def get_requests(user_id):
+    cur = connection.cursor()
+    cur.execute("SELECT connection_requests FROM users WHERE user_id=%s", (user_id,))
+    cur.close()
+    answer = cur.fetchone()
+    return answer[0]
+
+
+
+# TODO: Add this to API documentation
+# Get the connection requests that this user has sent
+def get_pending(user_id):
+    cur = connection.cursor()
+    cur.execute("SELECT pending_connections FROM users WHERE user_id=%s", (user_id,))
+    cur.close()
+    answer = cur.fetchone()
+    return answer[0]

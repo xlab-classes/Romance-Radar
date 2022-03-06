@@ -10,9 +10,6 @@ import db_api as dapi
 import unittest
 import json
 
-DB_NAME = "rrdb"
-TABLE_NAME = "users"
-
 kName = "Alex"              # Name for testing
 kEmail = "rr@gmail.com"     # Email for testing
 kPhone = "7160001122"       # Phone for testing
@@ -27,22 +24,22 @@ class BasicTests(unittest.TestCase):
     # Called before each of the tests below
     def setUp(self):
         # Create a database with a table
-        dapi.create_db(DB_NAME)
-        dapi.create_table(DB_NAME, TABLE_NAME)
+        dapi.create_db()
+        dapi.create_table()
 
 
     # Called after each of the tests below
     def tearDown(self):
         # Destroy table and database
-        dapi.destroy_table(DB_NAME, TABLE_NAME)
-        dapi.destroy_db(DB_NAME)
+        dapi.destroy_table()
+        dapi.destroy_db()
 
 
     # Make sure that database is empty after it's created
     def testInitiallyEmpty(self):
         # Get a cursor into the database
         cur = connection.cursor()
-        cur.execute(f"SELECT * FROM {TABLE_NAME}")
+        cur.execute(f"SELECT * FROM users")
         entries = cur.fetchone()
         cur.close()
         self.assertIsNone(entries)
@@ -87,15 +84,16 @@ class BasicTests(unittest.TestCase):
 # * Test that a user can login
 # * Test that we can check a user's password correctly
 # * Test that we can change a user's password
-# * Test that we can't add a connection with only one user in the DB
+# * Test that we can't add a connection with only one user in the kDb
 # * Test that we can delete a user
+# * Test that preferences, connections, and pending requests are empty initially
 class BasicFunctionalityTests(unittest.TestCase):
 
     # Called before each of the tests below. Creates database with users table
     # and single user
     def setUp(self):
-        dapi.create_db(DB_NAME)
-        dapi.create_table(DB_NAME, TABLE_NAME)
+        dapi.create_db()
+        dapi.create_table()
         dapi.create_user(kName, kEmail, kPassword, kPhone)
         
         # Save the user id for access in test cases
@@ -104,14 +102,28 @@ class BasicFunctionalityTests(unittest.TestCase):
 
     # Called after each of the tests below. Destroys table and database
     def tearDown(self):
-        dapi.destroy_table(DB_NAME, TABLE_NAME)
-        dapi.destroy_db(DB_NAME)
+        dapi.destroy_table()
+        dapi.destroy_db()
 
 
     def testEmptyConnections(self):
         # No connections, should return empty dict
         connections = dapi.get_connections(self.user_id)
         pycon = json.loads(connections)
+        self.assertDictEqual(pycon, {})
+
+    
+    def testEmptyPreferences(self):
+        # No preferences, should return empty dict
+        prefs = dapi.get_preferences(self.user_id)
+        pycon = json.loads(prefs)
+        self.assertDictEqual(pycon, {})
+
+    
+    def testEmptyRequests(self):
+        # No requests, should return empty dict
+        reqs = dapi.get_requests(self.user_id)
+        pycon = json.loads(reqs)
         self.assertDictEqual(pycon, {})
 
 
@@ -132,6 +144,10 @@ class BasicFunctionalityTests(unittest.TestCase):
         change_pwd = dapi.update_password(self.user_id, kPassword, "123456")
         self.assertEqual(change_pwd, 0)
 
+        # Returns 0 if passwords match
+        new_pwd = dapi.check_password(self.user_id, "123456")
+        self.assertEqual(new_pwd, 0)
+
 
     # Not implemented yet
     # def testAddConnection(self):
@@ -144,6 +160,10 @@ class BasicFunctionalityTests(unittest.TestCase):
         # Returns 0 on success
         deleted = dapi.delete_user(self.user_id)
         self.assertEqual(deleted, 0)
+
+        # This should fail since we deleted this user
+        uid = dapi.get_user_id(kEmail)
+        self.assertEqual(uid, -1)
 
 
 if __name__ == '__main__':
