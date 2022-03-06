@@ -35,7 +35,7 @@ function create_table() {
 /* TODO: Add to API docs */
 # Destroy database
 function destroy_db() {
-    $connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $connection = new mysqli($host, $user, $password, $db);
     if ($connection->connect_errno) {
         echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
         exit();
@@ -47,7 +47,7 @@ function destroy_db() {
 /* TODO: Add to API docs */
 # Destroy table 'users' in database if it exists
 function destroy_table() {
-    $connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $connection = new mysqli($host, $user, $password, $db);
     if ($connection->connect_errno) {
         echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
         exit();
@@ -59,7 +59,7 @@ function destroy_table() {
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
     # Connect to database
-    $connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $connection = new mysqli($host, $user, $password, $db);
     
     # Error check connection
     if ($connection->connect_errno) {
@@ -77,7 +77,7 @@ function user_exists($user_id) {
 # Get this user's ID by their email
 function get_user_id($email) {
     # Connect to database
-    $connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $connection = new mysqli($host, $user, $password, $db);
     
     # Error check connection
     if ($connection->connect_errno) {
@@ -96,7 +96,7 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Connect to database
-    $connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $connection = new mysqli($host, $user, $password, $db);
     
     # Error check connection
     if ($connection->connect_errno) {
