@@ -43,21 +43,19 @@ def create_table(db, name):
     try:
         create_table_sql = (
             f"CREATE TABLE IF NOT EXISTS {name} ("
-            "user_id int NOT NULL AUTO_INCREMENT,"
+            "user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,"
             "name varchar(255) NOT NULL,"
             "email varchar(255) NOT NULL,"
             "password varchar(255) NOT NULL,"
             "phone_number varchar(255) NOT NULL,"
             "online_status BOOL DEFAULT FALSE,"
-            "preferences JSON NOT NULL,"    # Default value causes error
-            "connections JSON NOT NULL,"    # Default value causes error
-            "pending_connections JSON NOT NULL,"    # Default value causes error
-            "connection_requests JSON NOT NULL,"    # Default value causes error
-            "PRIMARY KEY (user_id)"
+            "preferences JSON NOT NULL DEFAULT ('{}'),"
+            "connections JSON NOT NULL DEFAULT ('{}'),"
+            "pending_connections JSON NOT NULL DEFAULT ('{}'),"
+            "connection_requests JSON NOT NULL DEFAULT ('{}')"
             ") ENGINE=InnoDB"
         )
         cur.execute(create_table_sql)
-        print("Tables created successfully")
     except:
         print("Couldn't create tables in database")
 
@@ -126,23 +124,23 @@ def sign_in(email, password):
     answer = cur.fetchone()
     
     # Get the current online status of the select user with the given email
-    users_current_status = cur.execute("SELECT online FROM users WHERE email = %s", (email,))
+    users_current_status = cur.execute("SELECT online_status FROM users WHERE email = %s", (email,))
 
     # If no such user exists, return -1
     if answer is None:
         print("No such user exists. Please register or try again.")
         cur.close()
-        return -1
+        return 1
     # If the user is already online return -1
     elif users_current_status is True:
         print("User is already online. Please sign out before signing in again.")
         cur.close()
-        return -1
+        return 1
     else:
-        cur.execute("UPDATE users SET online=TRUE WHERE email = %s", (email,))
+        cur.execute("UPDATE users SET online_status=TRUE WHERE email = %s", (email,))
         cur.close()
         connection.commit()
-        return 1
+        return 0
 
 
 
@@ -152,7 +150,7 @@ def sign_out(user_id):
         return 1
     else:
         cur = connection.cursor()
-        cur.execute("UPDATE users SET online=FALSE WHERE user_id = %s", (user_id,))
+        cur.execute("UPDATE users SET online_status=FALSE WHERE user_id = %s", (user_id,))
         cur.close()
         connection.commit()
         return 0
