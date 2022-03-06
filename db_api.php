@@ -22,41 +22,112 @@ echo "Connected successfully";
 /* TODO: Add to API docs */
 # Create database if it doesn't exist
 function create_db() {
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
+    $db->query("CREATE DATABASE IF NOT EXISTS " . DB_NAME);
+    $db->close();
+
 
 }
 
 /* TODO: Add to API docs */
 # Create a table called 'users' in database if it doesn't exist
 function create_table() {
-
+    
 }
 
 /* TODO: Add to API docs */
 # Destroy database
 function destroy_db() {
-
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
+    $db->query("DROP DATABASE IF EXISTS " . DB_NAME);
+    $db->close();
 }
 
 /* TODO: Add to API docs */
 # Destroy table 'users' in database if it exists
 function destroy_table() {
-
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
+    $db->query("DROP TABLE IF EXISTS users");
+    $db->close();
 }
 
-# Check if there is an existing account with this email
+# Check if there is an existing account with this user_id
 function user_exists($user_id) {
+    # Connect to database
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+    # Error check connection
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
+
+    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
+    $result = $db->query($query);
+    $db->close();
+    return $result->num_rows > 0;
 
 }
 
 # Get this user's ID by their email
 function get_user_id($email) {
+    # Connect to database
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+    # Error check connection
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
+
+    $query = "SELECT user_id FROM users WHERE email = '$email'";
+    $result = $db->query($query);
+    $db->close();
+    return $result->fetch_assoc()['user_id'];
 
 }
 
 # Attempt to sign in the user whose email is `email` and whose password is
 # `password`
 function sign_in($email, $password) {
+    # Connect to database
+    $db = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+    # Error check connection
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        exit();
+    }
 
+  # Get the current online status of the select user with the given email
+    $query = "SELECT online FROM users WHERE email = '$email'";
+
+  # If no such user exists, return -1
+    if (!$result = $db->query($query)) {
+        $db->close();
+        return -1;
+    }
+  # If the user is already online return -1
+    if ($result->fetch_assoc()['online'] == TRUE) {
+        $db->close();
+        return -1;
+    }
+    # Else update the user with the given email to be online
+    $query = "UPDATE users SET online = TRUE WHERE email = '$email'";
+    $db->query($query);
+    $db->close();
 }
 
 # Attempt to sign out the user with ID `user_id`
@@ -128,6 +199,7 @@ function get_requests($user_id) {
 /* TODO: Add to API docs */
 # Get the connection requests that this user has sent
 function get_pending($user_id) {
+
 
 }
 
