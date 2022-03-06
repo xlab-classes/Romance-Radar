@@ -1,15 +1,15 @@
 # Authors: Alex Eastman, Jordan Grant, Farhan Chowhury
 # Created: 02/27/2022
-# Modified: 03/03/2022
+# Modified: 03/05/2022
 
 from typing import Optional
-from db_globals import config, db
+from db_globals import connection
 
 
 
 # Check if there is an existing account with this email
 def user_exists(user_id):
-    cur = db.cursor()
+    cur = connection.cursor()
     cur.execute("SELECT user_id FROM users WHERE user_id = %d", (user_id,))
     answer = cur.fetchone()
     cur.close()
@@ -23,7 +23,7 @@ def user_exists(user_id):
 
 # Get this user's ID by their email
 def get_user_id(email):
-    cur = db.cursor()
+    cur = connection.cursor()
     cur.execute("SELECT user_id FROM users WHERE email=%s", (email,))
     answer = cur.fetchone()
     cur.close()
@@ -38,7 +38,7 @@ def get_user_id(email):
 # Attempt to sign in the user whose email is `email` and whose password is
 # `password`
 def sign_in(email, password):
-    cur = db.cursor()
+    cur = connection.cursor()
     cur.execute("SELECT name FROM users WHERE email = %s AND password = %s", (email, password))
     answer = cur.fetchone()
     
@@ -58,7 +58,7 @@ def sign_in(email, password):
     else:
         cur.execute("UPDATE users SET online=TRUE WHERE email = %s", (email,))
         cur.close()
-        db.commit()
+        connection.commit()
         return 1
 
 
@@ -68,10 +68,10 @@ def sign_out(user_id):
     if not user_exists(user_id):
         return 1
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("UPDATE users SET online=FALSE WHERE user_id = %d", (user_id,))
         cur.close()
-        db.commit()
+        connection.commit()
         return 0
 
 
@@ -82,7 +82,7 @@ def check_password(user_id, password):
     if not user_exists(user_id):
         return 1  # User doesn't exist
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("SELECT user_id FROM users WHERE user_id=%d AND password=%s", (user_id, password))
         answer = cur.fetchone()
         cur.close()
@@ -103,17 +103,17 @@ def update_password(user_id, old_password, new_password):
     if passwords_match != 0:
         return 1  # User doesn't exist OR wrong pass
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("UPDATE users SET password=%s WHERE user_id=%d", (new_password, user_id))
         cur.close()
-        db.commit()
+        connection.commit()
         return 0  # Successfully changed password
 
 
 
 # Get the user ID of the user whose email is `email`
 def get_user_id(email):
-    cur = db.cursor()
+    cur = connection.cursor()
     cur.execute("SELECT user_id FROM users WHERE email=%s", (email,))
     answer = cur.fetchone()
     cur.close()
@@ -136,11 +136,11 @@ def create_user(name, email, password, phone_number):
     elif get_user_id(email) != -1:
         return 1  # User already exists
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("INSERT INTO users (name, email, password, phone_number) VALUES (%s,%s,%s,%s)",\
             (name, email, password, phone_number))
         cur.close()
-        db.commit()
+        connection.commit()
         return 0  # Successfully created user
 
 
@@ -150,10 +150,10 @@ def delete_user(user_id):
     if not user_exists(user_id):
         return 1
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("DELETE FROM users WHERE user_id=%d", (user_id,))
         cur.close()
-        db.commit()
+        connection.commit()
         return 0
 
 
@@ -203,7 +203,7 @@ def get_connections(user_id):
     if not user_exists(user_id):
         return ""
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("SELECT connections FROM users WHERE user_id=%d", (user_id,))
         answer = cur.fetchone()
         cur.close()
@@ -216,7 +216,7 @@ def get_preferences(user_id):
     if not user_exists(user_id):
         return ""
     else:
-        cur = db.cursor()
+        cur = connection.cursor()
         cur.execute("SELECT preferences FROM users WHERE user_id=%d", (user_id,))
         answer = cur.fetchone()
         cur.close()
@@ -249,11 +249,11 @@ def update_preferences(user_id, preferences):
     """
     if(preferences is None):
         return -1
-    cur = db.cursor()
+    cur = connection.cursor()
     try:
         cur.execute("UPDATE users SET preferences = %s WHERE id = %s", (preferences, user_id))
-        db.commit()
-        db.close()
+        connection.commit()
+        connection.close()
         print("Successfully updated preferences")
         return 1
     except:

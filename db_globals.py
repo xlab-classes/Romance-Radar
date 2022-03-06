@@ -1,15 +1,7 @@
-import mysql
-
-config = {
-    'user': 'root',
-    'password': 'diuFTC7#',
-    'auth_plugin': 'mysql_native_password',
-    'host': 'localhost',
-    'database': 'romance_radar',
-}
+import pymysql.cursors
 
 # Establishing the connection to the database
-db = mysql.connector.connect(**config)
-
-# Creating a cursor
-# cursor = db.cursor()  
+connection = pymysql.connect(host='localhost',
+                     user='root',
+                     password='diuFTC7#',
+                     charset='utf8mb4')
