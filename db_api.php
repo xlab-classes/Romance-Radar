@@ -10,8 +10,9 @@ Database api
 $host = 'localhost';
 $user = 'root';
 $password = 'diuFTC7#';
+$db = 'rrdb';
 
-$connection = new mysqli($host, $user, $password);
+$connection = mysqli_connect($host, $user, $password, $db);
 
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
@@ -71,11 +72,6 @@ function check_password($user_id, $password) {
 
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
-
-}
-
-# Get the user ID of the user whose email is `email`
-function get_user_id($email) {
 
 }
 
