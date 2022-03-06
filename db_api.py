@@ -28,7 +28,6 @@ def create_db(name):
     cur = connection.cursor()
     try:
         cur.execute(f"CREATE DATABASE IF NOT EXISTS {name}")
-        cur.execute(f"USE {name}")
     except:
         print("There was a problem creating a new database")
     cur.close()
@@ -82,7 +81,6 @@ def destroy_db(name):
 # Destroy table called 'name' in database 'db' if it exists
 def destroy_table(db, name):
     cur = connection.cursor()
-    cur.execute(f"USE {db}")
     try:
         cur.execute(f"DROP TABLE IF EXISTS {name}")
     except:
@@ -95,7 +93,7 @@ def destroy_table(db, name):
 # Check if there is an existing account with this email
 def user_exists(user_id):
     cur = connection.cursor()
-    cur.execute("SELECT user_id FROM users WHERE user_id = %d", (user_id,))
+    cur.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
     answer = cur.fetchone()
     cur.close()
 
@@ -116,7 +114,7 @@ def get_user_id(email):
     if answer is None:
         return -1
     else:
-        return answer[0]
+        return int(answer[0])
 
 
 
@@ -154,7 +152,7 @@ def sign_out(user_id):
         return 1
     else:
         cur = connection.cursor()
-        cur.execute("UPDATE users SET online=FALSE WHERE user_id = %d", (user_id,))
+        cur.execute("UPDATE users SET online=FALSE WHERE user_id = %s", (user_id,))
         cur.close()
         connection.commit()
         return 0
@@ -168,7 +166,7 @@ def check_password(user_id, password):
         return 1  # User doesn't exist
     else:
         cur = connection.cursor()
-        cur.execute("SELECT user_id FROM users WHERE user_id=%d AND password=%s", (user_id, password))
+        cur.execute("SELECT user_id FROM users WHERE user_id=%s AND password=%s", (user_id, password))
         answer = cur.fetchone()
         cur.close()
         
@@ -189,7 +187,7 @@ def update_password(user_id, old_password, new_password):
         return 1  # User doesn't exist OR wrong pass
     else:
         cur = connection.cursor()
-        cur.execute("UPDATE users SET password=%s WHERE user_id=%d", (new_password, user_id))
+        cur.execute("UPDATE users SET password=%s WHERE user_id=%s", (new_password, user_id))
         cur.close()
         connection.commit()
         return 0  # Successfully changed password
@@ -236,7 +234,7 @@ def delete_user(user_id):
         return 1
     else:
         cur = connection.cursor()
-        cur.execute("DELETE FROM users WHERE user_id=%d", (user_id,))
+        cur.execute("DELETE FROM users WHERE user_id=%s", (user_id,))
         cur.close()
         connection.commit()
         return 0
@@ -289,7 +287,7 @@ def get_connections(user_id):
         return ""
     else:
         cur = connection.cursor()
-        cur.execute("SELECT connections FROM users WHERE user_id=%d", (user_id,))
+        cur.execute("SELECT connections FROM users WHERE user_id=%s", (user_id,))
         answer = cur.fetchone()
         cur.close()
         return answer[0]
@@ -302,7 +300,7 @@ def get_preferences(user_id):
         return ""
     else:
         cur = connection.cursor()
-        cur.execute("SELECT preferences FROM users WHERE user_id=%d", (user_id,))
+        cur.execute("SELECT preferences FROM users WHERE user_id=%s", (user_id,))
         answer = cur.fetchone()
         cur.close()
         return answer[0]
