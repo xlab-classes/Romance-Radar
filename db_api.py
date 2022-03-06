@@ -200,21 +200,6 @@ def update_password(user_id, old_password, new_password):
 
 
 
-# Get the user ID of the user whose email is `email`
-def get_user_id(email):
-    cur = connection.cursor()
-    cur.execute("SELECT user_id FROM users WHERE email=%s", (email,))
-    answer = cur.fetchone()
-    cur.close()
-
-    if answer is None:
-        return -1  # user doesn't exist
-    else:
-        # TODO: This might not be the proper way to do this
-        return answer[0]
-
-
-
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
 def create_user(name, email, password, phone_number):
