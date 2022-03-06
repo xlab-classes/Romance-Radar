@@ -7,6 +7,17 @@ Database api
 -->
 <?php
 
+$host = 'localhost';
+$user = 'root';
+$password = 'diuFTC7#';
+
+$connection = new mysqli($host, $user, $password);
+
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
+echo "Connected successfully";
+
 /* TODO: Add to API docs */
 # Create database if it doesn't exist
 function create_db() {
