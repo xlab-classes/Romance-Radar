@@ -618,38 +618,26 @@ function update_preferences($user_id, $preferences) {
 
     # if preferences is not a valid JSON string, return -1
     if (json_decode($preferences) == NULL) {
-        echo("Invalid JSON");
-        return -1;
+        echo "Invalid JSON data in update_preferences";
+        return 1;
+    } else if (!user_exists($user_id)) {
+        echo "User doesn't exist in update_preferences";
+        return 1;
     }
 
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
+    $query = "UPDATE users SET preferences = $preferences WHERE user_id = $user_id";
+    $result = exec_query($query);
 
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+    # Couldn't execute query
+    if ($result == NULL) {
+        echo "Failed to execute query in update_preferences";
+        return 1;
+    }
+    # Successfully updated preferences
+    else {
+        return 0;
     }
 
-    # Check if user exists by seeing if user_id is in the database
-    $query = "SELECT * FROM users WHERE user_id = '" . $user_id . "'";
-    $result = $db->query($query);
-    if ($result->num_rows == 0) {
-        $db->close();
-        echo("User does not exist");
-        return -1;
-    }
-    # Try / Catch to update the preferences
-    try {
-        $query = "UPDATE users SET preferences = '" . $preferences . "' WHERE user_id = '" . $user_id . "'";
-        $db->query($query);
-    } catch (Exception $e) {
-        $db->close();
-        print("Failed to update preferences");
-        return -1;
-    }
-    $db->close();
-    return 1;
 }
 
 
