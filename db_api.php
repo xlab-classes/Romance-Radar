@@ -611,7 +611,6 @@ function get_preferences($user_id) {
     }
 }
 
-<?php
 # Set the preferences of the user with ID `user_id` to `preferences`
 
 function update_preferences($user_id, $preferences) {
@@ -641,7 +640,6 @@ function update_preferences($user_id, $preferences) {
 }
 
 
-/* TODO: Add to API docs */
 # Get the connection requests that this user needs to respond to
 # Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
