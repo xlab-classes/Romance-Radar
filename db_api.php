@@ -300,31 +300,35 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
 function create_user($name, $email, $pwd, $phone) {
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
     
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+    # Make sure none of the required fields are empty
+    if (empty($name) || empty($email) || empty($pwd) || empty($phone)) {
+        echo "Missing required fields in create_user";
+        return 1;
     }
 
-    # Check if user exists by seeing if user_id is in the database
-    $query = "SELECT * FROM users WHERE email = '" . $email . "'";
-    $result = $db->query($query);
-    if ($result->num_rows > 0) {
-        $db->close();
-        print("User already exists");
-        return -1;
+    # Make sure this email isn't being used
+    $email_used = exec_query("SELECT * from users WHERE email=$email");
+    if ($email_used == NULL) {
+        echo "Couldn't execute query to find email";
+        return 1;
+    }
+    else if ($email_used->num_rows > 0) {
+        echo "An account with this email already exists";
+        return 1;
     }
 
-    # Insert the new user into the database
-    $query = "INSERT INTO users (name, email, password, phone) VALUES ('$name', '$email', '$pwd', '$phone')";
-    $db->query($query);
-    $db->close();
-    echo "User {$name} created successfully! Thank you!";
-    return 1;
+    # Attempt to create this user
+    $query = "INSERT INTO users (name, email, password, phone) VALUES ($name, $email, $pwd, $phone)";
+    $result = exec_query($query);
+    if (result == NULL) {
+        echo "Couldn't insert user into database";
+        return 1;
     }
+    else {
+        return 0;
+    }
+}
 
 
 # Removes all of a user's data from the database
