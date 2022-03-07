@@ -126,6 +126,7 @@ function user_exists($user_id) {
         return false;
     } 
     else return $result->num_rows > 0;
+}
 
 
 # Get this user's ID by their email
@@ -263,22 +264,36 @@ function check_password($user_id, $password) {
 
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
-    # if eitheir old or new password is empty, return -1
-    if(empty($old_pwd) || empty($new_pwd)) {
-        return -1;
-    }
+    $query = "SELECT * FROM users WHERE user_id = $user_id AND password = $old_pwd";
+    $result;
 
-    # Check that  the old password is correct for the user with ID
-    # `user_id`
-    if(check_password($user_id, $old_pwd) != 1) {
-        return -1;
+    #If eitheir old or new password is empty, return -1
+    if(empty($old_pwd) || empty($new_pwd)) {
+        echo "Passwords cannot be empty"
+        return 1;
     }
-    # update user with user_id password to new password
-    $db = new mysqli($host, $user, $password, $name);
-    $query = "UPDATE users SET password = '$new_pwd' WHERE user_id = '$user_id'";
-    $db->query($query);
-    $db->close();
-    return 1;
+    else if (!user_exists($user_id)) {
+        echo "User doesn't exist in update_password";
+        return 1;
+    }
+    else if ($result = exec_query($query) == NULL) {
+        echo "Couldn't execute query in update_password";
+        return 1;
+    }
+    else if ($result->num_rows == 0) {
+        echo "No matching entry with this user ID and password";
+        return 1;
+    }
+    else {
+        $update = exec_query("UPDATE users SET password = $new_pwd WHERE user_id = $user_id AND password = $old_pwd");
+        if ($update == NULL) {
+            echo "Couldn't execute query to update password";
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }
 
 
