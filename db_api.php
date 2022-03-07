@@ -467,7 +467,58 @@ function add_connection_request($user_id_tx, $user_id_rx) {
 # requires that a connection exists between these users
 # TODO(Jordan): This function is not yet implemented
 function remove_connection($user_id_a, $user_id_b) {
+    # Connect to database
+    $db = new mysqli($host, $user, $password, $name);
+    
+    # Error check connection
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        return -1;
+    }
 
+    # Check if user exists by seeing if user_id is in the database
+    $query = "SELECT * FROM users WHERE user_id = '" . $user_id_a . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("User does not exist");
+        return -1;
+    }
+
+    # Check if user exists by seeing if user_id is in the database
+    $query = "SELECT * FROM users WHERE user_id = '" . $user_id_b . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("User does not exist");
+        return -1;
+    }
+
+    # Check if the users are already connected
+    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("Users are not connected");
+        return -1;
+    }
+
+    # Check if the users are already connected
+    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("Users are not connected");
+        return -1;
+    }
+
+    # Remove the connections from the appropriate users
+    $query = "DELETE FROM connections WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
+    $db->query($query);
+    $query = "DELETE FROM connections WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
+    $db->query($query);
+    db.close();
+    return 1;
 }
 ?>
 
