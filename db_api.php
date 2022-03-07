@@ -352,7 +352,10 @@ function add_connection($user_id_a, $user_id_b) {
         return -1;
     }
 
-    # Check if the users are already connected
+    # Check if the users are already connected. If they are, return -1
+    # Users have to both be connected to each other for it to be considered a connection. 
+    # This is a symmetric relation i.e A->B and B->A must be true.
+    # Note to Alex: I was thinking about splitting the logic to see if two users are connected to each other to a helper function ?
     $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
     $result = $db->query($query);
     if ($result->num_rows > 0) {
@@ -361,8 +364,17 @@ function add_connection($user_id_a, $user_id_b) {
         return -1;
     }
 
-    # 3. Ensure that user_id_a is in user_id_b's pending_connections (maybe reverse)
-    $query = "SELECT * FROM pending_connections WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
+    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
+    $result = $db->query($query);
+    if ($result->num_rows > 0) {
+        $db->close();
+        echo ("Users are already connected");
+        return -1;
+    }
+
+    # Check if the user a has a pending connection request to user b. If they don't, return -1
+
+    $query = "SELECT * FROM pending_connections WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
@@ -370,18 +382,18 @@ function add_connection($user_id_a, $user_id_b) {
         return -1;
     }
     # Ensure that user_id b is in user_id_a's connection_requests (reverse of above)
-    $query = "SELECT * FROM connection_requests WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
+    $query = "SELECT * FROM connection_requests WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
     $result = $db->query($query);
     if ($result->num_rows == 0) {
         $db->close();
-        echo ("User does not have a pending connection");
+        echo ("User does not have a connection request");
         return -1;
     }
 
     # Remove the pending_connection and connection_requests from the appropriate users
-    $query = "DELETE FROM pending_connections WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
+    $query = "DELETE FROM pending_connections WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
     $db->query($query);
-    $query = "DELETE FROM connection_requests WHERE user_id_a = '" . $user_id_a . "' AND user_id_b = '" . $user_id_b . "'";
+    $query = "DELETE FROM connection_requests WHERE user_id_a = '" . $user_id_b . "' AND user_id_b = '" . $user_id_a . "'";
     $db->query($query);
 
     # Add each user to the others' connections list
@@ -400,6 +412,52 @@ function add_connection($user_id_a, $user_id_b) {
 # TODO(Jordan): This function is not yet implemented
 
 function add_connection_request($user_id_tx, $user_id_rx) {
+    # Connect to database
+    $db = new mysqli($host, $user, $password, $name);
+    
+    # Error check connection
+    if ($db->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
+        return -1;
+    }
+
+    # Check if user exists by seeing if user_id is in the database
+    $query = "SELECT * FROM users WHERE user_id = '" . $user_id_tx . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("User does not exist");
+        return -1;
+    }
+
+    # Check if user exists by seeing if user_id is in the database
+    $query = "SELECT * FROM users WHERE user_id = '" . $user_id_rx . "'";
+    $result = $db->query($query);
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo ("User does not exist");
+        return -1;
+    }
+
+    # Check if the users are already connected
+    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_tx . "' AND user_id_b = '" . $user_id_rx . "'";
+    $result = $db->query($query);
+    if ($result->num_rows > 0) {
+        $db->close();
+        echo ("Users are already connected");
+        return -1;
+    }
+
+    # Check if the users are already connected
+    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id_rx . "' AND user_id_b = '" . $user_id_tx . "'";
+    $result = $db->query($query);
+    if ($result->num_rows > 0) {
+        $db->close();
+        echo ("Users are already connected");
+        return -1;
+    }
+
+    # Check if the users have a pending
 
 }
 ?>
@@ -415,6 +473,7 @@ function remove_connection($user_id_a, $user_id_b) {
 
 <?php
 # Get a JSON-formatted string of connections for the user with ID `user_id`
+# Returns an empty JSON dictionary if the user has no connections
 # TODO(Jordan): Take a second look at this function
 
 function get_connections($user_id) {
@@ -425,17 +484,16 @@ function get_connections($user_id) {
     # get connections
     $db = new mysqli($host, $user, $password, $name);
     $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id . "' OR user_id_b = '" . $user_id . "'";
+    
+    # Check for number of connections
     $result = $db->query($query);
-    $connections = array();
-    while ($row = $result->fetch_assoc()) {
-        if ($row['user_id_a'] == $user_id) {
-            $connections[] = $row['user_id_b'];
-        } else {
-            $connections[] = $row['user_id_a'];
-        }
-    }
+    if ($result->num_rows == 0) {
+        $db->close();
+        echo("User has no connections");
+        return json_encode("{}");
+        };
     $db->close();
-    return json_encode($connections);
+    return $result;
     
 }
 ?>
@@ -463,11 +521,13 @@ function get_preferences($user_id) {
     $result = $db->query($query);
     $preferences = $result->fetch_assoc();
     $db->close();
-    return json_encode($preferences);
+    return $preferences;
 }
 ?>
 
 <?php
+# Set the preferences of the user with ID `user_id` to `preferences`
+
 function update_preferences($user_id, $preferences) {
 
     # if preferences is not a valid JSON string, return -1
@@ -510,6 +570,7 @@ function update_preferences($user_id, $preferences) {
 <?php
 /* TODO: Add to API docs */
 # Get the connection requests that this user needs to respond to
+# Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
     # Connect to database
     $db = new mysqli($host, $user, $password, $name);
@@ -527,11 +588,15 @@ function get_requests($user_id) {
         $db->close();
         echo("User does not exist");
     }
-    # Get the connection requests for the user with ID user_id and return them as a JSON string
-    $query = "SELECT * FROM connection_requests WHERE user_id_b = '" . $user_id . "'";
+    # Get the connection requests for the user with ID user_id which is JSON-formatted
+    $query = "SELECT * FROM connection_requests WHERE user_id_b = '" . $user_id . "'";    
+    # Get the JSON-formatted string of connection requests
     $result = $db->query($query);
+    
+    # Close the database connection
     $db->close();
-    return json_encode($result);
+    # Returns a JSON string that represent an array of connection requests
+    return $requests;
 
 }
 ?>
