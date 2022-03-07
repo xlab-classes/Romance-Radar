@@ -34,7 +34,8 @@ function exec_query($query) {
         return NULL;
 
     # Executed successfully, return mysqli_result object
-    } else {
+    }
+    else {
         $connection->close();
         return $result;
     }
@@ -137,10 +138,12 @@ function get_user_id($email) {
         return -1;
     }
 
+    # $answer can be false or null, which will trigger the else
     if ($answer = $result->fetch_assoc()) {
         return (int) $answer["user_id"];
-    } else {
-        echo "Failed to get results of query";
+    }
+    else {
+        echo "Failed to get results of user ID query";
         return -1;
     }
 }
@@ -149,36 +152,42 @@ function get_user_id($email) {
 # Attempt to sign in the user whose email is `email` and whose password is
 # `password`
 function sign_in($email, $password) {
-    # Connect to database
-    $connection = new mysqli($host, $user, $password, $db);
-    
-    # Error check connection
-    if ($connection->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
-        exit();
-    }
-
   # Get the current online status of the select user with the given email
-    $query = "SELECT online FROM users WHERE email = '$email'";
-    $result = $db->query($query);
+    $query = "SELECT online FROM users WHERE email = $email AND password = $password";
+    $result = exec_query($query);
 
-  # If no such user exists, return -1
-    if (!$result = $connection->query($query)) {
-        $connection->close();
-        return -1;
+    # Query failed
+    if ($result == NULL) {
+        echo "Couldn't query online status of user";
+        return 1;
     }
-
-  # If the user is already online return -1
-    if ($result->fetch_assoc()['online'] == TRUE) {
-        $connection->close();
-        return -1;
+    # User not found
+    else if ($result->num_rows == 0) {
+        echo "Couldn't find user to sign in";
+        return 1;
     }
-
-    # Else update the user with the given email to be online
-    $query = "UPDATE users SET online = TRUE WHERE email = '$email'";
-    $connection->query($query);
-    $connection->close();
-    return 1;
+    # See if user is online, set to online if not
+    else if ($answer = $result->fetch_assoc()) {
+        $online = $answer["online_status"] == "1";
+        if (!$online) {
+            $update = exec_query("UPDATE users SET online = TRUE WHERE email = $email AND password = $password");
+            if ($update == NULL) {
+                echo "Couldn't sign in user";
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        else {
+            echo "User already online";
+            return -1;
+        }
+    }
+    # Couldn't get results from query
+    else {
+        echo "Failed to get results of sign-in query";
+        return 1;
+    }
 }
 
 
