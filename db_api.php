@@ -333,29 +333,19 @@ function create_user($name, $email, $pwd, $phone) {
 
 # Removes all of a user's data from the database
 function delete_user($user_id) {
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
-    
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+    if (!user_exists($user_id)) {
+        echo "No user with this ID in delete_user";
+        return 1;
     }
 
-    # Check if user exists by seeing if user_id is in the database
-    $query = "SELECT * FROM users WHERE user_id = '" . $user_id . "'";
-    $result = $db->query($query);
-    if ($result->num_rows == 0) {
-        $db->close();
-        echo "User does not exist";
-        return -1;
+    $result = exec_query("DELETE FROM users WHERE user_id = $user_id");
+    if ($result == NULL) {
+        echo "Failed to execute statement to remove user";
+        return 1;
     }
-
-    # Delete the user from the database
-    $query = "DELETE FROM users WHERE user_id = '$user_id'";
-    $db->query($query);
-    $db->close();
-    return 1;
+    else {
+        return 0;
+    }
 }
 
 
