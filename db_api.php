@@ -1,3 +1,10 @@
+<!--
+Authors: Alex Eastman, Jordan Grant
+Created: 03/06/2022
+Modified: 03/06/2022
+
+Database api
+-->
 <?php
 
 $host = 'localhost';
