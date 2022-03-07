@@ -29,7 +29,26 @@ function create_db() {
 /* TODO: Add to API docs */
 # Create a table called 'users' in database if it doesn't exist
 function create_table() {
-    
+    $connection = new mysqli($host, $user, $password, $db);
+    if ($connection->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_errno;
+    }
+
+    $query = "CREATE TABLE IF NOT EXISTS users (";
+    $query .= "user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,";
+    $query .= "name varchar(255) NOT NULL,";
+    $query .= "email varchar(255) NOT NULL,";
+    $query .= "password varchar(255) NOT NULL,";
+    $query .= "phone_number varchar(255) NOT NULL,";
+    $query .= "online_status BOOL DEFAULT FALSE,";
+    $query .= "preferences JSON NOT NULL DEFAULT ('{}'),";
+    $query .= "connections JSON NOT NULL DEFAULT ('{}'),";
+    $query .= "pending_connections JSON NOT NULL DEFAULT ('{}'),";
+    $query .= "connection_requests JSON NOT NULL DEFAULT ('{}')";
+    $query .= ") ENGINE=InnoDB";
+
+    $connection->query($query);
+    $connection->close();
 }
 
 /* TODO: Add to API docs */
