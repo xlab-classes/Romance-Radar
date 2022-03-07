@@ -657,31 +657,31 @@ function update_preferences($user_id, $preferences) {
 # Get the connection requests that this user needs to respond to
 # Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
-
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();    
+    if (!user_exists($user_id)) {
+        echo "User does not exist in get_requests";
+        return "";
     }
 
-    # Check if user exists by seeing if user_id is in the database
-    $query = "SELECT * FROM users WHERE user_id = '" . $user_id . "'";
-    $result = $db->query($query);
-    if ($result->num_rows == 0) {
-        $db->close();
-        echo("User does not exist");
-    }
-    # Get the connection requests for the user with ID user_id which is JSON-formatted
-    $query = "SELECT * FROM connection_requests WHERE user_id_b = '" . $user_id . "'";    
-    # Get the JSON-formatted string of connection requests
-    $result = $db->query($query);
+    $result = exec_query("SELECT connection_requests FROM users WHERE user_id = $user_id");
     
-    # Close the database connection
-    $db->close();
-    # Returns a JSON string that represent an array of connection requests
-    return $requests;
-
+    # Failed to execute query
+    if ($result == NULL) {
+        echo "Couldn't retrieve requets in get_requests";
+        return "";
+    }
+    # No results returned
+    else if ($result->num_rows == 0) {
+        echo "No results in get_requests, although user exists";
+        return "";
+    }
+    # Attempt to get first row of results
+    else if ($answer = $result->fetch_assoc()) {
+        return $answer["connection_requests"];
+    }
+    # Couldn't get first row of results
+    else {
+        echo "Failed to retrieve results in get_requests.";
+        return "";
+    }
 }
 ?>
