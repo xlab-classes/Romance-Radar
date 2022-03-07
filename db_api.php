@@ -266,8 +266,7 @@ function check_password($user_id, $password) {
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
     $query = "SELECT * FROM users WHERE user_id = $user_id AND password = $old_pwd";
-    $result;
-
+    $result = exec_query($query);
     #If eitheir old or new password is empty, return -1
     if(empty($old_pwd) || empty($new_pwd)) {
         echo "Passwords cannot be empty";
