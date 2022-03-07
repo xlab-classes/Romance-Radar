@@ -583,27 +583,32 @@ function get_connections($user_id) {
 
 # Get the preferences of the user with ID `user_id` returns a JSON-formatted string
 function get_preferences($user_id) {
-    # Check if user exists
     if (!user_exists($user_id)) {
-        print("User does not exist");
-        # Return empty String version of JSON  
-        return "{}";
-    }
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
-
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
+        echo "User does not exist in get_preferences";
+        return "";
     }
 
-    # Get the preferences of the user
-    $query = "SELECT * FROM preferences WHERE user_id = '" . $user_id . "'";
-    $result = $db->query($query);
-    $preferences = $result->fetch_assoc();
-    $db->close();
-    return $preferences;
+    $result = exec_query("SELECT preferences FROM users WHERE user_id = $user_id");
+    
+    # Failed to execute query
+    if ($result == NULL) {
+        echo "Couldn't retrieve preferences in get_preferences";
+        return "";
+    }
+    # No results returned
+    else if ($result->num_rows == 0) {
+        echo "No results in get_preferences, although user exists";
+        return "";
+    }
+    # Attempt to get first row of results
+    else if ($answer = $result->fetch_assoc()) {
+        return $answer["preferences"];
+    }
+    # Couldn't get first row of results
+    else {
+        echo "Failed to retrieve results in get_preferences.";
+        return "";
+    }
 }
 
 <?php
