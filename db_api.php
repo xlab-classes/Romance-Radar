@@ -238,29 +238,27 @@ function sign_out($user_id) {
 # Check that the password matches the password stored for the user with ID
 # `user_id`
 function check_password($user_id, $password) {
-    # if the user doesn't exists, return -1
+    $query = "SELECT * FROM users WHERE user_id = $user_id AND password = $password";
+    $result = exec_query($query);
+
+    # Check that user exists
     if(!user_exists($user_id)) {
         return -1;
     }
-
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
-
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
-    }
-    # Check that the password matches the password stored for the user with ID
-    # `user_id`
-    $query = "SELECT password FROM users WHERE user_id = '$user_id'";
-    $result = $db->query($query);
-    $db->close();
-    if ($result->fetch_assoc()['password'] == $password) {
+    # Check that query executed successfully
+    else if ($result == NULL) {
+        echo "Failed to execute query to check password";
         return 1;
     }
-    return -1;
-    }   
+    # No results, password and user_id don't match an entry
+    else if ($result->num_rows == 0) {
+        return -1;
+    }
+    # Passwords and user_id match an entry
+    else {
+        return 1;
+    }
+}  
 
 
 # Attempt to change the password of the user with ID `user_id`
