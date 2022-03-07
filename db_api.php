@@ -353,7 +353,6 @@ function delete_user($user_id) {
 # requires that one of the users has sent a connection request and the other
 # one has a pending request from the sender
 # TODO(Jordan): This function is not yet implemented
-
 function add_connection($user_id_a, $user_id_b) {
     # Connect to database
     $db = new mysqli($host, $user, $password, $name);
@@ -433,13 +432,12 @@ function add_connection($user_id_a, $user_id_b) {
     $db->query($query);
     db.close();
     return 1;
-    }
+}
 
 
 # Add a request to connect to the user with ID `user_id_rx`. Add the pending
 # connection to the user with ID `user_id_tx`
 # TODO(Jordan): This function is not yet implemented
-
 function add_connection_request($user_id_tx, $user_id_rx) {
     # Connect to database
     $db = new mysqli($host, $user, $password, $name);
@@ -553,26 +551,33 @@ function remove_connection($user_id_a, $user_id_b) {
 # Get a JSON-formatted string of connections for the user with ID `user_id`
 # Returns an empty JSON dictionary if the user has no connections
 # TODO(Jordan): Take a second look at this function
-
 function get_connections($user_id) {
-    # Check if user exists
-    if (user_exists($user_id) == -1) {
-        echo("User does not exist");
+    if (!user_exists($user_id)) {
+        echo "User does not exist in get_connections";
+        return "";
     }
-    # get connections
-    $db = new mysqli($host, $user, $password, $name);
-    $query = "SELECT * FROM connections WHERE user_id_a = '" . $user_id . "' OR user_id_b = '" . $user_id . "'";
+
+    $result = exec_query("SELECT connections FROM users WHERE user_id = $user_id");
     
-    # Check for number of connections
-    $result = $db->query($query);
-    if ($result->num_rows == 0) {
-        $db->close();
-        echo("User has no connections");
-        return json_encode("{}");
-        };
-    $db->close();
-    return $result;
-    
+    # Failed to execute query
+    if ($result == NULL) {
+        echo "Couldn't retrieve connections in get_connections";
+        return "";
+    }
+    # No results returned
+    else if ($result->num_rows == 0) {
+        echo "No results in get_connections, although user exists";
+        return "";
+    }
+    # Attempt to get first row of results
+    else if ($answer = $result->fetch_assoc()) {
+        return $answer["connections"];
+    }
+    # Couldn't get first row of results
+    else {
+        echo "Failed to retrieve results in get_connections.";
+        return "";
+    }
 }
 
 
