@@ -156,21 +156,24 @@ function sign_in($email, $password) {
     $query = "SELECT online FROM users WHERE email = $email AND password = $password";
     $result = exec_query($query);
 
+    if (!user_exists($email)) {
+        echo "Couldn't find user with email $email";
+    }
     # Query failed
-    if ($result == NULL) {
+    else if ($result == NULL) {
         echo "Couldn't query online status of user";
         return 1;
     }
     # User not found
     else if ($result->num_rows == 0) {
-        echo "Couldn't find user to sign in";
+        echo "No results for sign_in . User does exist";
         return 1;
     }
     # See if user is online, set to online if not
     else if ($answer = $result->fetch_assoc()) {
         $online = $answer["online_status"] == "1";
         if (!$online) {
-            $update = exec_query("UPDATE users SET online = TRUE WHERE email = $email AND password = $password");
+            $update = exec_query("UPDATE users SET online_status = TRUE WHERE email = $email AND password = $password");
             if ($update == NULL) {
                 echo "Couldn't sign in user";
                 return 1;
@@ -193,24 +196,42 @@ function sign_in($email, $password) {
 
 # Attempt to sign out the user with ID `user_id`
 function sign_out($user_id) {
-    # Connect to database
-    $db = new mysqli($host, $user, $password, $name);
+    $result = exec_query("SELECT online FROM users WHERE user_id = $user_id")
 
-    # Error check connection
-    if ($db->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $db->connect_errno . ") " . $db->connect_error;
-        exit();
-    }
     # Check if user exists by seeing if user_id is in the database
     if(!user_exists($user_id)) {
-        return -1;
+        echo "Couldn't find user with ID $user_id";
+        return 1;
     }
-
-    # Else update the user with the given email to be offline
-    $query = "UPDATE users SET online = FALSE WHERE user_id = '$user_id'";
-    $db->query($query);
-    $db->close();
-    return 1;
+    else if ($result == NULL) {
+        echo "Couldn't execute query for sign-out";
+        return 1;
+    }
+    else if ($result->num_rows == 0) {
+        echo "No results for sign_out. User does exist";
+        return 1;
+    }
+    else if ($answer = $result->fetch_assoc()) {
+        $online = $answer["online_status"] == "1";
+        if ($online) {
+            $update = exec_query("UPDATE users SET online_status = TRUE WHERE user_id = $user_id");
+            if ($update == NULL) {
+                echo "Couldn't sign user out";
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+        else {
+            echo "User already offline";
+            return -1;
+        }
+    }
+    else {
+        echo "Couldn't fetch results for sign_out";
+        return 1;
+    }
 }
 
 
