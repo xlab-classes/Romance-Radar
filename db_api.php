@@ -7,11 +7,6 @@ Database api
 -->
 <?php
 
-$host = 'localhost';
-$user = 'root';
-$password = '#Evangelina090';
-$db = 'rrdb';
-
 # Create a databaase to be used
 function create_db() {
     # setting global variables
