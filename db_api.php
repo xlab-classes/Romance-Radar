@@ -1,55 +1,69 @@
 <!--
 Authors: Alex Eastman, Jordan Grant
 Created: 03/06/2022
-Modified: 03/06/2022
+Modified: 03/07/2022
 
 Database api
 -->
+
 <?php
 
-# Create a databaase to be used
+$host = 'localhost';
+$user = 'root';
+$password = 'diuFTC7#';
+$db = 'rrdb';
+
+# Helper function. Not part of the API
+# Takes in a SQL statement to execute.
+# Returns:
+# * The mysqli_result object of the SQL statement if executed successfully
+# * NULL if there was a problem executing the SQL statement
+function exec_query($query) {
+    $connection = new mysqli($host, $user, $password);
+
+    # Error connecting, return NULL
+    if ($connection->connect_error) {
+        echo "Connection failed: (" . $connection->errno . ") ." $connection->error;
+        return NULL;
+    }
+
+    # Error executing, return NULL
+    if (!$result = $connection->query($query)) {
+        echo "Failed to execute SQL statement: " . $query;
+        $connection->close();
+        return NULL;
+
+    # Executed successfully, return mysqli_result object
+    } else {
+        $connection->close();
+        return $result;
+    }
+
+}
+
+
+# Create a database to be used
 function create_db() {
-    # setting global variables
+    # Using global variables
     global $host, $user, $password, $db;
 
-    # Create a connection to the database
-    $conn = new mysqli($host, $user, $password);
-
-    # Check for errors
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    $result = exec_query("CREATE DATABASE IF NOT EXISTS $db");
     
-    # Create the database if it doesn't exist
-    $sql = "SHOW DATABASES LIKE '$db'";
-    $result = $conn->query($sql);
-    if ($conn->query("CREATE DATABASE IF NOT EXISTS $db") === TRUE) {
-        echo "Database created successfully";
-    } else {
-        echo "Error creating database: " . $conn->error;
+    if ($result == NULL) {
+        echo "Couldn't create database";
+        return 1;
     }
-    $conn->close();
-    return 1;
-}
-?>
 
-<?php
-/* TODO: Add to API docs */
+    return 0;
+}
+
+
 # Create a table called 'users' in database if it doesn't exist
 function create_table() {
-    # setting global variables
+    # Using global variables
     global $host, $user, $password, $db;
 
-    # Create a connection to the database
-    $conn = new mysqli($host, $user, $password, $db);
-
-    # Check for errors
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
     # Create the table if it doesn't exist
-
     $sql = "CREATE TABLE IF NOT EXISTS users (
         user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name varchar(255) NOT NULL,
@@ -63,90 +77,75 @@ function create_table() {
         connection_requests JSON NOT NULL DEFAULT ('{}')
     )";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Table created successfully";
-    } else {
-        echo "Error creating table: " . $conn->error;
-        }
-    $conn->close();
-    return 1;
+    $result = exec_query($sql);
+
+    if ($result == NULL) {
+        echo "Failed to create table";
+        return 1;
     }
-?>
 
-<?php
+    return 0;
+}
 
-/* TODO: Add to API docs */
+
 # Destroy database
 function destroy_db() {
-    $connection = new mysqli($host, $user, $password, $db);
-    if ($connection->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
-        exit();
-    }
-    $connection->query("DROP DATABASE IF EXISTS " . DB_NAME);
-    $connection->close();
-    return 1;
-}
-?>
+    global $db;
+    $result = exec_query("DROP DATABASE IF EXISTS " . $db);
 
-<?php
-/* TODO: Add to API docs */
+    if ($result == NULL) {
+        echo "Failed to destroy database";
+        return 1;
+    }
+
+    return 0;
+}
+
+
 # Destroy table 'users' in database if it exists
 function destroy_table() {
-    $connection = new mysqli($host, $user, $password, $db);
-    if ($connection->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
-        exit();
+    $result = exec_query("DROP TABLE IF EXISTS users");
+    
+    if ($result == NULL) {
+        echo "Failed to destroy table";
+        return 1;
     }
-    $connection->query("DROP TABLE IF EXISTS users");
-    $connection->close();
-    return 1;
 
+    return 0;
 }
-?>
-<?php
+
+
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
-    # Connect to database
-    $connection = new mysqli($host, $user, $password, $db);
-    
-    # Error check connection
-    if ($connection->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
-        exit();
-    }
-
     $query = "SELECT * FROM users WHERE user_id = '$user_id'";
-    $result = $connection->query($query);
-    $connection->close();
-     if ($result->num_rows > 0) {
-        return 1;
-    } 
-    else return -1;
-    }
-    
-?>
+    $result = exec_query($query);
 
-<?php
+    if ($result == NULL) {
+        echo "Failed to query for user";
+        return false;
+    } 
+    else return $result->num_rows > 0;
+
+
 # Get this user's ID by their email
 function get_user_id($email) {
-    # Connect to database
-    $connection = new mysqli($host, $user, $password, $db);
+    $query = "SELECT user_id FROM users WHERE email = $email";
+    $result = exec_query($query);
     
-    # Error check connection
-    if ($connection->connect_errno) {
-        echo "Failed to connect to MySQL: (" . $connection->connect_errno . ") " . $connection->connect_error;
-        exit();
+    if ($result == NULL) {
+        echo "Failed to query for user ID";
+        return -1;
     }
 
-    $query = "SELECT user_id FROM users WHERE email = '$email'";
-    $result = $connection->query($query);
-    $connection->close();
-    return $result->fetch_assoc()['user_id'];
+    if ($answer = $result->fetch_assoc()) {
+        return (int) $answer["user_id"];
+    } else {
+        echo "Failed to get results of query";
+        return -1;
+    }
 }
-?>
 
-<?php
+
 # Attempt to sign in the user whose email is `email` and whose password is
 # `password`
 function sign_in($email, $password) {
@@ -181,9 +180,8 @@ function sign_in($email, $password) {
     $connection->close();
     return 1;
 }
-?>
 
-<?php
+
 # Attempt to sign out the user with ID `user_id`
 function sign_out($user_id) {
     # Connect to database
@@ -205,9 +203,8 @@ function sign_out($user_id) {
     $db->close();
     return 1;
 }
-?>
 
-<?php
+
 # Check that the password matches the password stored for the user with ID
 # `user_id`
 function check_password($user_id, $password) {
@@ -234,9 +231,8 @@ function check_password($user_id, $password) {
     }
     return -1;
     }   
-?>
 
-<?php
+
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
     # if eitheir old or new password is empty, return -1
@@ -256,9 +252,8 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     $db->close();
     return 1;
 }
-?>
 
-<?php
+
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
 function create_user($name, $email, $pwd, $phone) {
@@ -287,9 +282,8 @@ function create_user($name, $email, $pwd, $phone) {
     echo "User {$name} created successfully! Thank you!";
     return 1;
     }
-?>
 
-<?php
+
 # Removes all of a user's data from the database
 function delete_user($user_id) {
     # Connect to database
@@ -316,9 +310,8 @@ function delete_user($user_id) {
     $db->close();
     return 1;
 }
-?>
 
-<?php
+
 # Attempt to connect the users with IDs `user_id_a` and `user_id_b`. This
 # requires that one of the users has sent a connection request and the other
 # one has a pending request from the sender
@@ -404,9 +397,8 @@ function add_connection($user_id_a, $user_id_b) {
     db.close();
     return 1;
     }
-?>
 
-<?php
+
 # Add a request to connect to the user with ID `user_id_rx`. Add the pending
 # connection to the user with ID `user_id_tx`
 # TODO(Jordan): This function is not yet implemented
@@ -460,9 +452,8 @@ function add_connection_request($user_id_tx, $user_id_rx) {
     # Check if the users have a pending
 
 }
-?>
 
-<?php
+
 # Attempt to disconnect the users with IDs `user_id_a` and `user_id_b`. This
 # requires that a connection exists between these users
 # TODO(Jordan): This function is not yet implemented
@@ -520,9 +511,8 @@ function remove_connection($user_id_a, $user_id_b) {
     db.close();
     return 1;
 }
-?>
 
-<?php
+
 # Get a JSON-formatted string of connections for the user with ID `user_id`
 # Returns an empty JSON dictionary if the user has no connections
 # TODO(Jordan): Take a second look at this function
@@ -547,9 +537,8 @@ function get_connections($user_id) {
     return $result;
     
 }
-?>
 
-<?php
+
 # Get the preferences of the user with ID `user_id` returns a JSON-formatted string
 function get_preferences($user_id) {
     # Check if user exists
@@ -574,7 +563,6 @@ function get_preferences($user_id) {
     $db->close();
     return $preferences;
 }
-?>
 
 <?php
 # Set the preferences of the user with ID `user_id` to `preferences`
@@ -616,9 +604,8 @@ function update_preferences($user_id, $preferences) {
     $db->close();
     return 1;
 }
-?>
 
-<?php
+
 /* TODO: Add to API docs */
 # Get the connection requests that this user needs to respond to
 # Returns a JSON-formatted string of connection requests
