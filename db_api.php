@@ -23,7 +23,7 @@ function exec_query($query) {
 
     # Error connecting, return NULL
     if ($connection->connect_error) {
-        echo "Connection failed: (" . $connection->errno . ") ." $connection->error;
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
         return NULL;
     }
 
@@ -197,14 +197,15 @@ function sign_in($email, $password) {
 
 # Attempt to sign out the user with ID `user_id`
 function sign_out($user_id) {
-    $result = exec_query("SELECT online FROM users WHERE user_id = $user_id")
 
     # Check if user exists by seeing if user_id is in the database
     if(!user_exists($user_id)) {
         echo "Couldn't find user with ID $user_id";
         return 1;
-    }
-    else if ($result == NULL) {
+        }
+    $result = exec_query("SELECT online FROM users WHERE user_id = $user_id");
+
+    if ($result == NULL) {
         echo "Couldn't execute query for sign-out";
         return 1;
     }
@@ -269,7 +270,7 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 
     #If eitheir old or new password is empty, return -1
     if(empty($old_pwd) || empty($new_pwd)) {
-        echo "Passwords cannot be empty"
+        echo "Passwords cannot be empty";
         return 1;
     }
     else if (!user_exists($user_id)) {
