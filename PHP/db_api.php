@@ -5,8 +5,6 @@
 # * The mysqli_result object of the SQL statement if executed successfully
 # * NULL if there was a problem executing the SQL statement
 
-require './connection.php';
-
 function exec_query($query) {
     $host = 'localhost';
     $user = 'root';
@@ -14,7 +12,7 @@ function exec_query($query) {
     $db = 'rrdb';
     
     $connection = new mysqli($host, $user, $password);
-    
+
     # Error connecting, return NULL
     if ($connection->connect_error) {
         echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
