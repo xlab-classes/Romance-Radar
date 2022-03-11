@@ -8,7 +8,13 @@
 require './connection.php';
 
 function exec_query($query) {
-    global $connection; 
+    $host = 'localhost';
+    $user = 'root';
+    $password = 'diuFTC7#';
+    $db = 'rrdb';
+    
+    $connection = new mysqli($host, $user, $password);
+    
     # Error connecting, return NULL
     if ($connection->connect_error) {
         echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
