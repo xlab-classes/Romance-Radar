@@ -1,6 +1,6 @@
-# This file will contain tests for the respective db_api.php file.
-
 <?php
+
+# This file will contain tests for the respective db_api.php file.
 
 # Test for the get_all_users() function.
 function test_get_all_users() {
