@@ -1,26 +1,14 @@
-<!--
-Authors: Alex Eastman, Jordan Grant
-Created: 03/06/2022
-Modified: 03/07/2022
-
-Database api
--->
-
 <?php
-
-$host = 'localhost';
-$user = 'root';
-$password = 'diuFTC7#';
-$db = 'rrdb';
-
 # Helper function. Not part of the API
 # Takes in a SQL statement to execute.
 # Returns:
 # * The mysqli_result object of the SQL statement if executed successfully
 # * NULL if there was a problem executing the SQL statement
-function exec_query($query) {
-    $connection = new mysqli($host, $user, $password);
 
+require './connection.php';
+
+function exec_query($query) {
+    global $connection; 
     # Error connecting, return NULL
     if ($connection->connect_error) {
         echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
@@ -43,78 +31,20 @@ function exec_query($query) {
 }
 
 
-# Create a database to be used
-function create_db() {
-    # Using global variables
-    global $host, $user, $password, $db;
+// "CREATE TABLE IF NOT EXISTS users (
+//              user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+//              name varchar(255) NOT NULL,
+//              email varchar(255) NOT NULL,
+//              password varchar(255) NOT NULL,
+//              phone_number varchar(255) NOT NULL,
+//              online_status BOOL DEFAULT FALSE,
+//              preferences JSON NOT NULL DEFAULT ('{}'),
+//              connections JSON NOT NULL DEFAULT ('{}'),
+//              pending_connections JSON NOT NULL DEFAULT ('{}'),
+//              connection_requests JSON NOT NULL DEFAULT ('{}')
+//          )";
 
-    $result = exec_query("CREATE DATABASE IF NOT EXISTS $db");
-    
-    if ($result == NULL) {
-        echo "Couldn't create database";
-        return 1;
-    }
-
-    return 0;
-}
-
-
-# Create a table called 'users' in database if it doesn't exist
-function create_table() {
-    # Using global variables
-    global $host, $user, $password, $db;
-
-    # Create the table if it doesn't exist
-    $sql = "CREATE TABLE IF NOT EXISTS users (
-        user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name varchar(255) NOT NULL,
-        email varchar(255) NOT NULL,
-        password varchar(255) NOT NULL,
-        phone_number varchar(255) NOT NULL,
-        online_status BOOL DEFAULT FALSE,
-        preferences JSON NOT NULL DEFAULT ('{}'),
-        connections JSON NOT NULL DEFAULT ('{}'),
-        pending_connections JSON NOT NULL DEFAULT ('{}'),
-        connection_requests JSON NOT NULL DEFAULT ('{}')
-    )";
-
-    $result = exec_query($sql);
-
-    if ($result == NULL) {
-        echo "Failed to create table";
-        return 1;
-    }
-
-    return 0;
-}
-
-
-# Destroy database
-function destroy_db() {
-    global $db;
-    $result = exec_query("DROP DATABASE IF EXISTS " . $db);
-
-    if ($result == NULL) {
-        echo "Failed to destroy database";
-        return 1;
-    }
-
-    return 0;
-}
-
-
-# Destroy table 'users' in database if it exists
-function destroy_table() {
-    $result = exec_query("DROP TABLE IF EXISTS users");
-    
-    if ($result == NULL) {
-        echo "Failed to destroy table";
-        return 1;
-    }
-
-    return 0;
-}
-
+// Replacing by terminal script
 
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
@@ -670,4 +600,3 @@ function get_requests($user_id) {
         return "";
     }
 }
-?>
