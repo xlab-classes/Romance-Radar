@@ -600,3 +600,4 @@ function get_requests($user_id) {
         return "";
     }
 }
+?>
