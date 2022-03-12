@@ -5,13 +5,19 @@
 # * The mysqli_result object of the SQL statement if executed successfully
 # * NULL if there was a problem executing the SQL statement
 
-function exec_query($query) {
-    $host = 'localhost';
-    $user = 'root';
-    $password = 'diuFTC7#';
-    $db = 'rrdb';
+$host = 'localhost';
+$user = 'root';
+$password = 'diuFTC7#';
+$db = 'rrdb';
     
-    $connection = new mysqli($host, $user, $password);
+$connection = new mysqli($host, $user, $password);
+
+if ($connection->connect_error) {
+    echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
+    return NULL;
+}
+
+function exec_query($query, $data) {
 
     # Error connecting, return NULL
     if ($connection->connect_error) {
@@ -34,32 +40,18 @@ function exec_query($query) {
 
 }
 
-
-// "CREATE TABLE IF NOT EXISTS users (
-//              user_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-//              name varchar(255) NOT NULL,
-//              email varchar(255) NOT NULL,
-//              password varchar(255) NOT NULL,
-//              phone_number varchar(255) NOT NULL,
-//              online_status BOOL DEFAULT FALSE,
-//              preferences JSON NOT NULL DEFAULT ('{}'),
-//              connections JSON NOT NULL DEFAULT ('{}'),
-//              pending_connections JSON NOT NULL DEFAULT ('{}'),
-//              connection_requests JSON NOT NULL DEFAULT ('{}')
-//          )";
-
-// Replacing by terminal script
-
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
-    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
+    $query = "SELECT * FROM users WHERE user_id = $user_id";
     $result = exec_query($query);
 
-    if ($result == NULL) {
+    if (!$result) {
         echo "Failed to query for user";
         return false;
     } 
-    else return $result->num_rows > 0;
+    else{
+        return $result->num_rows > 0;
+    }
 }
 
 
@@ -70,7 +62,7 @@ function get_user_id($email) {
     
     if ($result == NULL) {
         echo "Failed to query for user ID";
-        return -1;
+        return 0;
     }
 
     # $answer can be false or null, which will trigger the else
@@ -79,7 +71,7 @@ function get_user_id($email) {
     }
     else {
         echo "Failed to get results of user ID query";
-        return -1;
+        return 0;
     }
 }
 
@@ -233,34 +225,35 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
-function create_user($name, $email, $pwd, $phone) {
-    
+function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
+    global $connection;
     # Make sure none of the required fields are empty
-    if (empty($name) || empty($email) || empty($pwd) || empty($phone)) {
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
         echo "Missing required fields in create_user";
-        return 1;
+        return 0;
     }
 
     # Make sure this email isn't being used
-    $email_used = exec_query("SELECT * from users WHERE email=$email");
-    if ($email_used == NULL) {
+    if ($email_used = get_user_id($email)) {
         echo "Couldn't execute query to find email";
-        return 1;
+        return 0;
     }
-    else if ($email_used->num_rows > 0) {
+    else if ($email_used) {
         echo "An account with this email already exists";
-        return 1;
+        return 0;
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO users (name, email, password, phone) VALUES ($name, $email, $pwd, $phone)";
-    $result = exec_query($query);
-    if (result == NULL) {
+    $stmt = $connection->prepare("INSERT INTO users (name, email, user_picture, street_address, zipcode, birthday) 
+                VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('ssssis', $name, $email, $pwd, $addr, $zipcode, $bday);
+    $result = $stmt->execute();
+    if (!$result) {
         echo "Couldn't insert user into database";
-        return 1;
+        return 0;
     }
     else {
-        return 0;
+        return 1;
     }
 }
 
@@ -604,4 +597,3 @@ function get_requests($user_id) {
         return "";
     }
 }
-?>
