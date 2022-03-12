@@ -5,32 +5,44 @@
 # * The mysqli_result object of the SQL statement if executed successfully
 # * NULL if there was a problem executing the SQL statement
 
-$host = 'localhost';
-$user = 'root';
-$password = 'diuFTC7#';
-$db = 'rrdb';
-    
-$connection = new mysqli($host, $user, $password);
+function getTypes($data){
+    $retString = '';
 
-if ($connection->connect_error) {
-    echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
-    return NULL;
+    foreach ($data as &$value) {
+        $retString .= gettype($value)[0];
+    }
+    unset($value);
+    return $retString;
 }
 
 function exec_query($query, $data) {
 
+    $host = 'oceanus.cse.buffalo.edu';
+    $user = 'swastikn';
+    $db = 'cse442_2022_spring_team_j_db';
+    $password = 50307246;
+    
+    $connection = new mysqli($host, $user, $password, $db);
+    
     # Error connecting, return NULL
     if ($connection->connect_error) {
         echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
         return NULL;
     }
 
+    if($data){
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param(getTypes($data), ...$data);
+        $result = $stmt->execute();
+    }else{
+        $result = $connection->query($query);
+    }
+
     # Error executing, return NULL
-    if (!$result = $connection->query($query)) {
+    if (!$result) {
         echo "Failed to execute SQL statement: " . $query;
         $connection->close();
         return NULL;
-
     # Executed successfully, return mysqli_result object
     }
     else {
@@ -244,10 +256,10 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $stmt = $connection->prepare("INSERT INTO users (name, email, user_picture, street_address, zipcode, birthday) 
-                VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('ssssis', $name, $email, $pwd, $addr, $zipcode, $bday);
-    $result = $stmt->execute();
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday];
+    $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database";
         return 0;
