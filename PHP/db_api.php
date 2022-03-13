@@ -35,6 +35,7 @@ function exec_query($query, $data) {
         $stmt = $connection->prepare($query);
         $stmt->bind_param(getTypes($data), ...$data);
         $result = $stmt->execute();
+        $result = $query[0] == 'S' ? $stmt->get_result() : $result;
     }else{
         $result = $connection->query($query);
     }
