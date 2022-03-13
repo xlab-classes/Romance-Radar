@@ -95,8 +95,16 @@ CREATE TABLE Suggested_dates(
     partner_id_2 INT NOT NULL,
     date_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (partner_id_1) REFERENCES Date_ideas(id) ON DELETE CASCADE,
-    FOREIGN KEY (partner_id_1) REFERENCES Date_ideas(id) ON DELETE CASCADE,
+    FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
 	FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
-    
+
+CREATE TABLE Connection_requests(
+    id INT AUTO_INCREMENT,
+    sent_from INT NOT NULL,
+    sent_to INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
+);
