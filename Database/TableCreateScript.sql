@@ -1,4 +1,4 @@
-CREATE TABLE Users(
+CREATE TABLE IF NOT EXISTS Users(
     id INT AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL,
@@ -11,7 +11,8 @@ CREATE TABLE Users(
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
     );
-CREATE TABLE Food(
+
+CREATE TABLE IF NOT EXISTS Food(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
     restraunt BIT NOT NULL,
@@ -22,7 +23,7 @@ CREATE TABLE Food(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
     
-CREATE TABLE Entertainment(
+CREATE TABLE IF NOT EXISTS Entertainment(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
     concerts BIT NOT NULL,
@@ -31,7 +32,7 @@ CREATE TABLE Entertainment(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Venue(
+CREATE TABLE IF NOT EXISTS Venue(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
     indoors BIT NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE Venue(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Date_time(
+CREATE TABLE IF NOT EXISTS Date_time(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
     morning BIT NOT NULL,
@@ -51,7 +52,7 @@ CREATE TABLE Date_time(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Date_preferences(
+CREATE TABLE IF NOT EXISTS Date_preferences(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
     cost INT NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE Date_preferences(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Date_ideas(
+CREATE TABLE IF NOT EXISTS Date_ideas(
     id INT AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(500) NOT NULL,
@@ -71,7 +72,7 @@ CREATE TABLE Date_ideas(
     PRIMARY KEY (id)
     );
 
-CREATE TABLE Date_liked(
+CREATE TABLE IF NOT EXISTS Date_liked(
     id INT AUTO_INCREMENT,
     date_id int NOT NULL,
     user_id int NOT NULL,
@@ -80,7 +81,7 @@ CREATE TABLE Date_liked(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Date_disliked(
+CREATE TABLE IF NOT EXISTS Date_disliked(
     id INT AUTO_INCREMENT,
     date_id int NOT NULL,
     user_id int NOT NULL,
@@ -89,7 +90,7 @@ CREATE TABLE Date_disliked(
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Suggested_dates(
+CREATE TABLE IF NOT EXISTS Suggested_dates(
     id INT AUTO_INCREMENT,
     partner_id_1 INT NOT NULL,
     partner_id_2 INT NOT NULL,
@@ -100,7 +101,7 @@ CREATE TABLE Suggested_dates(
 	FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
-CREATE TABLE Connection_requests(
+CREATE TABLE IF NOT EXISTS Connection_requests(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
     sent_to INT NOT NULL,
