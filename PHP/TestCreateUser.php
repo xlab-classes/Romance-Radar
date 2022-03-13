@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 final class TestCreateUser extends TestCase
 {
 
-    public function basicTest(): void
+    public function testBasic(): void
     {
         $create_result = create_user(
             "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd",
