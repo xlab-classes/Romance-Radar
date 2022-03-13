@@ -34,6 +34,7 @@ function exec_query($query, $data) {
         $stmt = $connection->prepare($query);
         $stmt->bind_param(getTypes($data), ...$data);
         $result = $stmt->execute();
+        $result = $query[0] == 'S' ? $stmt->get_result() : $result;
     }else{
         $result = $connection->query($query);
     }
@@ -128,17 +129,12 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
 function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
-    # Make sure none of the required fields are empty
-    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
-        echo "Missing required fields in create_user";
-        return 0;
-    }
 
     # Make sure this email isn't being used
     $email_used = get_user_id($email);
     
-    if ($email_used) {
-        echo "Couldn't execute query to find email";
+    if ($email_used != 0) {
+        echo "User already exists";
         return 0;
     }
 

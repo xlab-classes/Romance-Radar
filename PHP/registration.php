@@ -1,51 +1,38 @@
 <?php
 
-$host = 'oceanus.cse.buffalo.edu';
-$user = 'swastikn';
-$db = 'cse442_2022_spring_team_j_db';
-$password = 50307246;
+require './db_api.php';
 
-$connection = new mysqli($host, $user, $password, $db);
-
-function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
-    global $connection;
-    // Make sure none of the required fields are empty
-    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
-        echo "Missing required fields in create_user";
-        return 0;
-    }
-
-    // data validate missing will be added once dev_api is complet
-    $user_picture = 'Testing';
-    $stmt = $connection->prepare("INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('sssssis', $name, $email, $pwd, $user_picture, $addr, $zipcode, $bday);
-    $result = $stmt->execute();
-    if (!$result) {
-        echo "Couldn't insert user into database";
-    }
+function validate($value, $type){
+    return !empty($value) && (gettype($value) == $type);
 }
 
-
-if ($connection->connect_error) {
-    echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
+function validate_pwd($password){
+    $exp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+    return preg_match($exp, $password);
 }
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $string_type = "string";
+    $int_type = "integer";
+    
     $name = $_POST['Name'];
     $address = $_POST['Address'];
     $zip = $_POST['Zip'];
     $city = $_POST['City'];
     $email = $_POST['Email'];
     $password = $_POST['Password'];
-    $month = $_POST['Month'];
-    $day = $_POST['Day'];
-    $year = $_POST['Year'];
+    $bday = $_POST['Date'];
 
-    $date = mktime(0, 0, 0, $day, $month, $year); 
-    $bday = date('Y-m-d', $date);
-
-    create_user($name, $email, $password, $address, $zip, $bday);
+    if (validate($name, $string_type) && 
+        validate($address, $string_type) && 
+        validate($zip, $int_type) &&
+        validate($city, $string_type) &&
+        validate($email, $string_type) &&
+        validate($password, $string_type) &&
+        validate($bday, $string_type) &&
+        validate_pwd($password)){
+            create_user($name, $email, password_hash($password), $address, $zip, $bday);
+        }
 }
 
 header("Location: ../HTML/registration.html");
