@@ -1,9 +1,4 @@
 <?php
-# Helper function. Not part of the API
-# Takes in a SQL statement to execute.
-# Returns:
-# * The mysqli_result object of the SQL statement if executed successfully
-# * NULL if there was a problem executing the SQL statement
 
 function getTypes($data){
     $retString = '';
@@ -15,6 +10,12 @@ function getTypes($data){
     return $retString;
 }
 
+
+# Helper function. Not part of the API
+# Takes in a SQL statement to execute.
+# Returns:
+# * The mysqli_result object of the SQL statement if executed successfully
+# * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
     $host = 'oceanus.cse.buffalo.edu';

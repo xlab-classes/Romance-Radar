@@ -106,5 +106,5 @@ CREATE TABLE Connection_requests(
     sent_to INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE,
 );
