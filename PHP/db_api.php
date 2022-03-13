@@ -24,20 +24,69 @@ function exec_query($query, $data) {
     $password = 50307246;
     
     $connection = new mysqli($host, $user, $password, $db);
+    $result;
     
     # Error connecting, return NULL
     if ($connection->connect_error) {
-        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error . "\n";
         return NULL;
     }
 
+    # If there is data to be concatenated into the query, do it here
     if($data){
+        
+        # Returns false on error
         $stmt = $connection->prepare($query);
+        if (!$stmt) {   # prepare() call failed
+            echo "Couldn't prepare SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
         $stmt->bind_param(getTypes($data), ...$data);
-        $result = $stmt->execute();
-        $result = $query[0] == 'S' ? $stmt->get_result() : $result;
-    }else{
+        if (!$stmt) {    # bind_param() call failed
+            echo "Couldn't bind parameters to prepared SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $result_execute = $stmt->execute(); 
+        if ($result_execute) {  # True if successful
+            
+            if($query[0] != 'S'){
+                return $result_execute;
+            }
+
+            $result = $stmt->get_result();
+
+            if (!$result) {  # Failed
+                echo "Couldn't get result from statement execution\n";
+                $connection->close();
+                return NULL;
+            }
+            else{
+                $connection->close();
+                return $result;
+            }
+        }
+
+        # execute() call failed
+        else {
+            echo "Couldn't execute prepared statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+    # Otherwise, just execute the query
+    } else {
         $result = $connection->query($query);
+        if (!$result) {  # False if failed
+            echo "Couldn't execute non-prepared query\n";
+            $connection->close();
+            return NULL;
+        }
     }
 
     $connection->close();
@@ -58,7 +107,6 @@ function get_user_id($email) {
     $result = exec_query($query, [$email]);
     
     if (!$result->num_rows) {
-        echo "Failed to query for user ID";
         return 0;
     }
 
@@ -67,7 +115,7 @@ function get_user_id($email) {
         return $answer["id"];
     }
     else {
-        echo "Failed to get results of user ID query";
+        echo "Failed to get results of user ID query\n";
         return 0;
     }
 }
@@ -81,10 +129,10 @@ function sign_in($email, $password) {
     $result = exec_query($query, [$email, $password]);
     $row = $result->fetch_assoc();
     if (!row) {
-        echo "Couldn't find user with email $email";
+        echo "Couldn't find user with email $email\n";
     }
     else if (!$result->num_rows) {
-        echo "No results for sign_in. User does exist";
+        echo "No results for sign_in. User does exist\n";
         return 0;
     }
     # See if user is online, set to online if not
@@ -93,7 +141,7 @@ function sign_in($email, $password) {
     }
     # Couldn't get results from query
     else {
-        echo "Failed to get results of sign-in query";
+        echo "Failed to get results of sign-in query\n";
         return 0;
     }
 }
@@ -104,14 +152,14 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     
     #If eitheir old or new password is empty, return -1
     if(empty($old_pwd) || empty($new_pwd)) {
-        echo "Passwords cannot be empty";
+        echo "Passwords cannot be empty\n";
         return 0;
     }else if ($old_pwd == $new_pwd){
-        echo "Passwords are the same";
+        echo "Passwords are the same\n";
         return 0;
     }
     else if (!user_exists($user_id)) {
-        echo "User doesn't exist in update_password";
+        echo "User doesn't exist in update_password\n";
         return 0;
     }
     else {
@@ -119,7 +167,7 @@ function update_password($user_id, $old_pwd, $new_pwd) {
         $data = [$new_pwd, $user_id, $old_pwd];
         $update = exec_query($query, $data);
         if (!$update) {
-            echo "Couldn't execute query to update password";
+            echo "Couldn't execute query to update password\n";
             return 0;
         }
         return 1;
@@ -132,7 +180,7 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     # Make sure none of the required fields are empty
     if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
-        echo "Missing required fields in create_user";
+        echo "Missing required fields in create_user\n";
         return 0;
     }
 
@@ -150,7 +198,7 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday];
     $result = exec_query($query, $data);
     if (!$result) {
-        echo "Couldn't insert user into database";
+        echo "Couldn't insert user into database\n";
         return 0;
     }
     return 1;
@@ -160,13 +208,13 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
 # Removes all of a user's data from the database
 function delete_user($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
 
     $result = exec_query("DELETE FROM Users WHERE id=?", [$user_id]);
     if (!$result) {
-        echo "Failed to execute statement to remove user";
+        echo "Failed to execute statement to remove user\n";
         return 0;
     }
     return 1;
@@ -179,7 +227,7 @@ function delete_user($user_id) {
 # TODO(Jordan): This function is not yet implemented
 function add_connection($user_id_a, $user_id_b) {
     if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
     remove_connection($user_id_a);
@@ -191,7 +239,7 @@ function add_connection($user_id_a, $user_id_b) {
             remove_connection_request($user_id_b);
             return 1;
      }else{
-         echo "Failed to update partners";
+         echo "Failed to update partners\n";
          return 0;
      }
 }
@@ -201,7 +249,7 @@ function add_connection($user_id_a, $user_id_b) {
 # TODO(Jordan): This function is not yet implemented
 function remove_connection($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
 
@@ -223,7 +271,7 @@ function remove_connection($user_id) {
 # TODO(Jordan): This function is not yet implemented
 function add_connection_request($sent_from, $sent_to) {
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     
@@ -245,7 +293,7 @@ function add_connection_request($sent_from, $sent_to) {
 
 function remove_connection_request($sent_from) {
     if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     
@@ -261,7 +309,7 @@ function remove_connection_request($sent_from) {
 # Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
@@ -270,7 +318,7 @@ function get_requests($user_id) {
 
 function get_partner($user_id){
     if (!user_exists($user_id)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     $query = "SELECT * FROM Users WHERE id=?";
