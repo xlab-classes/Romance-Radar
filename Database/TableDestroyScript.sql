@@ -12,9 +12,9 @@ DROP TABLE IF EXISTS Date_liked;
 
 DROP TABLE IF EXISTS Date_disliked;
 
-DROP TABLE IF EXISTS Date_ideas;
-
 DROP TABLE IF EXISTS Suggested_dates;
+
+DROP TABLE IF EXISTS Date_ideas;
 
 DROP TABLE IF EXISTS Connection_requests;
 
