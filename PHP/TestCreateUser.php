@@ -35,7 +35,7 @@ final class TestCreateUser extends TestCase
         );
 
         for ($i=0; $i<count($drops); ++$i) {
-            $connection->$query($drops[$i]);
+            $connection->query($drops[$i]);
         }
     }
 
