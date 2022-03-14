@@ -133,7 +133,7 @@ function sign_in($email, $password) {
     $query = "SELECT * FROM Users WHERE email=? AND password=?";
     $result = exec_query($query, [$email, $password]);
     $row = $result->fetch_assoc();
-    if (!row) {
+    if (!$row) {
         echo "Couldn't find user with email $email\n";
     }
     else if (!$result->num_rows) {
