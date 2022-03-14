@@ -7,8 +7,7 @@ function validate($value, $type){
 }
 
 function validate_pwd($password){
-    $exp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
-    return preg_match($exp, $password);
+    return preg_match("#.*^(?=.{8,20})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$#", $password);
 }
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,11 +16,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $name = $_POST['Name'];
     $address = $_POST['Address'];
-    $zip = $_POST['Zip'];
+    $zip = (int)$_POST['Zip'];
     $city = $_POST['City'];
     $email = $_POST['Email'];
     $password = $_POST['Password'];
     $bday = $_POST['Date'];
+
+
+    echo validate($name, $string_type);
+    echo validate($address, $string_type);
+    echo validate($zip, $int_type);
+    echo validate($city, $string_type);
+    echo validate($email, $string_type);
+    echo validate($password, $string_type);
+    echo validate($bday, $string_type);
+    echo validate_pwd($password);
 
     if (validate($name, $string_type) && 
         validate($address, $string_type) && 
@@ -31,8 +40,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         validate($password, $string_type) &&
         validate($bday, $string_type) &&
         validate_pwd($password)){
-            create_user($name, $email, password_hash($password), $address, $zip, $bday);
+            create_user($name, $email, password_hash($password, PASSWORD_DEFAULT), $address, $zip, $bday);
+        }else{
+            echo "Failed to register";
         }
 }
-
 header("Location: ../HTML/registration.html");
