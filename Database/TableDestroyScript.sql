@@ -1,21 +1,25 @@
-DROP TABLE IF EXISTS Food;
+SET FOREIGN_KEY_CHECKS=0;
 
-DROP TABLE IF EXISTS Entertainment;
+TRUNCATE TABLE Food;
 
-DROP TABLE IF EXISTS Venue;
+TRUNCATE TABLE Entertainment;
 
-DROP TABLE IF EXISTS Date_time;
+TRUNCATE TABLE Venue;
 
-DROP TABLE IF EXISTS Date_preferences;
+TRUNCATE TABLE Date_time;
 
-DROP TABLE IF EXISTS Date_liked;
+TRUNCATE TABLE Date_preferences;
 
-DROP TABLE IF EXISTS Date_disliked;
+TRUNCATE TABLE Date_liked;
 
-DROP TABLE IF EXISTS Suggested_dates;
+TRUNCATE TABLE Date_disliked;
 
-DROP TABLE IF EXISTS Date_ideas;
+TRUNCATE TABLE Suggested_dates;
 
-DROP TABLE IF EXISTS Connection_requests;
+TRUNCATE TABLE Date_ideas;
 
-DROP TABLE IF EXISTS Users;
+TRUNCATE TABLE Connection_requests;
+
+TRUNCATE TABLE Users;
+
+SET FOREIGN_KEY_CHECKS=1;

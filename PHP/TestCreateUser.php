@@ -7,40 +7,6 @@ use PHPUnit\Framework\TestCase;
 final class TestCreateUser extends TestCase
 {
 
-    public function setUp(): void
-    {
-        $host = "oceanus.cse.buffalo.edu";
-        $user = "alexeast";
-        $db = "cse442_2022_spring_team_j_db";
-        $pass = "50252636";
-
-        $connection = new mysqli($host, $user, $pass, $db);
-        if ($connection->connect_error) {
-            print("Failed to connect in TestCreateUser::setUp()\n");
-            return;
-        }
-
-        $drops = array(
-            "SET FOREIGN_KEY_CHECKS=0",
-            "TRUNCATE TABLE Food",
-            "TRUNCATE TABLE Entertainment",
-            "TRUNCATE TABLE Venue",
-            "TRUNCATE TABLE Date_time",
-            "TRUNCATE TABLE Date_preferences",
-            "TRUNCATE TABLE Date_liked",
-            "TRUNCATE TABLE Date_disliked",
-            "TRUNCATE TABLE Suggested_dates",
-            "TRUNCATE TABLE Date_ideas",
-            "TRUNCATE TABLE Connection_requests",
-            "TRUNCATE TABLE Users",
-            "SET FORGEIGN_KEY_CHECKS=1"
-        );
-
-        for ($i=0; $i<count($drops); ++$i) {
-            $connection->query($drops[$i]);
-        }
-    }
-
     public function testUserDoesntExist(): void
     {
         $create_result = create_user(
