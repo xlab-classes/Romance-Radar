@@ -21,17 +21,17 @@ final class TestCreateUser extends TestCase
         }
 
         $drops = array(
-            "TRUNCATE TABLE IF EXISTS Food",
-            "TRUNCATE TABLE IF EXISTS Entertainment",
-            "TRUNCATE TABLE IF EXISTS Venue",
-            "TRUNCATE TABLE IF EXISTS Date_time",
-            "TRUNCATE TABLE IF EXISTS Date_preferences",
-            "TRUNCATE TABLE IF EXISTS Date_liked",
-            "TRUNCATE TABLE IF EXISTS Date_disliked",
-            "TRUNCATE TABLE IF EXISTS Suggested_dates",
-            "TRUNCATE TABLE IF EXISTS Date_ideas",
-            "TRUNCATE TABLE IF EXISTS Connection_requests",
-            "TRUNCATE TABLE IF EXISTS Users"
+            "TRUNCATE TABLE Food",
+            "TRUNCATE TABLE Entertainment",
+            "TRUNCATE TABLE Venue",
+            "TRUNCATE TABLE Date_time",
+            "TRUNCATE TABLE Date_preferences",
+            "TRUNCATE TABLE Date_liked",
+            "TRUNCATE TABLE Date_disliked",
+            "TRUNCATE TABLE Suggested_dates",
+            "TRUNCATE TABLE Date_ideas",
+            "TRUNCATE TABLE Connection_requests",
+            "TRUNCATE TABLE Users"
         );
 
         for ($i=0; $i<count($drops); ++$i) {
