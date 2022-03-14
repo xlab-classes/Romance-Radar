@@ -19,9 +19,9 @@ function getTypes($data){
 function exec_query($query, $data) {
 
     $host = 'oceanus.cse.buffalo.edu';
-    $user = 'swastikn';
+    $user = 'alexeast';
     $db = 'cse442_2022_spring_team_j_db';
-    $password = 50307246;
+    $password = 50252636;
     
     $connection = new mysqli($host, $user, $password, $db);
     $result;
