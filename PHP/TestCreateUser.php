@@ -11,7 +11,7 @@ final class TestCreateUser extends TestCase
     {
         $create_result = create_user(
             "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd",
-            14541, "12/01/1980");
+            14541, "1980/01/12");
         $this->assertSame(1, $create_result);
 
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["jon.doe@gmail.com"]);
