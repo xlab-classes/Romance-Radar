@@ -33,7 +33,12 @@ function exec_query($query, $data) {
     }
 
     # If there is data to be concatenated into the query, do it here
-    if($data){
+    if($data) {
+
+        if (gettype($data) != "array") {
+            echo "Mismatched data given to exec_query function\n";
+            return NULL;
+        }
         
         # Returns false on error
         $stmt = $connection->prepare($query);
