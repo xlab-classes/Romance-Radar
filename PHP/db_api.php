@@ -37,7 +37,7 @@ function exec_query($query, $data) {
         
         # Returns false on error
         $stmt = $connection->prepare($query);
-        if (!$stmt) {
+        if (!$stmt) {   # prepare() call failed
             echo "Couldn't prepare SQL statement\n";
             $connection->close();
             return NULL;
@@ -45,7 +45,7 @@ function exec_query($query, $data) {
 
         # Returns false on failure
         $stmt->bind_param(getTypes($data), ...$data);
-        if (!stmt) {
+        if (!$stmt) {    # bind_param() call failed
             echo "Couldn't bind parameters to prepared SQL statement\n";
             $connection->close();
             return NULL;
@@ -53,6 +53,7 @@ function exec_query($query, $data) {
 
         # Returns false on failure
         if ($stmt->execute()) {  # True if successful
+
             $result = $stmt->get_result();
             if (!$result && $stmt->mysqli_stmt_errno()) {  # Failed
                 echo "Couldn't get result from statement execution\n";
@@ -60,9 +61,12 @@ function exec_query($query, $data) {
                 return NULL;
             }
             else if (!$result) {  # Succeeded, but return false
-                # What to return here??
+                $connection->close();
+                return false;
             }
         }
+
+        # execute() call failed
         else {
             echo "Couldn't execute prepared statement\n";
             $connection->close();
