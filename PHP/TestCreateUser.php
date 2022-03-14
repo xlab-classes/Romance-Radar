@@ -21,6 +21,7 @@ final class TestCreateUser extends TestCase
         }
 
         $drops = array(
+            "SET FOREIGN_KEY_CHECKS=0",
             "TRUNCATE TABLE Food",
             "TRUNCATE TABLE Entertainment",
             "TRUNCATE TABLE Venue",
@@ -31,7 +32,8 @@ final class TestCreateUser extends TestCase
             "TRUNCATE TABLE Suggested_dates",
             "TRUNCATE TABLE Date_ideas",
             "TRUNCATE TABLE Connection_requests",
-            "TRUNCATE TABLE Users"
+            "TRUNCATE TABLE Users",
+            "SET FORGEIGN_KEY_CHECKS=1"
         );
 
         for ($i=0; $i<count($drops); ++$i) {
