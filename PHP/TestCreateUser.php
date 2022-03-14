@@ -28,7 +28,7 @@ final class TestCreateUser extends TestCase
         $this->assertSame($arr["password"], "password");
         $this->assertSame($arr["street_address"], "123 Apple Orchard Rd");
         $this->assertSame($arr["zipcode"], 14541);
-        $this->assertSame($arr["birthday"], "12/01/1980");
+        $this->assertSame($arr["birthday"], "1980-01-12");
     }
 
 }
