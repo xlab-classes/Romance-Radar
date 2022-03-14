@@ -34,10 +34,34 @@ function exec_query($query, $data) {
 
     # If there is data to be concatenated into the query, do it here
     if($data){
+        
+        # Returns false on error
         $stmt = $connection->prepare($query);
+        if (!$stmt) {
+            echo "Couldn't prepare SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
         $stmt->bind_param(getTypes($data), ...$data);
+        if (!stmt) {
+            echo "Couldn't bind parameters to prepared SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
         if ($stmt->execute()) {  # True if successful
             $result = $stmt->get_result();
+            if (!$result && $stmt->mysqli_stmt_errno()) {  # Failed
+                echo "Couldn't get result from statement execution\n";
+                $connection->close();
+                return NULL;
+            }
+            else if (!$result) {  # Succeeded, but return false
+                # What to return here??
+            }
         }
         else {
             echo "Couldn't execute prepared statement\n";
