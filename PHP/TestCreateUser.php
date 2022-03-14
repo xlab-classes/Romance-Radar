@@ -12,7 +12,7 @@ final class TestCreateUser extends TestCase
         $command = 'mysql'
         . ' -h oceanus'
         . ' -u alexeast'
-        . ' -p 50252636'
+        . ' --password=50252636'
         . ' --database=cse442_2022_spring_team_j_db'
         . ' --execute="SOURCE /web/CSE442-542/2022-Spring/cse-442j/Database/TableCreateScript.sql"';
         shell_exec($command);
@@ -23,7 +23,7 @@ final class TestCreateUser extends TestCase
         $command = 'mysql'
         . ' -h oceanus'
         . ' -u alexeast'
-        . ' -p 50252636'
+        . ' --password=50252636'
         . ' --database=cse442_2022_spring_team_j_db'
         . ' --execute="SOURCE /web/CSE442-542/2022-Spring/cse-442j/Database/TableDestroyScript.sql"';
         shell_exec($command);
