@@ -12,16 +12,16 @@ final class SignInTest extends TestCase
         $test_user = create_user("test", "test", "a", "b", 14214, "d");
 
         # Test that the user was created
-        $this->assertEquals(1, $test_user);
+        $this->assertSame(1, $test_user);
 
         #Check that the user isn't already signed in
-        $this->assertEquals(0, sign_in("test", "test"));
+        $this->assertEquals(1, sign_in("test", "test"));
         
         # Sign in the dummy user
         $result = sign_in($user);
         
         # Check that the user is signed in
-        $this->assertEquals(1, $result);
+        $this->assertEquals(0, $result);
         echo "Test passed";
     }
 
@@ -31,7 +31,7 @@ final class SignInTest extends TestCase
         $test_user = create_user("test", "test", "a", "b", 14214, "d");
 
         # Test that the user was created
-        $this->assertEquals(1, $test_user);
+        $this->assertSame(1, $test_user);
 
         # Sign in the dummy user
         $result = sign_in("test", "test");
