@@ -107,7 +107,6 @@ function get_user_id($email) {
     $result = exec_query($query, [$email]);
     
     if (!$result->num_rows) {
-        echo "Failed to query for user ID\n";
         return 0;
     }
 
