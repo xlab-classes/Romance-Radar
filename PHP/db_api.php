@@ -130,7 +130,7 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Get the current online status of the select user with the given email
-    $query = "SELECT * FROM Users WHERE email=?";
+    $query = "SELECT * FROM Users WHERE email=? AND password=?";
     $result = exec_query($query, [$email, $password]);
     $row = $result->fetch_assoc();
     if (!row) {
