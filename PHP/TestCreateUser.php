@@ -7,26 +7,6 @@ use PHPUnit\Framework\TestCase;
 final class TestCreateUser extends TestCase
 {
 
-    public function setUp(): void
-    {
-
-        $command = 'mysql'
-        . ' -h oceanus'
-        . ' -u alexeast'
-        . ' --password=50252636'
-        . ' --database=cse442_2022_spring_team_j_db'
-        . ' --execute="SOURCE /web/CSE442-542/2022-Spring/cse-442j/Database/TableDestroyScript.sql"';
-        shell_exec($command);
-        
-        $command = 'mysql'
-        . ' -h oceanus'
-        . ' -u alexeast'
-        . ' --password=50252636'
-        . ' --database=cse442_2022_spring_team_j_db'
-        . ' --execute="SOURCE /web/CSE442-542/2022-Spring/cse-442j/Database/TableCreateScript.sql"';
-        shell_exec($command);
-    }
-
     public function testUserDoesntExist(): void
     {
         $create_result = create_user(
