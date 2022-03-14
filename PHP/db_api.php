@@ -10,6 +10,22 @@ function getTypes($data){
     return $retString;
 }
 
+function getUser($user_id, $email){
+    $query = "";
+    $data = [];
+    if($user_id){
+        $query = "SELECT * FROM Users WHERE id=?";
+        $data = [$user_id];
+    }else if($email){
+        $query = "SELECT * FROM Users WHERE email=?";
+        $data = [$email];
+    }else{
+        return NULL;
+    }
+
+    $result = exec_query($query, $data);
+    return $result;
+}
 
 # Helper function. Not part of the API
 # Takes in a SQL statement to execute.
@@ -18,13 +34,13 @@ function getTypes($data){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
+    
     $host = 'oceanus.cse.buffalo.edu';
     $user = 'alexeast';
     $db = 'cse442_2022_spring_team_j_db';
     $password = 50252636;
     
     $connection = new mysqli($host, $user, $password, $db);
-    $result;
     
     # Error connecting, return NULL
     if ($connection->connect_error) {
@@ -100,16 +116,15 @@ function exec_query($query, $data) {
 
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
-    $query = "SELECT * FROM Users WHERE id =?";
-    $result = exec_query($query, [$user_id]);
+    $result = getUser($user_id, NULL);
     return $result->num_rows > 0;
 }
 
 
 # Get this user's ID by their email
 function get_user_id($email) {
-    $query = "SELECT id FROM Users WHERE email =?";
-    $result = exec_query($query, [$email]);
+    
+    $result = getUser(NULL, $email);
     
     if (!$result->num_rows) {
         return 0;
@@ -130,8 +145,7 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Get the current online status of the select user with the given email
-    $query = "SELECT * FROM Users WHERE email=? AND password=?";
-    $result = exec_query($query, [$email, $password]);
+    $row = getUser(NULL, $email);
     $row = $result->fetch_assoc();
     if (!$row) {
         echo "Couldn't find user with email $email\n";
@@ -141,7 +155,7 @@ function sign_in($email, $password) {
         return 0;
     }
     # See if user is online, set to online if not
-    else if ($row['password'] == $password) {
+    else if (password_verify($password, $row['password'])) {
         return 1;
     }
     # Couldn't get results from query
@@ -154,7 +168,8 @@ function sign_in($email, $password) {
 
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
-    
+    $user = getUser($user_id, NULL);
+    $user = $user->fetch_assoc();
     #If eitheir old or new password is empty, return -1
     if(empty($old_pwd) || empty($new_pwd)) {
         echo "Passwords cannot be empty\n";
@@ -166,11 +181,14 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     else if (!user_exists($user_id)) {
         echo "User doesn't exist in update_password\n";
         return 0;
-    }
-    else {
-        $query = "UPDATE Users SET password =?  WHERE user_id =? AND password =?";
+    }else if ($user['password'] != $old_pwd){
+        echo "Password is wrong\n";
+        return 0;
+    }else {
+        $query = "UPDATE Users SET password =?  WHERE id =? AND password =?";
         $data = [$new_pwd, $user_id, $old_pwd];
         $update = exec_query($query, $data);
+        echo $update;
         if (!$update) {
             echo "Couldn't execute query to update password\n";
             return 0;
@@ -258,10 +276,8 @@ function remove_connection($user_id) {
         return 0;
     }
 
-    $user = "SELECT * FROM Users WHERE id=?";
-    $result = exec_query($user, [$user_id])->fetch_assoc();
-
-    if($result && $partner = $user["partner"]){
+    $user = getUser($user_id, NULL)->fetch_assoc();
+    if($partner = $user["partner"]){
         $update_query = "UPDATE Users SET partner = NULL WHERE id=? OR id=?";
         if(exec_query($update_query, [$user_id, $partner])){
             return 1;
@@ -280,15 +296,17 @@ function add_connection_request($sent_from, $sent_to) {
         return 0;
     }
     
-    $user = "SELECT * FROM Users WHERE id=?";
-    $sent_from = exec_query($user, [$sent_from])->fetch_assoc();
-    $sent_to = exec_query($user, [$sent_to])->fetch_assoc();
-
-    remove_connection_request($sent_from);
-    remove_connection_request($sent_to);
-    if ($sent_from && $sent_to && !$sent_from['partner'] && !$sent_to['partner']){
+    $sent_from = getUser($sent_from, NULL)->fetch_assoc();
+    $sent_to = getUser($sent_to, NULL)->fetch_assoc();
+    
+    if(!$sent_from && !$sent_to){
+        echo "Fault in quering";
+    }
+    remove_connection_request($sent_from['id']);
+    remove_connection_request($sent_to['id']);
+    if (!$sent_from['partner'] && !$sent_to['partner']){
         $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from, $sent_to])){
+        if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
             return 1;
         }
     }
@@ -297,7 +315,7 @@ function add_connection_request($sent_from, $sent_to) {
 }
 
 function remove_connection_request($sent_from) {
-    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
+    if (!user_exists($sent_from)) {
         echo "No user with this ID\n";
         return 0;
     }
@@ -318,7 +336,12 @@ function get_requests($user_id) {
         return 0;
     }
     $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
-    return exec_query($query, [$user_id])->fetch_all();
+    $result = exec_query($query, [$user_id]);
+    $return = array();
+    while($row = $result->fetch_assoc()){
+        array_push($return, $row['sent_from']);
+    }
+    return $return;
 }
 
 function get_partner($user_id){
@@ -326,8 +349,8 @@ function get_partner($user_id){
         echo "No user with this ID\n";
         return 0;
     }
-    $query = "SELECT * FROM Users WHERE id=?";
-    return exec_query($query, [$user_id])->fetch_assoc()['partner'];
+    $user = getUser($user_id, NULL);
+    return $user->fetch_assoc()['partner'];
 }
 
 # Get the preferences of the user with ID `user_id` returns a JSON-formatted string
