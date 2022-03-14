@@ -66,7 +66,7 @@ function exec_query($query, $data) {
                 $connection->close();
                 return NULL;
             }
-            else{]
+            else{
                 $connection->close();
                 return $result;
             }
