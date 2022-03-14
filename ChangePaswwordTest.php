@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
     public function testUpdatePassword(): void
     {
-        $create_result = create_user("Jon Doe","password","","","","");
+        $create_result = create_user("Jon Doe","password","","",14214,"");
         $this->assertSame(1, $create_result);
 
         # Check that the current users password is correct
@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 
     public function testUpdatePasswordSame(): void
     {
-        $create_result = create_user("Jon Doe","password","","","","");
+        $create_result = create_user("Jon Doe","password","","",14214,"");
         $this->assertSame(1, $create_result);
 
         # Check that the current users password is correct

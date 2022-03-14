@@ -9,7 +9,7 @@ final class SignInTest extends TestCase
     public function testSignInNotLoggedIn(): void
     {
         # Create a test user
-        $test_user = create_user("test", "test", "a", "b", "c", "d");
+        $test_user = create_user("test", "test", "a", "b", 14214, "d");
 
         # Test that the user was created
         $this->assertEquals(1, $test_user);
@@ -28,7 +28,7 @@ final class SignInTest extends TestCase
     public function testSignInAlreadyLoggedIn(): void
     {
         # Create a test user
-        $test_user = create_user("test", "test", "a", "b", "c", "d");
+        $test_user = create_user("test", "test", "a", "b", 14214, "d");
 
         # Test that the user was created
         $this->assertEquals(1, $test_user);
@@ -59,7 +59,7 @@ final class SignInTest extends TestCase
         $this->assertEquals(0, $result);
 
         # Create the user that doesn't exist
-        $test_user = create_user("abcdefghijklmnop", "doesntexist", "a", "b", "c", "d");
+        $test_user = create_user("abcdefghijklmnop", "doesntexist", "a", "b", 14214, "d");
 
         # Test that the user was created
         $this->assertEquals(1, $test_user);
