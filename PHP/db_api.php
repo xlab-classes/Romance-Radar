@@ -37,6 +37,7 @@ function exec_query($query, $data) {
         
         # Returns false on error
         $stmt = $connection->prepare($query);
+
         if (!$stmt) {
             echo "Couldn't prepare SQL statement\n";
             $connection->close();
@@ -52,15 +53,22 @@ function exec_query($query, $data) {
         }
 
         # Returns false on failure
-        if ($stmt->execute()) {  # True if successful
+        $result_execute = $stmt->execute(); 
+        if ($result_execute) {  # True if successful
+            
+            if($query[0] != 'S'){
+                return $result_execute;
+            }
+
             $result = $stmt->get_result();
-            if (!$result && $stmt->mysqli_stmt_errno()) {  # Failed
+
+            if (!$result) {  # Failed
                 echo "Couldn't get result from statement execution\n";
                 $connection->close();
                 return NULL;
             }
-            else if (!$result) {  # Succeeded, but return false
-                # What to return here??
+            else{
+                return $result;
             }
         }
         else {
