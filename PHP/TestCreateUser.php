@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 final class TestCreateUser extends TestCase
 {
 
-    public function testBasic(): void
+    public function testUserDoesntExist(): void
     {
         $create_result = create_user(
             "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd",
@@ -29,6 +29,15 @@ final class TestCreateUser extends TestCase
         $this->assertSame($arr["street_address"], "123 Apple Orchard Rd");
         $this->assertSame($arr["zipcode"], 14541);
         $this->assertSame($arr["birthday"], "1980-01-12");
+    }
+
+    public function testUserExists(): void
+    {
+        $create_result = create_user(
+            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", 14541, "1980/01/12");
+        
+        # The call to create_user should fail
+        $this->assertSame(0, $create_result);
     }
 
 }
