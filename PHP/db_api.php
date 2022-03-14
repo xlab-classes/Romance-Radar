@@ -24,20 +24,35 @@ function exec_query($query, $data) {
     $password = 50307246;
     
     $connection = new mysqli($host, $user, $password, $db);
+    $result;
     
     # Error connecting, return NULL
     if ($connection->connect_error) {
-        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error . "\n";
         return NULL;
     }
 
+    # If there is data to be concatenated into the query, do it here
     if($data){
         $stmt = $connection->prepare($query);
         $stmt->bind_param(getTypes($data), ...$data);
-        $result = $stmt->execute();
-        $result = $query[0] == 'S' ? $stmt->get_result() : $result;
-    }else{
+        if ($stmt->execute()) {  # True if successful
+            $result = $stmt->get_result();
+        }
+        else {
+            echo "Couldn't execute prepared statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+    # Otherwise, just execute the query
+    } else {
         $result = $connection->query($query);
+        if (!$result) {  # False if failed
+            echo "Couldn't execute non-prepared query\n";
+            $connection->close();
+            return NULL;
+        }
     }
 
     $connection->close();
