@@ -366,16 +366,36 @@ function get_preferences($user_id) {
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
     
-    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
+    $preferences_categories = array(
+                     'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1),
+                     'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
+                     'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
+                     'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
 
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
         return 0;
     }
     foreach($preferences as $cat => $changes){
-        
+        if(!isset($preferences_categories[$cat])){
+            echo 'Category does not exist';
+            return 0;
+        }
+
+        foreach($changes as $sub_cat => $value){
+            if(!isset($preferences_categories[$cat][$value])){
+                echo 'Sub-Categoty does not exist';
+                return 0;
+            }
+            $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
+            $result = exec_query($query, [$value, $user_id]);
+            if (!$result){
+                echo 'No executed';
+            }
+        }
     }
-    
+    return 1;
 
 }
 
