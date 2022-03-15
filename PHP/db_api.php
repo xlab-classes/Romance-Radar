@@ -340,7 +340,6 @@ function get_partner($user_id){
     return $user->fetch_assoc()['partner'];
 }
 
-# Get the preferences of the user with ID `user_id` returns a JSON-formatted string
 function get_preferences($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
@@ -348,23 +347,35 @@ function get_preferences($user_id) {
     }
 
     $preferences = [];
-    $preferences_categories = array('Food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
+    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
     
     foreach($preferences_categories as $cat){
         $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
-        $result = exec_query($query, [$cat]);
+        $result = exec_query($query, [$user_id]);
         if(!$result || $result->num_rows == 0){
             echo "records don't exist";
             return [];
         }
         $preferences[$cat] = $result->fetch_assoc();
     }
+
     return $preferences;
 
 }
 
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
+    
+    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
+
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    foreach($preferences as $cat => $changes){
+        
+    }
+    
 
 }
 
@@ -373,22 +384,22 @@ function initialize_preferences($user_id){
         echo "No user with this ID\n";
         return 0;
     }
+
     $preferences_categories = array(
-        'Food' => ['(restraunt, cafe, fast_food, alcohol)', '(?,?,?,?)', [0,0,0,0]], 
-        'Entertainment' => ['(concerts, hiking)', '(?,?)', [0,0]],
-        'Venue' => ['(indoors, outdoors, social_events, )', '(?,?,?)', [0,0,0]],
-        'Date_time' => ['(morning, afternoon, evening)', '(?,?,?)', [0,0,0]],
-        'Date_preferences' => ['(cost, distance, length)', '(?,?,?)', [0,0,0]]
+        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]
     );
 
     foreach($preferences_categories as $cat => $placeholders){
         $query = sprintf("INSERT INTO %s %s VALUES %s", $cat, $placeholders[0], $placeholders[1]);
-        $result = exec_query($query, $placeholders[2]);
+        $result = exec_query($query, array_merge($placeholders[2], [$user_id]));
         if(!$result){
             echo "Error in execution";
             return 0;
         }
     }
     return 1;
-
 }
