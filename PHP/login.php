@@ -10,10 +10,11 @@ function validate_pwd($password){
     return preg_match("#.*^(?=.{8,20})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$#", $password);
 }
 
+#Checking request method
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $string_type = "string";
     $int_type = "integer";
-    
+
     $email = $_POST['Email'];
     $password = $_POST['Password'];
 
@@ -22,6 +23,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo validate($password, $string_type);
     echo validate_pwd($password);
 
+    #Validating email and password
     if (validate($email, $string_type) &&
         validate($password, $string_type) &&
         validate_pwd($password)){
