@@ -7,6 +7,11 @@ use PHPUnit\Framework\TestCase;
 final class TestCreateUser extends TestCase
 {
 
+    public function tearDown(): void
+    {
+        exec_query("DELETE FROM Users WHERE email=?", ["jon.doe@gmail.com"]);
+    }
+
     public function testUserDoesntExist(): void
     {
         $create_result = create_user(
