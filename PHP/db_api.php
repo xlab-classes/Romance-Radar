@@ -36,9 +36,9 @@ function exec_query($query, $data) {
 
     
     $host = 'oceanus.cse.buffalo.edu';
-    $user = 'alexeast';
+    $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
-    $password = 50252636;
+    $password = 50276673;
     
     $connection = new mysqli($host, $user, $password, $db);
     
@@ -145,7 +145,7 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Get the current online status of the select user with the given email
-    $row = getUser(NULL, $email);
+    $result = getUser(NULL, $email);
     $row = $result->fetch_assoc();
     if (!$row) {
         echo "Couldn't find user with email $email\n";
