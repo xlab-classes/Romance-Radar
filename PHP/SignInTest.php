@@ -9,42 +9,74 @@ final class SignInTest extends TestCase
     public function testSignInNotLoggedIn(): void
     {
         # Create a test user
-        $test_user = create_user("test", "test", "a", "b", 14214, "d");
+        create_user(
+            "Jon Doe", "doe.jon@gmail.com", password_hash("password",PASSWORD_DEFAULT), "123 Apple Orchard Rd",
+            14541, "1980/01/12");
 
-        # Test that the user was created
-        $this->assertSame(1, $test_user);
+        # Check that the user is in the database
+        $user = exec_query("SELECT * FROM Users WHERE email=?", ["doe.jon@gmail.com"]);
+        $this->assertNotNull($user);
 
-        #Check that the user isn't already signed in
-        $this->assertEquals(1, sign_in("test", "test"));
+        # Check that the user is not logged in
+
+        # Turn useer into an associative array
+        $arr = $user->fetch_assoc();
+        $this->assertNotNull($arr);
+
+        # Check that the user's info is correct
+        $this->assertSame($arr["name"], "Jon Doe");
+        $this->assertSame($arr["email"], "doe.jon@gmail.com");
         
-        # Sign in the dummy user
-        $result = sign_in($user);
-        
-        # Check that the user is signed in
-        $this->assertEquals(0, $result);
-        echo "Test passed";
+        # If this fails you can't sign in at all
+        $this->assertTrue(password_verify("password",$arr["password"]));
+
+        $this->assertSame($arr["street_address"], "123 Apple Orchard Rd");
+        $this->assertSame($arr["zipcode"], 14541);
+        $this->assertSame($arr["birthday"], "1980-01-12");
+
+        # Check that the user is not logged in
+
+        $login_status = sign_in($arr["email"], $arr["password"]);
+        $this->assertSame(1, $login_status);
+
+        # Sign in again 
+        $login_status = sign_in($arr["email"], $arr["password"]);
+        $this->assertSame(0, $login_status);
     }
+
 
     public function testSignInAlreadyLoggedIn(): void
     {
         # Create a test user
-        $test_user = create_user("test", "test", "a", "b", 14214, "d");
+        create_user("Jordan Grant","jordangrant46@yahoo.com", password_hash("#Password",PASSWORD_DEFAULT), "98-38 %7th Ave", "11368", "04/24/2000");
 
-        # Test that the user was created
-        $this->assertSame(1, $test_user);
+        # Test that the user was created successfully and is in the database
+        $result = exec_query("SELECT * FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
+        $this->assertNotNull($result);
+
+        # Fetch the user's info
+        $arr = $result->fetch_assoc();
+        $this->assertNotNull($arr);
+        
+        # Check that the user's info is correct
+        $this->assertSame($arr["name"], "Jordan Grant");
+        $this->assertSame($arr["email"], "jordangrant46@yahoo.com");
+
+        # If this fails you can't sign in at all
+        $this->assertTrue(password_verify("#Password",$arr["password"]));
 
         # Sign in the dummy user
-        $result = sign_in("test", "test");
+        $result = sign_in("jordangrant46@yahoo.com", "#Password");
 
         # Check that the user is signed in
         $this->assertEquals(1, $result);
 
         # Try to sign in the dummy user again
-        $result = sign_in("test", "test");
+        $result = sign_in("jordangrant46@yahoo.com", "#Password");
 
         # Check that this second sign in attempt fails
         $this->assertEquals(0, $result);
-        echo "test passed";
+        echo "Test passed";
     }
 
     /*
@@ -52,23 +84,39 @@ final class SignInTest extends TestCase
     */
     public function testSignInUserDoesntExists(): void 
     {
+
+        # Ensure there is no user with an email of "edfghijlmnop"
+        $result = exec_query("SELECT * FROM Users WHERE name=?", ["abcdefghijklmnop"]);
+        $this->assertEquals(0, $result->num_rows);
+
         # Try to sign in a user that doesn't exist
-        $result = sign_in("abcdefghijklmnop", "doesntexist");
+        $result = sign_in("abcd", "edfghijlmnop");
         
         # Check that the user is not signed in
         $this->assertEquals(0, $result);
 
         # Create the user that doesn't exist
-        $test_user = create_user("abcdefghijklmnop", "doesntexist", "a", "b", 14214, "d");
+        create_user("abcdefghijklmnop", "abcd", password_hash("edfghijlmnop",PASSWORD_DEFAULT), "b", 14214, "d");
 
         # Test that the user was created
-        $this->assertEquals(1, $test_user);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", ["abcd"]);
+        $this->assertNotNull($result);
 
-        # Try to sign in the dummy user again
-        $result = sign_in("abcdefghijklmnop", "doesntexist");
+        # Verify the user's info
+        $arr = $result->fetch_assoc();
+        $this->assertSame($arr["name"], "abcdefghijklmnop");
+        $this->assertSame($arr["email"], "abcd");
+        $this->assertTrue(password_verify("edfghijlmnop", $arr["password"]));
+
+        # Try to sign in the user again
+        $sign_in_status = sign_in("abcd", "edfghijlmnop");
+
 
         # Check that this second sign in attempt succeeds
-        $this->assertEquals(1, $result);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", ["abcd"]);
+        $this->assertNotNull($result);
+        $this->assertEquals(1, $sign_in_status); 
+
         echo "Test passed";
 
     }

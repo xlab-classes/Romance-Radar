@@ -36,9 +36,9 @@ function exec_query($query, $data) {
 
     
     $host = 'oceanus.cse.buffalo.edu';
-    $user = 'alexeast';
+    $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
-    $password = 50252636;
+    $password = 50276673;
     
     $connection = new mysqli($host, $user, $password, $db);
     
@@ -145,7 +145,7 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Get the current online status of the select user with the given email
-    $row = getUser(NULL, $email);
+    $result = getUser(NULL, $email);
     $row = $result->fetch_assoc();
     if (!$row) {
         echo "Couldn't find user with email $email\n";
@@ -244,10 +244,6 @@ function delete_user($user_id) {
 }
 
 
-# Attempt to connect the users with IDs `user_id_a` and `user_id_b`. This
-# requires that one of the users has sent a connection request and the other
-# one has a pending request from the sender
-# TODO(Jordan): This function is not yet implemented
 function add_connection($user_id_a, $user_id_b) {
     if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
         echo "No user with this ID in delete_user\n";
@@ -267,9 +263,6 @@ function add_connection($user_id_a, $user_id_b) {
      }
 }
 
-# Attempt to disconnect the users with IDs `user_id_a` and `user_id_b`. This
-# requires that a connection exists between these users
-# TODO(Jordan): This function is not yet implemented
 function remove_connection($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID in delete_user\n";
@@ -287,9 +280,6 @@ function remove_connection($user_id) {
     return 0;
 }
 
-# Add a request to connect to the user with ID `user_id_rx`. Add the pending
-# connection to the user with ID `user_id_tx`
-# TODO(Jordan): This function is not yet implemented
 function add_connection_request($sent_from, $sent_to) {
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID\n";
@@ -327,9 +317,6 @@ function remove_connection_request($sent_from) {
     return 0;
 }
 
-
-# Get the connection requests that this user needs to respond to
-# Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
@@ -353,13 +340,86 @@ function get_partner($user_id){
     return $user->fetch_assoc()['partner'];
 }
 
-# Get the preferences of the user with ID `user_id` returns a JSON-formatted string
 function get_preferences($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $preferences = [];
+    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
     
+    foreach($preferences_categories as $cat){
+        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
+        $result = exec_query($query, [$user_id]);
+        if(!$result || $result->num_rows == 0){
+            echo "records don't exist";
+            return [];
+        }
+        $preferences[$cat] = $result->fetch_assoc();
+    }
+
+    return $preferences;
+
 }
 
 # Set the preferences of the user with ID `user_id` to `preferences`
-
 function update_preferences($user_id, $preferences) {
+    
+    $preferences_categories = array(
+                     'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1),
+                     'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
+                     'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
+                     'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
 
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    foreach($preferences as $cat => $changes){
+        if(!isset($preferences_categories[$cat])){
+            echo 'Category does not exist';
+            return 0;
+        }
+
+        foreach($changes as $sub_cat => $value){
+            if(!isset($preferences_categories[$cat][$value])){
+                echo 'Sub-Categoty does not exist';
+                return 0;
+            }
+            $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
+            $result = exec_query($query, [$value, $user_id]);
+            if (!$result){
+                echo 'No executed';
+            }
+        }
+    }
+    return 1;
+
+}
+
+function initialize_preferences($user_id){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $preferences_categories = array(
+        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]
+    );
+
+    foreach($preferences_categories as $cat => $placeholders){
+        $query = sprintf("INSERT INTO %s %s VALUES %s", $cat, $placeholders[0], $placeholders[1]);
+        $result = exec_query($query, array_merge($placeholders[2], [$user_id]));
+        if(!$result){
+            echo "Error in execution";
+            return 0;
+        }
+    }
+    return 1;
 }
