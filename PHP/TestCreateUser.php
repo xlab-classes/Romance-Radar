@@ -41,6 +41,10 @@ final class TestCreateUser extends TestCase
         $create_result = create_user(
             "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", 14541, "1980/01/12");
         
+        // Attempt to create the same user a second time
+        $create_result = create_user(
+            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", 14541, "1980/01/12");
+        
         # The call to create_user should fail
         $this->assertSame(0, $create_result);
     }
