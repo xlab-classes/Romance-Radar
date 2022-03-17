@@ -47,7 +47,7 @@ use PHPUnit\Framework\TestCase;
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Taro Tanaka");
         $this->assertSame($arr["email"], "email");
-        $this-> assertTrue(password_verify("password", $arr["password"]));
+        $this-> assertTrue(password_verify("japan", $arr["password"]));
 
         $this-> assertSame(0,update_password(get_user_id($arr["email"]),$arr["password"],$arr["password"]));
     }

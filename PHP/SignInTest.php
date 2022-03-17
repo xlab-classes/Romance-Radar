@@ -26,7 +26,10 @@ final class SignInTest extends TestCase
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Jon Doe");
         $this->assertSame($arr["email"], "doe.jon@gmail.com");
-        $this->assertSame($arr["password"], "password");
+        
+        # If this fails you can't sign in at all
+        $this->assertTrue(password_verify("password",$arr["password"]));
+
         $this->assertSame($arr["street_address"], "123 Apple Orchard Rd");
         $this->assertSame($arr["zipcode"], 14541);
         $this->assertSame($arr["birthday"], "1980-01-12");
@@ -60,7 +63,7 @@ final class SignInTest extends TestCase
         $this->assertSame($arr["email"], "jordangrant46@yahoo.com");
 
         # If this fails you can't sign in at all
-        $this->asserTrue(password_verify("#Password",$arr["password"]));
+        $this->assertTrue(password_verify("#Password",$arr["password"]));
 
         # Sign in the dummy user
         $result = sign_in("jordangrant46@yahoo.com", "#Password");
