@@ -10,7 +10,7 @@ final class SignInTest extends TestCase
 
     public function tearDown(): void
     {
-        exec_query("DELETE FROM Users WHERE email=?", [$this->$email_]);
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
     # Create a function that tests the db_api.php sign_in function
@@ -18,11 +18,11 @@ final class SignInTest extends TestCase
     {
         # Create a test user
         create_user(
-            "Jon Doe", $this->$email_, password_hash($this->$password_,PASSWORD_DEFAULT), "123 Apple Orchard Rd",
+            "Jon Doe", $this->email_, password_hash($this->password_,PASSWORD_DEFAULT), "123 Apple Orchard Rd",
             14541, "1980/01/12");
 
         # Check that the user is in the database
-        $user = exec_query("SELECT * FROM Users WHERE email=?", [$this->$email_]);
+        $user = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
         $this->assertNotNull($user);
 
         # Check that the user is not logged in
@@ -33,10 +33,10 @@ final class SignInTest extends TestCase
 
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Jon Doe");
-        $this->assertSame($arr["email"], $this->$email_);
+        $this->assertSame($arr["email"], $this->email_);
         
         # If this fails you can't sign in at all
-        $this->assertTrue(password_verify($this->$password_, $arr["password"]));
+        $this->assertTrue(password_verify($this->password_, $arr["password"]));
 
         $this->assertSame($arr["street_address"], "123 Apple Orchard Rd");
         $this->assertSame($arr["zipcode"], 14541);
@@ -44,7 +44,7 @@ final class SignInTest extends TestCase
 
         # Check that the user is not logged in
 
-        $login_status = sign_in($this->$email_, $this->$password_);
+        $login_status = sign_in($this->email_, $this->password_);
         $this->assertSame(1, $login_status);
 
         # Sign in again 
@@ -52,7 +52,7 @@ final class SignInTest extends TestCase
         $this->assertSame(0, $login_status);
 
         # Remove entry that was created for this test
-        exec_query("DELETE FROM Users WHERE email=?", [$this->$email_]);
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
 
@@ -60,10 +60,10 @@ final class SignInTest extends TestCase
     {
 
         # Create a test user
-        create_user("Jordan Grant", $this->$email_, password_hash($this->$password_, PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "2000/04/24");
+        create_user("Jordan Grant", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "2000/04/24");
 
         # Test that the user was created successfully and is in the database
-        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->$email_]);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
         $this->assertNotNull($result);
         $this->assertNotFalse($result);
         $this->assertSame(1, $result->num_rows, "Wrong number of rows in testSignInAlreadyLoggedIn");
@@ -74,26 +74,26 @@ final class SignInTest extends TestCase
 
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Jordan Grant");
-        $this->assertSame($arr["email"], $this->$email_);
-        $this->assertTrue(password_verify($this->$password_ ,$arr["password"]));
+        $this->assertSame($arr["email"], $this->email_);
+        $this->assertTrue(password_verify($this->password_ ,$arr["password"]));
         $this->assertSame($arr["street_address"], "98-38 57th Ave");
 
         # If this fails you can't sign in at all
-        $this->assertTrue(password_verify($this->$password_, $arr["password"]));
+        $this->assertTrue(password_verify($this->password_, $arr["password"]));
 
         # Sign in the dummy user again
-        $result = sign_in($this->$email_, $this->$password_);
+        $result = sign_in($this->email_, $this->password_);
 
         # Check that the user is signed in
         $this->assertEquals(1, $result, "Couldn't sign in user in testSignInAlreadyLoggedIn");
 
         # Try to sign in the dummy user again
-        $result = sign_in($this->$email_, $this->$password_);
+        $result = sign_in($this->email_, $this->password_);
 
         # Check that this second sign in attempt fails
         $this->assertEquals(0, $result, "Expected failure succeeded when signing in in testSignInAlreadyLoggedIn");
 
-        exec_query("DELETE FROM Users WHERE email=?", [$this->$email_]);
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
     /*
@@ -107,36 +107,36 @@ final class SignInTest extends TestCase
         $this->assertEquals(0, $result->num_rows);
 
         # Try to sign in a user that doesn't exist
-        $result = sign_in($this->$email_, $this->$password_);
+        $result = sign_in($this->email_, $this->password_);
         
         # Check that the user is not signed in
         $this->assertEquals(0, $result);
 
         # Create the user that doesn't exist
-        create_user("abcdefghijklmnop", $this->$email_, password_hash($this->$password_, PASSWORD_DEFAULT), "b", 14214, "2000/04/24");
+        create_user("abcdefghijklmnop", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "b", 14214, "2000/04/24");
 
         # Test that the user was created
-        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->$email_]);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
         $this->assertNotNull($result);
 
         # Verify the user's info
         $arr = $result->fetch_assoc();
         $this->assertSame($arr["name"], "abcdefghijklmnop");
-        $this->assertSame($arr["email"], $this->$email_);
-        $this->assertTrue(password_verify($this->$password_, $arr["password"]));
+        $this->assertSame($arr["email"], $this->email_);
+        $this->assertTrue(password_verify($this->password_, $arr["password"]));
 
         # Try to sign in the user again
-        $sign_in_status = sign_in($this->$email_, $this->$password_);
+        $sign_in_status = sign_in($this->email_, $this->password_);
 
 
         # Check that this second sign in attempt succeeds
-        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->$email_]);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
         $this->assertNotNull($result);
         $this->assertEquals(1, $sign_in_status); 
 
         echo "Test passed";
 
-        exec_query("DELETE FROM Users WHERE email=?", [$this->$email_]);
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
     # Tear down function that will execute the Table Create script and Table Destroy script
