@@ -139,7 +139,5 @@ final class SignInTest extends TestCase
         exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
-    # Tear down function that will execute the Table Create script and Table Destroy script
-
 }
 

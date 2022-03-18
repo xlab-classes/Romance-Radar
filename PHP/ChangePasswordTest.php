@@ -7,11 +7,49 @@ use PHPUnit\Framework\TestCase;
 
  final class ChangePasswordTest extends TestCase {
 
+     # Creating class variables
+
+        public $email_ = "jdoe@meta.org";
+        public $password_ = "#Password";
+        public $new_password_ = "new_password";
+
+
+    public function tearDown(): void
+    {
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
+    }
     public function testUpdatePassword(): void
     {
-        $create_result = create_user("Jon Doe","doejohn@meta.org",password_hash("password",PASSWORD_DEFAULT),"123",14214,"1963/12/13");
+        $create_result = create_user("Jon Doe",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"123",14214,"1963/12/13");
         # Check that the current users password is correct
-        $result = exec_query("SELECT * FROM Users WHERE email=?", ["doejohn@meta.org"]);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
+        $this->assertNotNull($result, "Result is null");
+
+        # Fetch the user's info
+        $arr = $result->fetch_assoc();
+        $this->assertNotNull($arr);
+
+        # Check that the user's info is correct
+        $this->assertSame($arr["name"], "Jon Doe", "Name is incorrect");
+        $this->assertSame($arr["email"], $this->email_, "Email is incorrect");
+        $this-> assertTrue(password_verify($this->password_, $arr["password"]), "Password is not correct");
+
+        update_password(get_user_id($this->email_),$arr["password"], password_hash($this->new_password,PASSWORD_DEFAULT));
+        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
+        $this->assertNotNull($result, "Result is null");
+        
+        
+        $this-> assertTrue(password_verify($this->new_password_, $arr["password"]), "Password is not correct");
+
+        tearDown();
+    }
+
+    public function testUpdatePasswordSame(): void
+    {
+        $create_result = create_user("Taro Tanaka","ttanaka@google.com",password_hash("japan",PASSWORD_DEFAULT),"address",11367,"2000/01/01");
+
+        # Check that the current users password is correct
+        $result = exec_query("SELECT * FROM Users WHERE email=?", ["ttanaka@google.com"]);
         $this->assertNotNull($result);
 
         # Fetch the user's info
@@ -19,40 +57,12 @@ use PHPUnit\Framework\TestCase;
         $this->assertNotNull($arr);
 
         # Check that the user's info is correct
-        $this->assertSame($arr["name"], "Jon Doe");
-        $this->assertSame($arr["email"], "doejohn@meta.org");
-        $this-> assertTrue(password_verify("password", $arr["password"]));
+        $this->assertSame($arr["name"], "Taro Tanaka");
+        $this->assertSame($arr["email"], "ttanaka@google.com");
+        $this-> assertTrue(password_verify("japan", $arr["password"]));
 
-        # Echo with a newline the password
-        echo $arr["password"] . "\n";
+        $this-> assertSame(0,update_password(get_user_id($arr["email"]),"japan","japan"));
 
-        update_password(get_user_id("doejohn@meta.org"),$arr["password"], password_hash("new_password",PASSWORD_DEFAULT));
-        $result = exec_query("SELECT * FROM Users WHERE email=?", ["doejohn@meta.org"]);
-        $this->assertNotNull($result);
-        
-        # Echo with a newline the password
-        echo $arr["password"] . "\n";
-        
-        // $this-> assertTrue(password_verify("new_password", $arr["password"]));
+        tearDown();
     }
-
-    // public function testUpdatePasswordSame(): void
-    // {
-    //     $create_result = create_user("Taro Tanaka","ttanaka@google.com",password_hash("japan",PASSWORD_DEFAULT),"address",11367,"2000/01/01");
-
-    //     # Check that the current users password is correct
-    //     $result = exec_query("SELECT * FROM Users WHERE email=?", ["ttanaka@google.com"]);
-    //     $this->assertNotNull($result);
-
-    //     # Fetch the user's info
-    //     $arr = $result->fetch_assoc();
-    //     $this->assertNotNull($arr);
-
-    //     # Check that the user's info is correct
-    //     $this->assertSame($arr["name"], "Taro Tanaka");
-    //     $this->assertSame($arr["email"], "ttanaka@google.com");
-    //     $this-> assertTrue(password_verify("japan", $arr["password"]));
-
-    //     $this-> assertSame(0,update_password(get_user_id($arr["email"]),"japan","japan"));
-    // }
 }
