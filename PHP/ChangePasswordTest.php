@@ -39,7 +39,7 @@ use PHPUnit\Framework\TestCase;
         $this->assertNotNull($result, "Result is null");
         
         
-        $this-> assertTrue(password_verify($this->new_password_, $arr["password"]), "Password is not correct");
+        $this-> assertTrue(password_verify($this->new_password_, $arr["password"]), "Passwords are not the same");
 
         exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
