@@ -34,14 +34,14 @@ use PHPUnit\Framework\TestCase;
         $this->assertSame($arr["email"], $this->email_, "Email is incorrect");
         $this-> assertTrue(password_verify($this->password_, $arr["password"]), "Password is not correct");
 
-        update_password(get_user_id($this->email_),$arr["password"], password_hash($this->new_password,PASSWORD_DEFAULT));
+        update_password(get_user_id($this->email_),$arr["password"], password_hash($this->new_password_,PASSWORD_DEFAULT));
         $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
         $this->assertNotNull($result, "Result is null");
         
         
         $this-> assertTrue(password_verify($this->new_password_, $arr["password"]), "Password is not correct");
 
-        tearDown();
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 
     public function testUpdatePasswordSame(): void
@@ -63,6 +63,6 @@ use PHPUnit\Framework\TestCase;
 
         $this-> assertSame(0,update_password(get_user_id($this->email_),$password_, $password_));
 
-        tearDown();
+        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
     }
 }
