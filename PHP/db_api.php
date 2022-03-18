@@ -1,9 +1,4 @@
 <?php
-# Helper function. Not part of the API
-# Takes in a SQL statement to execute.
-# Returns:
-# * The mysqli_result object of the SQL statement if executed successfully
-# * NULL if there was a problem executing the SQL statement
 
 function getTypes($data){
     $retString = '';
@@ -15,28 +10,104 @@ function getTypes($data){
     return $retString;
 }
 
+function getUser($user_id, $email){
+    $query = "";
+    $data = [];
+    if($user_id){
+        $query = "SELECT * FROM Users WHERE id=?";
+        $data = [$user_id];
+    }else if($email){
+        $query = "SELECT * FROM Users WHERE email=?";
+        $data = [$email];
+    }else{
+        return NULL;
+    }
+
+    $result = exec_query($query, $data);
+    return $result;
+}
+
+# Helper function. Not part of the API
+# Takes in a SQL statement to execute.
+# Returns:
+# * The mysqli_result object of the SQL statement if executed successfully
+# * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
+    
     $host = 'oceanus.cse.buffalo.edu';
-    $user = 'swastikn';
+    $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
-    $password = 50307246;
+    $password = 50276673;
     
     $connection = new mysqli($host, $user, $password, $db);
     
     # Error connecting, return NULL
     if ($connection->connect_error) {
-        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error;
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error . "\n";
         return NULL;
     }
 
-    if($data){
+    # If there is data to be concatenated into the query, do it here
+    if($data) {
+
+        if (gettype($data) != "array") {
+            echo "Mismatched data given to exec_query function\n";
+            return NULL;
+        }
+        
+        # Returns false on error
         $stmt = $connection->prepare($query);
+        if (!$stmt) {   # prepare() call failed
+            echo "Couldn't prepare SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
         $stmt->bind_param(getTypes($data), ...$data);
-        $result = $stmt->execute();
-        $result = $query[0] == 'S' ? $stmt->get_result() : $result;
-    }else{
+        if (!$stmt) {    # bind_param() call failed
+            echo "Couldn't bind parameters to prepared SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $result_execute = $stmt->execute(); 
+        if ($result_execute) {  # True if successful
+            
+            if($query[0] != 'S'){
+                return $result_execute;
+            }
+
+            $result = $stmt->get_result();
+
+            if (!$result) {  # Failed
+                echo "Couldn't get result from statement execution\n";
+                $connection->close();
+                return NULL;
+            }
+            else{
+                $connection->close();
+                return $result;
+            }
+        }
+
+        # execute() call failed
+        else {
+            echo "Couldn't execute prepared statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+    # Otherwise, just execute the query
+    } else {
         $result = $connection->query($query);
+        if (!$result) {  # False if failed
+            echo "Couldn't execute non-prepared query\n";
+            $connection->close();
+            return NULL;
+        }
     }
 
     $connection->close();
@@ -45,19 +116,17 @@ function exec_query($query, $data) {
 
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
-    $query = "SELECT * FROM Users WHERE id =?";
-    $result = exec_query($query, [$user_id]);
+    $result = getUser($user_id, NULL);
     return $result->num_rows > 0;
 }
 
 
 # Get this user's ID by their email
 function get_user_id($email) {
-    $query = "SELECT id FROM Users WHERE email =?";
-    $result = exec_query($query, [$email]);
+    
+    $result = getUser(NULL, $email);
     
     if (!$result->num_rows) {
-        echo "Failed to query for user ID";
         return 0;
     }
 
@@ -66,7 +135,7 @@ function get_user_id($email) {
         return $answer["id"];
     }
     else {
-        echo "Failed to get results of user ID query";
+        echo "Failed to get results of user ID query\n";
         return 0;
     }
 }
@@ -76,23 +145,23 @@ function get_user_id($email) {
 # `password`
 function sign_in($email, $password) {
     # Get the current online status of the select user with the given email
-    $query = "SELECT * FROM Users WHERE email=?";
-    $result = exec_query($query, [$email, $password]);
+    $result = getUser(NULL, $email);
     $row = $result->fetch_assoc();
-    if (!row) {
-        echo "Couldn't find user with email $email";
+    if (!$row) {
+        echo "Couldn't find user with email $email\n";
     }
     else if (!$result->num_rows) {
-        echo "No results for sign_in. User does exist";
+        echo "No results for sign_in. User does exist\n";
         return 0;
     }
-    # See if user is online, set to online if not
-    else if ($row['password'] == $password) {
+    else if (password_verify($password, $row['password'])) {
+        // NEED TO SET TO ONLINE. Jesus swastik.
+        
         return 1;
     }
     # Couldn't get results from query
     else {
-        echo "Failed to get results of sign-in query";
+        echo "Failed to get results of sign-in query\n";
         return 0;
     }
 }
@@ -100,25 +169,29 @@ function sign_in($email, $password) {
 
 # Attempt to change the password of the user with ID `user_id`
 function update_password($user_id, $old_pwd, $new_pwd) {
-    
+    $user = getUser($user_id, NULL);
+    $user = $user->fetch_assoc();
     #If eitheir old or new password is empty, return -1
     if(empty($old_pwd) || empty($new_pwd)) {
-        echo "Passwords cannot be empty";
+        echo "Passwords cannot be empty\n";
         return 0;
     }else if ($old_pwd == $new_pwd){
-        echo "Passwords are the same";
+        echo "Passwords are the same\n";
         return 0;
     }
     else if (!user_exists($user_id)) {
-        echo "User doesn't exist in update_password";
+        echo "User doesn't exist in update_password\n";
         return 0;
-    }
-    else {
-        $query = "UPDATE Users SET password =?  WHERE user_id =? AND password =?";
+    }else if ($user['password'] != $old_pwd){
+        echo "Password is wrong\n";
+        return 0;
+    }else {
+        $query = "UPDATE Users SET password =?  WHERE id =? AND password =?";
         $data = [$new_pwd, $user_id, $old_pwd];
         $update = exec_query($query, $data);
+        echo $update;
         if (!$update) {
-            echo "Couldn't execute query to update password";
+            echo "Couldn't execute query to update password\n";
             return 0;
         }
         return 1;
@@ -129,6 +202,11 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
 function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
+    # Make sure none of the required fields are empty
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
+        echo "Missing required fields in create_user\n";
+        return 0;
+    }
 
     # Make sure this email isn't being used
     $email_used = get_user_id($email);
@@ -144,7 +222,7 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday];
     $result = exec_query($query, $data);
     if (!$result) {
-        echo "Couldn't insert user into database";
+        echo "Couldn't insert user into database\n";
         return 0;
     }
     return 1;
@@ -154,26 +232,22 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
 # Removes all of a user's data from the database
 function delete_user($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
 
     $result = exec_query("DELETE FROM Users WHERE id=?", [$user_id]);
     if (!$result) {
-        echo "Failed to execute statement to remove user";
+        echo "Failed to execute statement to remove user\n";
         return 0;
     }
     return 1;
 }
 
 
-# Attempt to connect the users with IDs `user_id_a` and `user_id_b`. This
-# requires that one of the users has sent a connection request and the other
-# one has a pending request from the sender
-# TODO(Jordan): This function is not yet implemented
 function add_connection($user_id_a, $user_id_b) {
     if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
     remove_connection($user_id_a);
@@ -185,24 +259,19 @@ function add_connection($user_id_a, $user_id_b) {
             remove_connection_request($user_id_b);
             return 1;
      }else{
-         echo "Failed to update partners";
+         echo "Failed to update partners\n";
          return 0;
      }
 }
 
-# Attempt to disconnect the users with IDs `user_id_a` and `user_id_b`. This
-# requires that a connection exists between these users
-# TODO(Jordan): This function is not yet implemented
 function remove_connection($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user";
+        echo "No user with this ID in delete_user\n";
         return 0;
     }
 
-    $user = "SELECT * FROM Users WHERE id=?";
-    $result = exec_query($user, [$user_id])->fetch_assoc();
-
-    if($result && $partner = $user["partner"]){
+    $user = getUser($user_id, NULL)->fetch_assoc();
+    if($partner = $user["partner"]){
         $update_query = "UPDATE Users SET partner = NULL WHERE id=? OR id=?";
         if(exec_query($update_query, [$user_id, $partner])){
             return 1;
@@ -212,24 +281,23 @@ function remove_connection($user_id) {
     return 0;
 }
 
-# Add a request to connect to the user with ID `user_id_rx`. Add the pending
-# connection to the user with ID `user_id_tx`
-# TODO(Jordan): This function is not yet implemented
 function add_connection_request($sent_from, $sent_to) {
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     
-    $user = "SELECT * FROM Users WHERE id=?";
-    $sent_from = exec_query($user, [$sent_from])->fetch_assoc();
-    $sent_to = exec_query($user, [$sent_to])->fetch_assoc();
-
-    remove_connection_request($sent_from);
-    remove_connection_request($sent_to);
-    if ($sent_from && $sent_to && !$sent_from['partner'] && !$sent_to['partner']){
+    $sent_from = getUser($sent_from, NULL)->fetch_assoc();
+    $sent_to = getUser($sent_to, NULL)->fetch_assoc();
+    
+    if(!$sent_from && !$sent_to){
+        echo "Fault in quering";
+    }
+    remove_connection_request($sent_from['id']);
+    remove_connection_request($sent_to['id']);
+    if (!$sent_from['partner'] && !$sent_to['partner']){
         $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from, $sent_to])){
+        if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
             return 1;
         }
     }
@@ -238,8 +306,8 @@ function add_connection_request($sent_from, $sent_to) {
 }
 
 function remove_connection_request($sent_from) {
-    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
-        echo "No user with this ID";
+    if (!user_exists($sent_from)) {
+        echo "No user with this ID\n";
         return 0;
     }
     
@@ -250,34 +318,109 @@ function remove_connection_request($sent_from) {
     return 0;
 }
 
-
-# Get the connection requests that this user needs to respond to
-# Returns a JSON-formatted string of connection requests
 function get_requests($user_id) {
     if (!user_exists($user_id)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
     $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
-    return exec_query($query, [$user_id])->fetch_all();
+    $result = exec_query($query, [$user_id]);
+    $return = array();
+    while($row = $result->fetch_assoc()){
+        array_push($return, $row['sent_from']);
+    }
+    return $return;
 }
 
 function get_partner($user_id){
     if (!user_exists($user_id)) {
-        echo "No user with this ID";
+        echo "No user with this ID\n";
         return 0;
     }
-    $query = "SELECT * FROM Users WHERE id=?";
-    return exec_query($query, [$user_id])->fetch_assoc()['partner'];
+    $user = getUser($user_id, NULL);
+    return $user->fetch_assoc()['partner'];
 }
 
-# Get the preferences of the user with ID `user_id` returns a JSON-formatted string
 function get_preferences($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $preferences = [];
+    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
     
+    foreach($preferences_categories as $cat){
+        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
+        $result = exec_query($query, [$user_id]);
+        if(!$result || $result->num_rows == 0){
+            echo "records don't exist";
+            return [];
+        }
+        $preferences[$cat] = $result->fetch_assoc();
+    }
+
+    return $preferences;
+
 }
 
 # Set the preferences of the user with ID `user_id` to `preferences`
-
 function update_preferences($user_id, $preferences) {
+    
+    $preferences_categories = array(
+                     'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1),
+                     'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
+                     'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
+                     'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
 
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    foreach($preferences as $cat => $changes){
+        if(!isset($preferences_categories[$cat])){
+            echo 'Category does not exist';
+            return 0;
+        }
+
+        foreach($changes as $sub_cat => $value){
+            if(!isset($preferences_categories[$cat][$value])){
+                echo 'Sub-Categoty does not exist';
+                return 0;
+            }
+            $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
+            $result = exec_query($query, [$value, $user_id]);
+            if (!$result){
+                echo 'No executed';
+            }
+        }
+    }
+    return 1;
+
+}
+
+function initialize_preferences($user_id){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $preferences_categories = array(
+        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
+        'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]
+    );
+
+    foreach($preferences_categories as $cat => $placeholders){
+        $query = sprintf("INSERT INTO %s %s VALUES %s", $cat, $placeholders[0], $placeholders[1]);
+        $result = exec_query($query, array_merge($placeholders[2], [$user_id]));
+        if(!$result){
+            echo "Error in execution";
+            return 0;
+        }
+    }
+    return 1;
 }

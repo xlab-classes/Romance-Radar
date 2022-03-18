@@ -1,29 +1,46 @@
 <?php
 
-# This file will contain tests for the respective db_api.php file.
+# Import db_api.php
+require_once('db_api.php');
 
-# Test for the get_all_users() function.
-function test_get_all_users() {
-    $users = get_all_users();
-    if (count($users) == 0) {
-        echo "No users found.\n";
+# Create a function that tests the db_api.php sign_in function
+function test_sign_in() {
+
+    # Check that the database doesn't have a user with the username 'test' and the password 'test'
+    $result = sign_in('test', 'test');
+    if ($result) {
+        # There should be no user with the username 'test' and the password 'test'
+        echo 'User already signed in.';
+        echo 'Tests failed.';
+        # Fail the test
+        return false;
+
     } else {
-        echo "Users found:\n";
-        foreach ($users as $user) {
-            echo $user['username'] . "\n";
-        }
+
+    # Create a dummy user using the db_api.php create_user function
+    $user = create_user('test_user', 'test_password');
+    
+    # Sign in the dummy user
+    $result = sign_in($user);
+
+    # Check that the user is signed in
+    if ($result) {
+        # The user is signed in
+        echo 'The user is signed in.';
+        echo 'Tests passed.';
+        # Pass the test
+        return true;
+
+    } else {
+        # The user is not signed in
+        echo 'The user is not signed in.';
+        echo 'Tests failed.';
+        # Fail the test
+        return false;
     }
-}
+    }
 
-# Test for the get_user_by_id() function.
-function test_get_user_by_id() {
-    # Get all the user ids
-    $user_ids = get_all_user_ids();
 
 }
-# Test for the get_user_by_username() function.
-function test_get_user_by_username() {
-    # Get all the usernames
-    $usernames = get_all_usernames();
-}
+
 ?>
