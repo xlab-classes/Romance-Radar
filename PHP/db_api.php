@@ -154,8 +154,9 @@ function sign_in($email, $password) {
         echo "No results for sign_in. User does exist\n";
         return 0;
     }
-    # See if user is online, set to online if not
     else if (password_verify($password, $row['password'])) {
+        // NEED TO SET TO ONLINE. Jesus swastik.
+        
         return 1;
     }
     # Couldn't get results from query
