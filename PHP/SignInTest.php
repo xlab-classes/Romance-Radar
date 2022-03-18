@@ -5,6 +5,9 @@ require_once('db_api.php');
 final class SignInTest extends TestCase
 {
 
+    private $email_ = "doe.jon@gmail.com";
+    private $password_ = "#Password";
+
     public function tearDown(): void
     {
         exec_query("DELETE FROM Users WHERE email=?", [$this->$email_]);
@@ -137,9 +140,6 @@ final class SignInTest extends TestCase
     }
 
     # Tear down function that will execute the Table Create script and Table Destroy script
-
-    private $email_ = "doe.jon@gmail.com";
-    private $password_ = "#Password";
 
 }
 
