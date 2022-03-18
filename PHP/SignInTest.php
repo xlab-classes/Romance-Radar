@@ -7,7 +7,7 @@ final class SignInTest extends TestCase
 
     public function tearDown(): void
     {
-        exec_query("DELETE FROM Users WHERE email=?", ["doe.jon@gmail.com"]);
+        exec_query("DELETE FROM Users WHERE email=?", [$email_]);
     }
 
     # Create a function that tests the db_api.php sign_in function
