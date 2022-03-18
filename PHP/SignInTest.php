@@ -42,6 +42,9 @@ final class SignInTest extends TestCase
         # Sign in again 
         $login_status = sign_in($arr["email"], $arr["password"]);
         $this->assertSame(0, $login_status);
+
+        # Remove entry that was created for this test
+        exec_query("DELETE FROM Users WHERE email=?", ["doe.jon@gmail.com"]);
     }
 
 
@@ -81,6 +84,8 @@ final class SignInTest extends TestCase
         # Check that this second sign in attempt fails
         $this->assertEquals(0, $result);
         echo "Test passed";
+
+        exec_query("DELETE FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
     }
 
     /*
