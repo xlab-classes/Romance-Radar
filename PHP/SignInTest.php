@@ -105,7 +105,7 @@ final class SignInTest extends TestCase
         $this->assertEquals(0, $result);
 
         # Create the user that doesn't exist
-        create_user("abcdefghijklmnop", "abcd", password_hash("edfghijlmnop",PASSWORD_DEFAULT), "b", 14214, "d");
+        create_user("abcdefghijklmnop", "abcd", password_hash("edfghijlmnop",PASSWORD_DEFAULT), "b", 14214, "2000/04/24");
 
         # Test that the user was created
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["abcd"]);
