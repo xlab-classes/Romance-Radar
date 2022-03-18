@@ -128,6 +128,7 @@ final class SignInTest extends TestCase
 
         echo "Test passed";
 
+        exec_query("DELETE FROM Users WHERE email=?", ["abcd"]);
     }
 
     # Tear down function that will execute the Table Create script and Table Destroy script
