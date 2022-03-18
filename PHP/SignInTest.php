@@ -51,7 +51,7 @@ final class SignInTest extends TestCase
     public function testSignInAlreadyLoggedIn(): void
     {
         # Create a test user
-        create_user("Jordan Grant","jordangrant46@yahoo.com", password_hash("#Password",PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "04/24/2000");
+        create_user("Jordan Grant","jordangrant46@yahoo.com", password_hash("#Password",PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "2000/04/24");
 
         # Test that the user was created successfully and is in the database
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
