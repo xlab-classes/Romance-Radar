@@ -50,53 +50,45 @@
                         </h3>
                     </div>
                 </div>
-                <form action="" class="">
+                <form action="../PHP/registration.php" method="post" enctype="multipart/form-data">
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Name" hidden>Full Name</label>
-                            <input class="form-control text-center" id="Name" type="text" placeholder="Full Name"/>
+                            <input name="Name" class="form-control text-center" id="Name" type="text" placeholder="Full Name"/>
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Address" hidden>Street Address</label>
-                            <input class="form-control text-center" id="Address" type="text" placeholder="Street Address"/>
+                            <input name="Address" class="form-control text-center" id="Address" type="text" placeholder="Street Address"/>
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-3">
                             <label for="Zip" hidden>Zip Code</label>
-                            <input class="form-control text-center" id="Zip" type="number" placeholder="Zip Code"/>
+                            <input name="Zip" class="form-control text-center" id="Zip" type="number" placeholder="Zip Code"/>
                         </div>
                         <div class="col-3">
                             <label for="City" hidden>City</label>
-                            <input class="form-control text-center" id="City" type="text" placeholder="City"/>
+                            <input name="City" class="form-control text-center" id="City" type="text" placeholder="City"/>
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Email" hidden>Email</label>
-                            <input class="form-control text-center" id="Email" type="text" placeholder="Email"/>
+                            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email"/>
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Password" hidden>Password</label>
-                            <input class="form-control text-center" id="Password" type="password" placeholder="Password"/>
+                            <input name="Password" class="form-control text-center" id="Password" type="password" placeholder="Password"/>
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
-                        <div class="col-2">
-                            <label for="Month" hidden>Month</label>
-                            <input class="form-control text-center" id="Month" type="number" placeholder="MM"/>
-                        </div>
-                        <div class="col-2">
-                            <label for="Day" hidden>Day</label>
-                            <input class="form-control text-center" id="Day" type="number" placeholder="DD"/>
-                        </div>
-                        <div class="col-2">
-                            <label for="Year" hidden>Year</label>
-                            <input class="form-control text-center" id="Year" type="number" placeholder="YYYY"/>
+                        <div class="col-6">
+                            <label for="Date" hidden>Date</label>
+                            <input name="Date" class="form-control text-center" type="date" name="date" id="date">
                         </div>
                     </div>
                     <div class="row justify-content-center m-3">

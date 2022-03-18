@@ -211,8 +211,8 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     # Make sure this email isn't being used
     $email_used = get_user_id($email);
     
-    if ($email_used) {
-        echo "Couldn't execute query to find email";
+    if ($email_used != 0) {
+        echo "User already exists";
         return 0;
     }
 
