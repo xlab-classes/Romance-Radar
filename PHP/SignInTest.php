@@ -36,7 +36,7 @@ final class SignInTest extends TestCase
 
         # Check that the user is not logged in
 
-        $login_status = sign_in($arr["email"], $arr["password"]);
+        $login_status = sign_in("doe.jon@gmail.com", "password");
         $this->assertSame(1, $login_status);
 
         # Sign in again 
@@ -48,24 +48,28 @@ final class SignInTest extends TestCase
     public function testSignInAlreadyLoggedIn(): void
     {
         # Create a test user
-        create_user("Jordan Grant","jordangrant46@yahoo.com", password_hash("#Password",PASSWORD_DEFAULT), "98-38 %7th Ave", "11368", "04/24/2000");
+        create_user("Jordan Grant","jordangrant46@yahoo.com", password_hash("#Password",PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "04/24/2000");
 
         # Test that the user was created successfully and is in the database
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
         $this->assertNotNull($result);
+        $this->assertNotFalse($result);
+        $this->assertSame(1, $result->num_rows);
 
-        # Fetch the user's info
+        # Turn user into an associative array
         $arr = $result->fetch_assoc();
         $this->assertNotNull($arr);
-        
+
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Jordan Grant");
         $this->assertSame($arr["email"], "jordangrant46@yahoo.com");
+        $this->assertTrue(password_verify("#Password",$arr["password"]));
+        $this->assertSame($arr["street_address"], "98-38 57th Ave");
 
         # If this fails you can't sign in at all
         $this->assertTrue(password_verify("#Password",$arr["password"]));
 
-        # Sign in the dummy user
+        # Sign in the dummy user again
         $result = sign_in("jordangrant46@yahoo.com", "#Password");
 
         # Check that the user is signed in
@@ -120,5 +124,8 @@ final class SignInTest extends TestCase
         echo "Test passed";
 
     }
+
+    # Tear down function that will execute the Table Create script and Table Destroy script
+
 }
 
