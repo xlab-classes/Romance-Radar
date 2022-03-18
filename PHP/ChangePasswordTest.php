@@ -49,17 +49,17 @@ use PHPUnit\Framework\TestCase;
         $create_result = create_user("Taro Tanaka",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"address",11367,"2000/01/01");
 
         # Check that the current users password is correct
-        $result = exec_query("SELECT * FROM Users WHERE email=?", ["ttanaka@google.com"]);
-        $this->assertNotNull($result);
+        $result = exec_query("SELECT * FROM Users WHERE email=?", ["$this->email_"]);
+        $this->assertNotNull($result, "Result is null");
 
         # Fetch the user's info
         $arr = $result->fetch_assoc();
         $this->assertNotNull($arr);
 
         # Check that the user's info is correct
-        $this->assertSame($arr["name"], "Taro Tanaka");
-        $this->assertSame($arr["email"], $this->email_);
-        $this-> assertTrue(password_verify($this->password_, $arr["password"]));
+        $this->assertSame($arr["name"], "Taro Tanaka", "Name is incorrect");
+        $this->assertSame($arr["email"], $this->email_, "Email is incorrect");
+        $this-> assertTrue(password_verify($this->password_, $arr["password"]), "Password is not correct");
 
         $this-> assertSame(0,update_password(get_user_id($this->email_),$password_, $password_));
 
