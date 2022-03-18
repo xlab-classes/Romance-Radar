@@ -46,7 +46,7 @@ use PHPUnit\Framework\TestCase;
 
     public function testUpdatePasswordSame(): void
     {
-        $create_result = create_user("Taro Tanaka","ttanaka@google.com",password_hash("japan",PASSWORD_DEFAULT),"address",11367,"2000/01/01");
+        $create_result = create_user("Taro Tanaka",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"address",11367,"2000/01/01");
 
         # Check that the current users password is correct
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["ttanaka@google.com"]);
@@ -58,10 +58,10 @@ use PHPUnit\Framework\TestCase;
 
         # Check that the user's info is correct
         $this->assertSame($arr["name"], "Taro Tanaka");
-        $this->assertSame($arr["email"], "ttanaka@google.com");
-        $this-> assertTrue(password_verify("japan", $arr["password"]));
+        $this->assertSame($arr["email"], $this->email_);
+        $this-> assertTrue(password_verify($this->password_, $arr["password"]));
 
-        $this-> assertSame(0,update_password(get_user_id($arr["email"]),"japan","japan"));
+        $this-> assertSame(0,update_password(get_user_id($this->email_),$password_, $password_));
 
         tearDown();
     }
