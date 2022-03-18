@@ -57,7 +57,7 @@ final class SignInTest extends TestCase
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
         $this->assertNotNull($result);
         $this->assertNotFalse($result);
-        $this->assertSame(1, $result->num_rows);
+        $this->assertSame(1, $result->num_rows, "Wrong number of rows in testSignInAlreadyLoggedIn");
 
         # Turn user into an associative array
         $arr = $result->fetch_assoc();
@@ -76,13 +76,13 @@ final class SignInTest extends TestCase
         $result = sign_in("jordangrant46@yahoo.com", "#Password");
 
         # Check that the user is signed in
-        $this->assertEquals(1, $result);
+        $this->assertEquals(1, $result, "Couldn't sign in user in testSignInAlreadyLoggedIn");
 
         # Try to sign in the dummy user again
         $result = sign_in("jordangrant46@yahoo.com", "#Password");
 
         # Check that this second sign in attempt fails
-        $this->assertEquals(0, $result);
+        $this->assertEquals(0, $result, "Expected failure succeeded when signing in in testSignInAlreadyLoggedIn");
         echo "Test passed";
 
         exec_query("DELETE FROM Users WHERE email=?", ["jordangrant46@yahoo.com"]);
