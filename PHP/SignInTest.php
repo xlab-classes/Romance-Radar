@@ -5,8 +5,8 @@ require_once('db_api.php');
 final class SignInTest extends TestCase
 {
 
-    private $email_ = "doe.jon@gmail.com";
-    private $password_ = "#Password";
+    public $email_ = "doe.jon@gmail.com";
+    public $password_ = "#Password";
 
     public function tearDown(): void
     {
