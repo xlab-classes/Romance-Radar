@@ -1,6 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
-class TestUpdatePersonalDetails extends TestCase
+# Import db_api.php
+require_once('db_api.php');
+use PHPUnit\Framework\TestCase;
+
+final class TestUpdatePersonalDetails extends TestCase
 {
     # Class varibles represnetaive of the user's personal information.
     private $name = "John Doe";
