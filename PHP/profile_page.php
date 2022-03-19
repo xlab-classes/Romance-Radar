@@ -4,7 +4,6 @@ require './db_api.php';
 
 # A function that will update the user's personal information. All fields are optional. Fields that are not null will be updated.
 
-
 function update_personal_details($user_id, $name =null, $address = null, $zip = null, $city = null, $bday = null){
 
     # Check which fields are not null.
@@ -25,7 +24,7 @@ function update_personal_details($user_id, $name =null, $address = null, $zip = 
         $fields['bday'] = $bday;
     }
 
-    #Create a query that will update the user's personal information to allign with the input if the field is not null.
+    #Create a query that will update the user's personal information to align with the input if the field is not null.
     $query = "UPDATE users SET ";
     
     # Edit the query to include the fields that are not null.
