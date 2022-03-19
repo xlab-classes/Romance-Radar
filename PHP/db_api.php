@@ -436,3 +436,19 @@ function get_question($question_id){
 
     return $result->fetch_assoc()['question'];
 }
+
+function addSecurityQuestions($user_id, $data){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    
+    $query = "INSERT INTO User_security_questions(user_id, question_id_1, question_id_2, question_id_3, answer_1, answer_2, answer_3) VALUES (?,?,?,?,?,?,?)";
+
+    if(!exec_query($query, $data)){
+        echo 'Could not insert security questions';
+        return 0;
+    }
+
+    return 1;
+}

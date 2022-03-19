@@ -12,17 +12,6 @@ $security_questions = '
     </div>
 ';
 $password_changed = FALSE;
-function get_question($question_id){
-    $query = 'SELECT question FROM Security_questions WHERE id=?';
-    $result = exec_query($query, [(int)$question_id]);
-
-    if(!$result || !$result->num_rows){
-        exit('No question Found');
-    }
-
-    return $result->fetch_assoc()['question'];
-}
-
 session_start();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
@@ -166,7 +155,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                         </h3>
                     </div>
                 </div>
-                <form action="./test.php" method="post" enctype="multipart/form-data">
+                <form action="./forgotpassword.php" method="post" enctype="multipart/form-data">
                     <?php
                         echo $security_questions;
                     ?>
