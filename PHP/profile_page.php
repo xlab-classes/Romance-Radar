@@ -25,5 +25,14 @@ function update_personal_details($user_id, $name =null, $address = null, $zip = 
         $fields['bday'] = $bday;
     }
 
-    # Whichever fields are not null, update the user's information.
+    #Create a query that will update the user's personal information to allign with the input if the field is not null.
+    $query = "UPDATE users SET ";
+    
+    # Edit the query to include the fields that are not null.
+    foreach($fields as $key => $value){
+        $query .= $key . " = '" . $value . "',";
+    }
+    
+    # Execute the query. Where every field that is not null will be updated.
+    execute_query($query . " WHERE user_id = " . $user_id);
 }
