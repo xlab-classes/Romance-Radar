@@ -21,7 +21,6 @@ function get_question($question_id){
     }
 
     return $result->fetch_assoc()['question'];
-
 }
 
 session_start();

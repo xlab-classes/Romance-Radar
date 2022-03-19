@@ -1,3 +1,16 @@
+
+<?php
+
+require '../PHP/db_api.php';
+require '../PHP/helper.php';
+
+$question_1 = get_question(rand(1,20));
+$question_2 = get_question(rand(1,20));
+$question_3 = get_question(rand(1,20));
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,6 +104,28 @@
                             <input name="Date" class="form-control text-center" type="date" name="date" id="date">
                         </div>
                     </div>
+                    <?php
+                    echo sprintf('
+                    <div class="row justify-content-center m-4">
+                        <div class="col-6">
+                            <label for="Question_1">%s</label>
+                            <input name="Question_1" class="form-control text-center" id="Question_1" type="text" placeholder="Answer"/>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center m-4">
+                        <div class="col-6">
+                            <label for="Question_2">%s</label>
+                            <input name="Question_2" class="form-control text-center" id="Question_2" type="text" placeholder="Answer"/>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center m-4">
+                        <div class="col-6">
+                            <label for="Question_3">%s</label>
+                            <input name="Question_3" class="form-control text-center" id="Question_3" type="text" placeholder="Answer"/>
+                        </div>
+                    </div>
+                    ', $question_1, $question_2, $question_3);
+                    ?>
                     <div class="row justify-content-center m-3">
                         <div class="col-3">
                             <label for="Submit" hidden>Submit</label>
@@ -107,7 +142,6 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </body>
 </html>

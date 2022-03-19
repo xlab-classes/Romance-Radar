@@ -425,3 +425,14 @@ function initialize_preferences($user_id){
     }
     return 1;
 }
+
+function get_question($question_id){
+    $query = 'SELECT question FROM Security_questions WHERE id=?';
+    $result = exec_query($query, [(int)$question_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No question Found');
+    }
+
+    return $result->fetch_assoc()['question'];
+}
