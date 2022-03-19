@@ -11,7 +11,7 @@ $security_questions = '
         </div>
     </div>
 ';
-
+$password_changed = FALSE;
 function get_question($question_id){
     $query = 'SELECT question FROM Security_questions WHERE id=?';
     $result = exec_query($query, [(int)$question_id]);
@@ -83,9 +83,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                     </div>
                 </div>', $q_row['Email']);
         }else{
-            $security_questions='Wrong Answers';
+            $security_questions=sprintf('
+            <div class="col-6">
+                <div class="row pb-2 justify-content-center"></<label for="Error">%s</label></div>
+            </div>
+            ', 'Wrong Answer');
         }
-
     }else{
         echo 'Validation failed';
     }
@@ -96,9 +99,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
 
     if(validate($password_new, $string_type) && validate_pwd($password_new)){
         $query = 'UPDATE Users SET password=? WHERE id=?';
-        $result = exec_query($query, [password_hash($password, PASSWORD_DEFAULT), (int)$_SESSION['security']['user_id']]);
+        $result = exec_query($query, [password_hash($password_new, PASSWORD_DEFAULT), (int)$_SESSION['security']['user_id']]);
         if(!$result){
             echo 'Failed to change password';
+        }else{
+            $password_changed = TRUE;
+            $security_questions = '';
         }
     }else {
         echo 'Failed to change password';
@@ -165,12 +171,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                     <?php
                         echo $security_questions;
                     ?>
+                    <?php
+                    if(!$password_changed){
+                    echo '
                     <div class="row justify-content-center m-3">
                         <div class="col-3">
                             <label for="Submit" hidden>Submit</label>
                             <input class="btn-primary form-control text-center" id="Submit" type="submit"/>
                         </div>
-                    </div>
+                    </div>';
+                    }else{
+                        echo 'Password Changed!';
+                    }
+                    ?>
                 </form>
             </div>
             <div class="col-2 align-self-end">
