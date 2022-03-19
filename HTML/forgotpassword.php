@@ -6,33 +6,94 @@ function validate($value, $type){
     return !empty($value) && (gettype($value) == $type);
 }
 
-$security_questions = "";
+$security_questions = '
+    <div class="row justify-content-center m-4">
+        <div class="col-6">
+            <label for="Email" hidden>Email</label>
+            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email"/>
+        </div>
+    </div>
+';
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+function get_question($question_id){
+    $query = 'SELECT question FROM Security_questions WHERE id=?';
+    $result = exec_query($query, [(int)$question_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No question Found');
+    }
+
+    return $result->fetch_assoc()['question'];
+
+}
+
+session_start();
+
+if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
+
     $string_type = "string";
     $email = $_POST['Email'];
     if (validate($email, $string_type) && $user_id = get_user_id($email)){    
-        $questions_query = "SELECT S.question FROM Users U, User_security_questions Us, Security_questions S WHERE
-                            Us.user_id = U.id AND U.id=? AND (S.id = Us.question_id_1 OR S.id = Us.question_id_2 OR S.id = Us.question_id_3)";
+    
+        $questions_query = "SELECT * FROM User_security_questions WHERE user_id=?";
         
         $result = exec_query($questions_query, [$user_id]);
         
-        $security_questions .= '<form action="./forgotpassword.php" method="post" enctype="multipart/form-data">';
-        
-        while($row = $result->fetch_assoc()){
-            $security_questions .= '<label>'.$row['question'].'</label>';
-        }
-        
-        $security_questions .= '</form>';
-    
+        $row = $result->fetch_assoc();
+
+        if($row){
+            
+            $_SESSION['security'] = $row;
+            $_SESSION['security']['Email'] = $email;
+            $security_questions = '';
+            $input_name = 'question';
+            $answer = 'answer_';
+            $id = '_id_';
+            
+            for($i = 1; $i <= 3; $i+=1 ){
+                $a = $answer.strval($i);
+                $q = get_question($row[$input_name.$id.strval($i)]);
+                $security_questions .= 
+                sprintf('
+                <div class="row justify-content-center m-4">
+                    <div class="col-6">
+                        <label for="%s">%s</label>
+                        <input name="%s" class="form-control text-center" id="%s" type="text" placeholder="Answer"/>
+                    </div>
+                </div>
+                ', $input_name.strval($i), $q, $input_name.'_'.strval($i), $a);
+            }
+        }else{
+            echo "Security Questions Not found";    
+        }        
     }else{
         echo "User does not exist";
     }
-}
+}else if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $string_type = "string";
+    $answer_1 = $_POST['question_1'];
+    $answer_2 = $_POST['question_2'];
+    $answer_3 = $_POST['question_3'];
 
+    if(validate($answer_1, $string_type) && validate($answer_2, $string_type) && validate($answer_3, $string_type) && isset($_SESSION['security'])){
+        $q_row = $_SESSION['security'];
+        if($answer_1 == $q_row['answer_1'] && $answer_2 == $q_row['answer_2'] && $answer_3 == $q_row['answer_3']){
+            $security_questions=sprintf('
+                <div class="row justify-content-center m-4">
+                    <div class="col-6">
+                        <label for="Password">%s</label>
+                        <input name="Password" class="form-control text-center" id="Password" type="text" placeholder="New Password"/>
+                    </div>
+                </div>', $q_row['Email']);
+        }else{
+            $security_questions='Wrong Answers';
+        }
 
-?>
+    }else{
+        echo 'Validation failed';
+    }
 
+}?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -89,12 +150,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
                 <form action="./test.php" method="post" enctype="multipart/form-data">
-                    <div class="row justify-content-center m-4">
-                        <div class="col-6">
-                            <label for="Email" hidden>Email</label>
-                            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email"/>
-                        </div>
-                    </div>
+                    <?php
+                        echo $security_questions;
+                    ?>
                     <div class="row justify-content-center m-3">
                         <div class="col-3">
                             <label for="Submit" hidden>Submit</label>
@@ -102,9 +160,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
                 </form>
-                <?php
-                    echo $security_questions;
-                ?>
             </div>
             <div class="col-2 align-self-end">
                 <div class="row">
