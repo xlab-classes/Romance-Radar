@@ -120,6 +120,17 @@ function user_exists($user_id) {
     return $result->num_rows > 0;
 }
 
+# Check if a $user_id's password matches $password
+function check_password($user_id, $password) {
+    if (!user_exists($user_id)) return 1;           // User doesn't exist
+    
+    $result = exec_query("SELECT * FROM Users WHERE $user_id=? AND $password=?",
+        [$user_id, password_hash($password)]);
+
+    if ($result == NULL) return 1;                  // Err executing sql
+    else if ($result->num_rows == 0) return -1;     // No matching user id and password
+    else return 0;                                  // Password matches
+}
 
 # Get this user's ID by their email
 function get_user_id($email) {
