@@ -1,3 +1,39 @@
+<?php
+
+require './db_api.php';
+
+function validate($value, $type){
+    return !empty($value) && (gettype($value) == $type);
+}
+
+$security_questions = "";
+
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $string_type = "string";
+    $email = $_POST['Email'];
+    if (validate($email, $string_type) && $user_id = get_user_id($email)){    
+        $questions_query = "SELECT S.question FROM Users U, User_security_questions Us, Security_questions S WHERE
+                            Us.user_id = U.id AND U.id=? AND (S.id = Us.question_id_1 OR S.id = Us.question_id_2 OR S.id = Us.question_id_3)";
+        
+        $result = exec_query($questions_query, [$user_id]);
+        
+        $security_questions .= '<form action="./forgotpassword.php" method="post" enctype="multipart/form-data">';
+        
+        while($row = $result->fetch_assoc()){
+            $security_questions .= '<label>'.$row['question'].'</label>';
+        }
+        
+        $security_questions .= '</form>';
+    
+    }else{
+        echo "User does not exist";
+    }
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +59,7 @@
         }
         #top{
             height: 110px;
-            width: 11   0px;
+            width: 110px;
         }
         #bottom{
             height: 200px;
@@ -52,7 +88,7 @@
                         </h3>
                     </div>
                 </div>
-                <form action="../PHP/forgotpassword.php" method="post" enctype="multipart/form-data"></form>
+                <form action="./test.php" method="post" enctype="multipart/form-data">
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Email" hidden>Email</label>
@@ -66,6 +102,9 @@
                         </div>
                     </div>
                 </form>
+                <?php
+                    echo $security_questions;
+                ?>
             </div>
             <div class="col-2 align-self-end">
                 <div class="row">
@@ -75,7 +114,6 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </body>
 </html>

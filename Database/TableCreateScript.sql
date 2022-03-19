@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS Connection_requests(
 CREATE TABLE IF NOT EXISTS Security_questions(
     id INT AUTO_INCREMENT,
     question VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id),
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS User_security_questions(
