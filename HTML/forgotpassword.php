@@ -1,16 +1,13 @@
 <?php
 
-require './db_api.php';
-
-function validate($value, $type){
-    return !empty($value) && (gettype($value) == $type);
-}
+require '../PHP/db_api.php';
+require '../PHP/helper.php';
 
 $security_questions = '
     <div class="row justify-content-center m-4">
         <div class="col-6">
             <label for="Email" hidden>Email</label>
-            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email"/>
+            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email" required/>
         </div>
     </div>
 ';
@@ -50,7 +47,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
             $answer = 'answer_';
             $id = '_id_';
             
-            for($i = 1; $i <= 3; $i+=1 ){
+            for($i = 1; $i <= 3; $i+=1){
                 $a = $answer.strval($i);
                 $q = get_question($row[$input_name.$id.strval($i)]);
                 $security_questions .= 
@@ -58,7 +55,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                 <div class="row justify-content-center m-4">
                     <div class="col-6">
                         <label for="%s">%s</label>
-                        <input name="%s" class="form-control text-center" id="%s" type="text" placeholder="Answer"/>
+                        <input name="%s" class="form-control text-center" id="%s" type="text" placeholder="Answer" required/>
                     </div>
                 </div>
                 ', $input_name.strval($i), $q, $input_name.'_'.strval($i), $a);
@@ -69,7 +66,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
     }else{
         echo "User does not exist";
     }
-}else if($_SERVER['REQUEST_METHOD'] == 'POST'){
+}else if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['question_1'])){
     $string_type = "string";
     $answer_1 = $_POST['question_1'];
     $answer_2 = $_POST['question_2'];
@@ -81,8 +78,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
             $security_questions=sprintf('
                 <div class="row justify-content-center m-4">
                     <div class="col-6">
-                        <label for="Password">%s</label>
-                        <input name="Password" class="form-control text-center" id="Password" type="text" placeholder="New Password"/>
+                        <div class="row pb-2 justify-content-center"></<label for="Password">%s</label></div>
+                        <div class="row"><input name="Password" class="form-control text-center" id="Password" type="text" placeholder="New Password" required/></div>
                     </div>
                 </div>', $q_row['Email']);
         }else{
@@ -93,8 +90,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
         echo 'Validation failed';
     }
 
-}?>
+}else if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Password'])){
+    $string_type = "string";
+    $password_new = $_POST['Password'];
 
+    if(validate($password_new, $string_type) && validate_pwd($password_new)){
+        $query = 'UPDATE Users SET password=? WHERE id=?';
+        $result = exec_query($query, [password_hash($password, PASSWORD_DEFAULT), (int)$_SESSION['security']['user_id']]);
+        if(!$result){
+            echo 'Failed to change password';
+        }
+    }else {
+        echo 'Failed to change password';
+    }
+
+}
+?>
+<div class="row"></div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
