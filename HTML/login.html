@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+</head>
+
+<body>
+    <h1> Login</h1>
+    <!-- PHP form and method type -->
+    <form action="../PHP/login.php" method="post" enctype="multipart/form-data" id="login-form">
+        <input type="text" name="Email" id="email-field" class="login-form-field" placeholder="Email">
+        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+        <a href="#">Forget password</a>
+        <p>Don't have an account? <a href="#">Register here</a></p>
+        <input type="submit" value="Login" id="login-form-submit">
+    </form>
+    <img src="assests/hearts.png" class="heart" />
+    <img src="assests/hearts.png" class="hearts" />
+</body>
+
+<style>
+    h1 {
+        position: absolute;
+        width: 461px;
+        height: 130px;
+        left: 710px;
+        top: 150px;
+
+        font-family: 'Red Rose';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 40px;
+        line-height: 60px;
+        display: flex;
+        align-items: center;
+        text-align: center;
+
+        color: #000000;
+
+    }
+
+    #login-form {
+        align-self: flex-start;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        left: 640px;
+        top: 300px;
+
+        position: absolute;
+
+
+    }
+
+
+
+    .login-form-field {
+        border: none;
+        margin-bottom: 10px;
+        border-radius: 3px;
+        outline: none;
+        align-items: center;
+        text-align: center;
+        width: 200px;
+    }
+
+    #login-form-submit {
+        align-items: center;
+        text-align: center;
+        background-color: #C75656;
+        font-size: 14px;
+        margin-top: 30px;
+        padding: 16px 20px;
+        border-radius: 30px;
+        border: 1px solid #D4D3E8;
+        text-transform: uppercase;
+        font-weight: 700;
+        width: 50%;
+        line-height: 10px;
+        color: hwb(240 96% 3%);
+        box-shadow: 0px 2px 2px #ac4141;
+
+    }
+
+    #login-form-submit:hover {
+        background-color: #e76c6c;
+        border-color: #e76c6c;
+        transition: 0.3s;
+    }
+
+    input {
+        text-align: center;
+        height: 40px;
+        width: 180px;
+        ;
+    }
+
+    body {
+        background: #FFC0CB;
+        background-image: url(assests/cupid.png);
+        background-repeat: no-repeat;
+        background-size: 1500px 995px;
+        background-blend-mode: soft-light;
+
+    }
+
+    .hearts {
+        position: absolute;
+        top: 350px;
+        left: 825px;
+        width: 90px;
+        height: 60px;
+    }
+
+
+    .heart {
+        position: absolute;
+        width: 90px;
+        height: 60px;
+        top: 265px;
+        left: 610px;
+
+    }
+</style>
