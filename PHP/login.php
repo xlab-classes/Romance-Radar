@@ -1,15 +1,7 @@
 <?php
 
 require './db_api.php';
-
-function validate($value, $type){
-    return !empty($value) && (gettype($value) == $type);
-}
-
-function validate_pwd($password){
-    return preg_match("#.*^(?=.{8,20})(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$#", $password);
-}
-
+require './helper.php';
 #Checking request method
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $string_type = "string";
@@ -18,16 +10,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['Email'];
     $password = $_POST['Password'];
 
-
-    echo validate($email, $string_type);
-    echo validate($password, $string_type);
-    echo validate_pwd($password);
-
     #Validating email and password
     if (validate($email, $string_type) &&
-        validate($password, $string_type) &&
-        validate_pwd($password)){
-            sign_in($email, password_hash($password, PASSWORD_DEFAULT));
+        validate($password, $string_type)){
+            if(sign_in($email, password_hash($password, PASSWORD_DEFAULT)) && $user = getUser(NULL, $email)->fetch_assoc()){
+                session_start();
+                $_SESSION['user'] = $user;
+            }else{
+                echo 'error occured';
+            }
         }else{
             echo "Failed to login";
         }
