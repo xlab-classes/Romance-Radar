@@ -13,7 +13,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     #Validating email and password
     if (validate($email, $string_type) &&
         validate($password, $string_type)){
-            if(sign_in($email, password_hash($password, PASSWORD_DEFAULT)) && $user = getUser(NULL, $email)->fetch_assoc()){
+            if(sign_in($email, $password) && $user = getUser(NULL, $email)->fetch_assoc()){
                 session_start();
                 $_SESSION['user'] = $user;
             }else{
