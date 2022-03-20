@@ -117,7 +117,8 @@ function exec_query($query, $data) {
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
     $result = getUser($user_id, NULL);
-    return $result->num_rows > 0;
+    if ($result == NULL) return false;
+    else return $result->num_rows > 0;
 }
 
 # Check if a $user_id's password matches $password
@@ -167,7 +168,6 @@ function sign_in($email, $password) {
     }
     else if (password_verify($password, $row['password'])) {
         // NEED TO SET TO ONLINE. Jesus swastik.
-        
         return 1;
     }
     # Couldn't get results from query
@@ -212,9 +212,9 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
-function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
+function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Make sure none of the required fields are empty
-    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($city) || empty($zipcode) || empty($bday)) {
         echo "Missing required fields in create_user\n";
         return 0;
     }
@@ -223,18 +223,23 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     $email_used = get_user_id($email);
     
     if ($email_used != 0) {
-        echo "User already exists";
+        echo "User already exists\n";
         return 0;
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday];
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
         return 0;
+    }
+
+    $id = get_user_id($email);
+    if (!initialize_preferences($id)) {
+        echo "Couldn't initialize preferences for new user!\n";
     }
     return 1;
 }
@@ -302,7 +307,7 @@ function add_connection_request($sent_from, $sent_to) {
     $sent_to = getUser($sent_to, NULL)->fetch_assoc();
     
     if(!$sent_from && !$sent_to){
-        echo "Fault in quering";
+        echo "Fault in querying\n";
     }
     remove_connection_request($sent_from['id']);
     remove_connection_request($sent_to['id']);
@@ -359,13 +364,13 @@ function get_preferences($user_id) {
     }
 
     $preferences = [];
-    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
+    $preferences_categories = array('Food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
     
     foreach($preferences_categories as $cat){
         $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
         $result = exec_query($query, [$user_id]);
         if(!$result || $result->num_rows == 0){
-            echo "records don't exist";
+            echo "Records don't exist\n";
             return [];
         }
         $preferences[$cat] = $result->fetch_assoc();
@@ -379,7 +384,7 @@ function get_preferences($user_id) {
 function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
-                     'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Food' => array('restaraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
                      'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
@@ -391,19 +396,19 @@ function update_preferences($user_id, $preferences) {
     }
     foreach($preferences as $cat => $changes){
         if(!isset($preferences_categories[$cat])){
-            echo 'Category does not exist';
+            echo 'Category does not exist\n';
             return 0;
         }
 
         foreach($changes as $sub_cat => $value){
-            if(!isset($preferences_categories[$cat][$value])){
-                echo 'Sub-Categoty does not exist';
+            if(!isset($preferences_categories[$cat][$sub_cat])){
+                echo 'Sub-Category does not exist\n';
                 return 0;
             }
             $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
             $result = exec_query($query, [$value, $user_id]);
             if (!$result){
-                echo 'No executed';
+                echo 'No executed\n';
             }
         }
     }
@@ -418,7 +423,7 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
         'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
@@ -429,9 +434,36 @@ function initialize_preferences($user_id){
         $query = sprintf("INSERT INTO %s %s VALUES %s", $cat, $placeholders[0], $placeholders[1]);
         $result = exec_query($query, array_merge($placeholders[2], [$user_id]));
         if(!$result){
-            echo "Error in execution";
+            echo "Error in execution\n";
             return 0;
         }
     }
+    return 1;
+}
+
+function get_question($question_id){
+    $query = 'SELECT question FROM Security_questions WHERE id=?';
+    $result = exec_query($query, [(int)$question_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No question Found');
+    }
+
+    return $result->fetch_assoc()['question'];
+}
+
+function addSecurityQuestions($user_id, $data){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    
+    $query = "INSERT INTO User_security_questions(user_id, question_id_1, question_id_2, question_id_3, answer_1, answer_2, answer_3) VALUES (?,?,?,?,?,?,?)";
+
+    if(!exec_query($query, $data)){
+        echo 'Could not insert security questions';
+        return 0;
+    }
+
     return 1;
 }
