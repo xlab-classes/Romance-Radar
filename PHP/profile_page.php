@@ -63,13 +63,13 @@ function update_address($id, $zip) {
 function update_email($id, $email) {
 
     # Checking the validtiy of the inputs
-    if(empty($user_id) || empty($email)) {
+    if(empty($id) || empty($email)) {
         echo "User ID or email cannot be empty.";
         return 0;
     }
     
-    # Check if the user with $user_id exists
-    $user = user_exists($user_id);
+    # Check if the user with $id exists
+    $user = user_exists($id);
     if ($user == false) {
         echo "User does not exist. Cannot update email.";
         return 0;
