@@ -236,6 +236,11 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
         echo "Couldn't insert user into database\n";
         return 0;
     }
+
+    $id = get_used_id($email);
+    if (!initialize_preferences($id)) {
+        echo "Couldn't initialize preferences for new user!";
+    }
     return 1;
 }
 
