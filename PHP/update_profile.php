@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = (int) $_SESSION["user"]["id"];
     if (!$user_id) {
         exit();
-        }     // User not logged in
+    }     // User not logged in
 
 
     /**** PERSONAL INFORMATION ****/
@@ -70,9 +70,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Entertainment preferences
     if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
-        $prefs['Entertainment']['concerts'] = "1";
-        $prefs['Entertainment']['hiking'] = "1";
-        $prefs['Entertainment']['bars'] = "1";
+        $prefs['Entertainment']['concerts'] = true;
+        $prefs['Entertainment']['hiking'] = true;
+        $prefs['Entertainment']['bars'] = true;
     }
     else {
         if (!empty($_POST["Concerts"])) {
@@ -88,10 +88,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Food preferences
     if (!empty($_POST["Food"])) {  // If true, allow all food types
-        $prefs["Food"]['resturants'] = "1";
-        $prefs["Food"]['cafes'] = "1";
-        $prefs["Food"]['fast_food'] = "1";
-        $prefs["food"]['alcohol'] = "1";
+        $prefs["Food"]['resturants'] = true;
+        $prefs["Food"]['cafes'] = true;
+        $prefs["Food"]['fast_food'] = true;
+        $prefs["food"]['alcohol'] = true;
     }
     else {
         if (!empty($_POST["Restaurant"])) {
@@ -110,9 +110,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Venue preferences
     if (!empty($_POST["Venue"])) {  // If true, allow all venues
-        $prefs['Venue']['indoors'] = "1";
-        $prefs['Venue']['outdoors'] = "1";
-        $prefs['Venue']['social_events'] = "1";
+        $prefs['Venue']['indoors'] = true;
+        $prefs['Venue']['outdoors'] = true;
+        $prefs['Venue']['social_events'] = true;
     }
     else {
         if (!empty($_POST["Indoors"])) {
@@ -128,9 +128,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // Time preferences
     if (!empty($_POST["Date_time"])) {  // If true, allow all times
-        $prefs['Date_time']['morning'] = "1";
-        $prefs['Date_time']['afternoon'] = "1";
-        $prefs['Date_time']['evening'] = "1";
+        $prefs['Date_time']['morning'] = true;
+        $prefs['Date_time']['afternoon'] = true;
+        $prefs['Date_time']['evening'] = true;
     }
     else {
         if (!empty($_POST["Morning"])) {
