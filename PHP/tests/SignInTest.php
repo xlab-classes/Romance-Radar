@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
-require_once('db_api.php');
+require_once('../db_api.php');
 # Create a PHPUnit test case class
 final class SignInTest extends TestCase
 {

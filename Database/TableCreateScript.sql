@@ -109,3 +109,25 @@ CREATE TABLE IF NOT EXISTS Connection_requests(
     FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS Security_questions(
+    id INT AUTO_INCREMENT,
+    question VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS User_security_questions(
+    id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    question_id_1 INT,
+    question_id_2 INT,
+    question_id_3 INT,
+    answer_1 VARCHAR(100) NOT NULL,
+    answer_2 VARCHAR(100) NOT NULL,
+    answer_3 VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id_1) REFERENCES Security_questions(id) ON DELETE SET NULL,
+    FOREIGN KEY (question_id_2) REFERENCES Security_questions(id) ON DELETE SET NULL,
+    FOREIGN KEY (question_id_3) REFERENCES Security_questions(id) ON DELETE SET NULL
+);

@@ -120,6 +120,17 @@ function user_exists($user_id) {
     return $result->num_rows > 0;
 }
 
+# Check if a $user_id's password matches $password
+function check_password($user_id, $password) {
+    if (!user_exists($user_id)) return 1;           // User doesn't exist
+    
+    $result = exec_query("SELECT * FROM Users WHERE $user_id=? AND $password=?",
+        [$user_id, password_hash($password)]);
+
+    if ($result == NULL) return 1;                  // Err executing sql
+    else if ($result->num_rows == 0) return -1;     // No matching user id and password
+    else return 0;                                  // Password matches
+}
 
 # Get this user's ID by their email
 function get_user_id($email) {
@@ -156,7 +167,6 @@ function sign_in($email, $password) {
     }
     else if (password_verify($password, $row['password'])) {
         // NEED TO SET TO ONLINE. Jesus swastik.
-        
         return 1;
     }
     # Couldn't get results from query
@@ -224,6 +234,11 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     if (!$result) {
         echo "Couldn't insert user into database\n";
         return 0;
+    }
+
+    $id = get_user_id($email);
+    if (!initialize_preferences($id)) {
+        echo "Couldn't initialize preferences for new user!";
     }
     return 1;
 }
@@ -368,8 +383,8 @@ function get_preferences($user_id) {
 function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
-                     'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
-                     'Entertainment' => array('concerts' => 1, 'hiking'=>1),
+                     'Food' => array('restaraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
                      'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
@@ -407,7 +422,7 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
         'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
@@ -422,5 +437,32 @@ function initialize_preferences($user_id){
             return 0;
         }
     }
+    return 1;
+}
+
+function get_question($question_id){
+    $query = 'SELECT question FROM Security_questions WHERE id=?';
+    $result = exec_query($query, [(int)$question_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No question Found');
+    }
+
+    return $result->fetch_assoc()['question'];
+}
+
+function addSecurityQuestions($user_id, $data){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    
+    $query = "INSERT INTO User_security_questions(user_id, question_id_1, question_id_2, question_id_3, answer_1, answer_2, answer_3) VALUES (?,?,?,?,?,?,?)";
+
+    if(!exec_query($query, $data)){
+        echo 'Could not insert security questions';
+        return 0;
+    }
+
     return 1;
 }
