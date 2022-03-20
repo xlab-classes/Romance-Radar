@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS Users(
     password VARCHAR(100) NOT NULL,
     user_picture VARCHAR(100) NOT NULL,
     street_address VARCHAR(100) NOT NULL,
-    city VARCHAR(100) NOT NULL,
     zipcode INT NOT NULL,
     birthday DATE NOT NULL,
+    city VARCHAR(100) NOT NULL,
     partner INT,
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
