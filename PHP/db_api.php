@@ -425,7 +425,7 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
         'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
