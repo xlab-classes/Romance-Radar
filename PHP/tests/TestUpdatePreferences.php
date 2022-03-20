@@ -47,7 +47,7 @@ final class TestUpdatePreferences extends TestCase
     }
 
     // Test updating max cost, max distane, preferred date length
-    function testUpdatePreferences(): void
+    function testBasic(): void
     {
         $data = array();
         $data["MaxCost"] = "100";
