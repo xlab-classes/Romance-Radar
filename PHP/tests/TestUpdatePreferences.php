@@ -11,13 +11,14 @@ final class TestUpdatePreferences extends TestCase
     private $email = "nunya@gmail.com";
     private $pass = "password";
     private $addr = "123 Cherry Road";
-    private $zip = "14224";
+    private $city = "Buffalo";
+    private $zip = "14224"
     private $bday = "1999/12/12";
     private $user_id;
 
     function setUp(): void
     {
-        create_user($this->name, $this->email, $this->pass, $this->addr, $this->zip, $this->bday);
+        create_user($this->name, $this->email, $this->pass, $this->addr, $this->city, $this->zip, $this->bday);
         $this->user_id = get_user_id($this->email);
     }
 

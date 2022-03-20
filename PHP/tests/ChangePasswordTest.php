@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
     }
     public function testUpdatePassword(): void
     {
-        $create_result = create_user("Jon Doe",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"123",14214,"1963/12/13");
+        $create_result = create_user("Jon Doe",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"123", "Buffalo", 14214,"1963/12/13");
 
         
 
@@ -56,7 +56,7 @@ use PHPUnit\Framework\TestCase;
 
     public function testUpdatePasswordSame(): void
     {
-        $create_result = create_user("Taro Tanaka",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"address",11367,"2000/01/01");
+        $create_result = create_user("Taro Tanaka",$this->email_,password_hash($this->password_,PASSWORD_DEFAULT),"address", "Buffalo", 11367,"2000/01/01");
 
         # Check that the current users password is correct
         $result = exec_query("SELECT * FROM Users WHERE email=?", ["$this->email_"]);

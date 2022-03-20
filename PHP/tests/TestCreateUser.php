@@ -15,7 +15,7 @@ final class TestCreateUser extends TestCase
     public function testUserDoesntExist(): void
     {
         $create_result = create_user(
-            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd",
+            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", "Buffalo",
             14541, "1980/01/12");
         $this->assertSame(1, $create_result);
 
@@ -39,11 +39,11 @@ final class TestCreateUser extends TestCase
     public function testUserExists(): void
     {
         $create_result = create_user(
-            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", 14541, "1980/01/12");
+            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", "Buffalo", 14541, "1980/01/12");
         
         // Attempt to create the same user a second time
         $create_result = create_user(
-            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", 14541, "1980/01/12");
+            "Jon Doe", "jon.doe@gmail.com", "password", "123 Apple Orchard Rd", "Buffalo", 14541, "1980/01/12");
         
         # The call to create_user should fail
         $this->assertSame(0, $create_result);

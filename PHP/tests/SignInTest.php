@@ -19,7 +19,7 @@ final class SignInTest extends TestCase
         # Create a test user
         create_user(
             "Jon Doe", $this->email_, password_hash($this->password_,PASSWORD_DEFAULT), "123 Apple Orchard Rd",
-            14541, "1980/01/12");
+            "Buffalo", 14541, "1980/01/12");
 
         # Check that the user is in the database
         $user = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
@@ -60,7 +60,7 @@ final class SignInTest extends TestCase
     {
 
         # Create a test user
-        create_user("Jordan Grant", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "98-38 57th Ave", 11368, "2000/04/24");
+        create_user("Jordan Grant", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "98-38 57th Ave", "Buffalo", 11368, "2000/04/24");
 
         # Test that the user was created successfully and is in the database
         $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
@@ -113,7 +113,7 @@ final class SignInTest extends TestCase
         $this->assertEquals(0, $result);
 
         # Create the user that doesn't exist
-        create_user("abcdefghijklmnop", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "b", 14214, "2000/04/24");
+        create_user("abcdefghijklmnop", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "b", "Buffalo", 14214, "2000/04/24");
 
         # Test that the user was created
         $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
