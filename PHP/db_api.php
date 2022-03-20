@@ -370,7 +370,7 @@ function get_preferences($user_id) {
         $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
         $result = exec_query($query, [$user_id]);
         if(!$result || $result->num_rows == 0){
-            echo "records don't exist";
+            echo "Records don't exist\n";
             return [];
         }
         $preferences[$cat] = $result->fetch_assoc();
@@ -396,19 +396,19 @@ function update_preferences($user_id, $preferences) {
     }
     foreach($preferences as $cat => $changes){
         if(!isset($preferences_categories[$cat])){
-            echo 'Category does not exist';
+            echo 'Category does not exist\n';
             return 0;
         }
 
         foreach($changes as $sub_cat => $value){
             if(!isset($preferences_categories[$cat][$sub_cat])){
-                echo 'Sub-Categoty does not exist';
+                echo 'Sub-Category does not exist\n';
                 return 0;
             }
             $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
             $result = exec_query($query, [$value, $user_id]);
             if (!$result){
-                echo 'No executed';
+                echo 'No executed\n';
             }
         }
     }
