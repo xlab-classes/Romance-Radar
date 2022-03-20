@@ -17,20 +17,14 @@ final class TestUpdatePreferences extends TestCase
 
     function sendRequestToServer($data): void
     {
-        $url = "https://localhost/CSE442-542/2022-Spring/cse-442j/PHP/update_profile.php";
-        $options = array(
-            "http" => array(
-                "header" => "Content-type: application/x-www-form-urlencoded\r\n",
-                "method" => "POST",
-                "content" => http_build_query($data)
-            )
-        );
+        $url = "https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442j/PHP/update_profile.php";
+        $ch = curl_init($url);
 
-        $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-        if ($result == FALSE) {
-            echo "Uh oh.\n";
-        }
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
     }
 
     function setUp(): void
