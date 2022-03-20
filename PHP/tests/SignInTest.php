@@ -56,46 +56,6 @@ final class SignInTest extends TestCase
     }
 
 
-    public function testSignInAlreadyLoggedIn(): void
-    {
-
-        # Create a test user
-        create_user("Jordan Grant", $this->email_, password_hash($this->password_, PASSWORD_DEFAULT), "98-38 57th Ave", "Buffalo", 11368, "2000/04/24");
-
-        # Test that the user was created successfully and is in the database
-        $result = exec_query("SELECT * FROM Users WHERE email=?", [$this->email_]);
-        $this->assertNotNull($result);
-        $this->assertNotFalse($result);
-        $this->assertSame(1, $result->num_rows, "Wrong number of rows in testSignInAlreadyLoggedIn");
-
-        # Turn user into an associative array
-        $arr = $result->fetch_assoc();
-        $this->assertNotNull($arr);
-
-        # Check that the user's info is correct
-        $this->assertSame($arr["name"], "Jordan Grant");
-        $this->assertSame($arr["email"], $this->email_);
-        $this->assertTrue(password_verify($this->password_ ,$arr["password"]));
-        $this->assertSame($arr["street_address"], "98-38 57th Ave");
-
-        # If this fails you can't sign in at all
-        $this->assertTrue(password_verify($this->password_, $arr["password"]));
-
-        # Sign in the dummy user again
-        $result = sign_in($this->email_, $this->password_);
-
-        # Check that the user is signed in
-        $this->assertEquals(1, $result, "Couldn't sign in user in testSignInAlreadyLoggedIn");
-
-        # Try to sign in the dummy user again
-        $result = sign_in($this->email_, $this->password_);
-
-        # Check that this second sign in attempt fails
-        $this->assertEquals(0, $result, "Expected failure succeeded when signing in in testSignInAlreadyLoggedIn");
-
-        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
-    }
-
     /*
         This function will tests in the case of a user that doesn't exist is trying to sign in.
     */
