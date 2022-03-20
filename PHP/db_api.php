@@ -212,9 +212,9 @@ function update_password($user_id, $old_pwd, $new_pwd) {
 
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
-function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
+function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Make sure none of the required fields are empty
-    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($zipcode) || empty($bday)) {
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($city) || empty($zipcode) || empty($bday)) {
         echo "Missing required fields in create_user\n";
         return 0;
     }
@@ -228,9 +228,9 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday];
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";

@@ -16,11 +16,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if(sign_in($email, $password) && $user = getUser(NULL, $email)->fetch_assoc()){
                 session_start();
                 $_SESSION['user'] = $user;
+                header('Location: ../HTML/tempProfile.php');
+                exit();
             }else{
-                echo 'error occured';
+                exit('error occured');
             }
         }else{
-            echo "Failed to login";
+            exit("Failed to login");
         }
 }
 header("Location: ../HTML/login.html");

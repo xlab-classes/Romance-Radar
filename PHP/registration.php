@@ -40,7 +40,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         validate($answer_2, $string_type) &&
         validate($answer_3, $string_type)
         ){
-            if(!create_user($name, $email, password_hash($password, PASSWORD_DEFAULT), $address, $zip, $bday)){
+            if(!create_user($name, $email, password_hash($password, PASSWORD_DEFAULT), $address, $city, $zip, $bday)){
                 exit('Failed to create a user');
             }
             $user_id = get_user_id($email);
@@ -49,10 +49,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             );
             $sq = addSecurityQuestions($user_id, $data);
             if(!$sq){
-                echo 'Failed to insert security questions';
+                exit('Failed to insert security questions');
             }
+            header("Location: ../HTML/login.html");
+            exit();
         }else{
             echo "Failed to register";
         }
+}else{
+    header("Location: ../HTML/registration.php");
 }
-header("Location: ../HTML/registration.php");

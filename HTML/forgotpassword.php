@@ -71,11 +71,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                     </div>
                 </div>', $q_row['Email']);
         }else{
-            $security_questions=sprintf('
-            <div class="col-6">
-                <div class="row pb-2 justify-content-center"></<label for="Error">%s</label></div>
-            </div>
-            ', 'Wrong Answer');
+            echo 'Failed';
         }
     }else{
         echo 'Validation failed';
@@ -92,7 +88,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
             echo 'Failed to change password';
         }else{
             $password_changed = TRUE;
-            $security_questions = '';
         }
     }else {
         echo 'Failed to change password';
@@ -170,6 +165,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                     </div>';
                     }else{
                         echo 'Password Changed!';
+                        echo '
+                        <div class="row justify-content-center m-3">
+                            <div class="col-3">
+                            <a href="./login.html">Return to Login</a>    
+                            </div>
+                        </div>';
                     }
                     ?>
                 </form>
