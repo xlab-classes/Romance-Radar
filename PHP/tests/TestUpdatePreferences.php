@@ -53,8 +53,6 @@ final class TestUpdatePreferences extends TestCase
         $data["MaxDist"] = "10";
         $data["PreDateLen"] = "2";
 
-        $_SESSION["user"]["id"] = $user_id;
-
         sendRequestToServer($data);
 
         $prefs = get_preferences($this->user_id);
