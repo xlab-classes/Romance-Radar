@@ -237,7 +237,7 @@ function create_user($name, $email, $pwd, $addr, $zipcode, $bday) {
         return 0;
     }
 
-    $id = get_used_id($email);
+    $id = get_user_id($email);
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!";
     }
