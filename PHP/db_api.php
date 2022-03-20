@@ -380,7 +380,7 @@ function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
                      'Food' => array('restraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
-                     'Entertainment' => array('concerts' => 1, 'hiking'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
                      'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
