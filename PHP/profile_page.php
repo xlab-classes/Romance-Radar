@@ -43,7 +43,7 @@ function update_name($id, $name) {
 // TODO: Update other aspects of the address 
 function update_address($id, $zip) {
 
-    if (empty($id)  || empty($zip) ) {
+    if (empty($id) || empty($address) || empty($zip) || empty($city)) {
         return 0;       // Can't have empty inputs
     }
 
@@ -87,7 +87,7 @@ function update_email($id, $email) {
     $query = "UPDATE users SET email=? WHERE id=?";
 
     # Check if the query was successful
-    $result = exec_query($query, [$email, $id]);
+    $result = exec_query($query, [$email, $user_id]);
     if (!$result) {
         echo "Failed to update email. The query was not successful.";
         return 0;
