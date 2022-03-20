@@ -1,6 +1,6 @@
 <?php
 
-require_once "./db_api.php"
+require_once "./db_api.php";
 
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
