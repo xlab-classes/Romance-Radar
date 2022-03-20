@@ -22,8 +22,6 @@ TRUNCATE TABLE Connection_requests;
 
 TRUNCATE TABLE User_security_questions;
 
-TRUNCATE TABLE Security_questions;
-
 TRUNCATE TABLE Users;
 
 SET FOREIGN_KEY_CHECKS=1;

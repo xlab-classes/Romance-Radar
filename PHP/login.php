@@ -16,6 +16,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if(sign_in($email, $password) && $user = getUser(NULL, $email)->fetch_assoc()){
                 session_start();
                 $_SESSION['user'] = $user;
+                header('Location: ../HTML/tempProfile.php');
+                exit();
             }else{
                 exit('error occured');
             }
