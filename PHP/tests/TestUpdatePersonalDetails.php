@@ -27,8 +27,8 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertNotNull($user, "User was not created.");
 
         # Serach for the user in the database via their email.
-        $user = SELECT * FROM  Users WHERE email = $this->email;
-
+        $user = exec_query("SELECT * FROM Users WHERE email=?" , [$this->email]);
+        
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
@@ -41,7 +41,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals(1, $user, "User was not updated.");
 
         # Serach for the user in the database via their email again.
-        $user = SELECT * FROM Users WHERE email = $this->email;
+        $user = exec_query("SELECT * FROM Users WHERE email = $this->email");
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -61,7 +61,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query('SELECT * FROM Users WHERE user_id =?', [get_user_id($this->email)]);
        
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -70,11 +70,11 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals($this->email, $user['email'], "The user's email is not correct.");
 
         # Update the user's email.
-        $user = update_email($user, "johndoe@buffalo.edu"
+        $user = update_email($user, "johndoe@buffalo.edu");
         # Assert that $user is 1. Indcicating that the user's email was updated.
 
         # Serach for the user in the database again via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query("SELECT * FROM Users WHERE user_id =?", [get_user_id($this->email)]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -91,7 +91,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query("SELECT * FROM Users WHERE user_id=?",[get_user_id($this->email)]);
        
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -106,7 +106,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals(1, $user, "The user's date of birth was not updated.");
 
         # Serach for the user in the database again via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query("SELECT * FROM users WHERE user_id =?", [get_user_id($this->email)]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -124,7 +124,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query("SELECT * FROM users WHERE user_id =?", [get_user_id($this->email)]);
        
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -139,7 +139,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals(1, $user, "The user's address was not updated.");
 
         # Serach for the user in the database again via their user_id.
-        $user = SELECT * FROM users WHERE user_id = get_user_id($this->email);
+        $user = exec_query("SELECT * FROM users WHERE user_id =?" ,[get_user_id($this->email)]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
