@@ -168,7 +168,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
                         echo '
                         <div class="row justify-content-center m-3">
                             <div class="col-3">
-                            <a href="./login">Return to Login</a>    
+                            <a href="./login.html">Return to Login</a>    
                             </div>
                         </div>';
                     }

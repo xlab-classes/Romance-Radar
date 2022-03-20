@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS Users(
     password VARCHAR(100) NOT NULL,
     user_picture VARCHAR(100) NOT NULL,
     street_address VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
     zipcode INT NOT NULL,
     birthday DATE NOT NULL,
     partner INT,
