@@ -27,7 +27,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertNotNull($user, "User was not created.");
 
         # Serach for the user in the database via their email.
-        $user = SELECT * FROM users WHERE email = $this->email;
+        $user = SELECT * FROM  Users WHERE email = $this->email;
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
@@ -41,7 +41,7 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals(1, $user, "User was not updated.");
 
         # Serach for the user in the database via their email again.
-        $user = SELECT * FROM users WHERE email = $this->email;
+        $user = SELECT * FROM Users WHERE email = $this->email;
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
