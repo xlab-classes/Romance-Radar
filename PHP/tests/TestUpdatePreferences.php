@@ -31,16 +31,16 @@ final class TestUpdatePreferences extends TestCase
     function testBasic(): void
     {
         $data = array();
-        $data["Date_preferences"]["cost"] = "100";
-        $data["Date_preferences"]["distance"] = "10";
-        $data["Date_preferences"]["length"] = "2";
+        $data["Date_preferences"]["cost"] = 100;
+        $data["Date_preferences"]["distance"] = 10;
+        $data["Date_preferences"]["length"] = 2;
 
         update_preferences($this->user_id, $data);
 
         $prefs = get_preferences($this->user_id);
-        $this->assertSame($prefs["Date_preferences"]["cost"], "100");
-        $this->assertSame($prefs["Date_preferences"]["distance"], "10");
-        $this->assertSame($prefs["Date_preferences"]["length"], "2");
+        $this->assertSame($prefs["Date_preferences"]["cost"], 100);
+        $this->assertSame($prefs["Date_preferences"]["distance"], 10);
+        $this->assertSame($prefs["Date_preferences"]["length"], 2);
     }
 
 }
