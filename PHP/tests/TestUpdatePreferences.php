@@ -30,9 +30,9 @@ final class TestUpdatePreferences extends TestCase
     function testBasic(): void
     {
         $data = array();
-        $data["MaxCost"] = "100";
-        $data["MaxDist"] = "10";
-        $data["PreDateLen"] = "2";
+        $data["cost"] = "100";
+        $data["distance"] = "10";
+        $data["length"] = "2";
 
         update_preferences($this->user_id, $data);
 
