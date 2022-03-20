@@ -53,7 +53,7 @@ final class TestUpdatePreferences extends TestCase
         $data["MaxDist"] = "10";
         $data["PreDateLen"] = "2";
 
-        sendRequestToServer($data);
+        $this->sendRequestToServer($data);
 
         $prefs = get_preferences($this->user_id);
         $this->assertSame($prefs["Date_preferences"]["cost"], "100");
