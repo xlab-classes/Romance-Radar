@@ -57,7 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Preferences for cost,distance,and time
     if (!empty($_POST["MaxCost"])) {
+        echo "\nGot max cost!\n";
         $prefs['Date_preferences']['cost'] = $_POST['MaxCost'];
+    }
+    else {
+        echo "\n NO max cost!\n";
     }
     if (!empty($_POST["MaxDist"]) {
         $prefs['Date_preferences']['distance'] = $_POST['MaxDist'];
