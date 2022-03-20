@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Time preferences
-    if (!empty($_POST["Date_time")]) {  // If true, allow all times
+    if (!empty($_POST["Date_time"])) {  // If true, allow all times
         $prefs['Date_time']['morning'] = "1";
         $prefs['Date_time']['afternoon'] = "1";
         $prefs['Date_time']['evening'] = "1";
