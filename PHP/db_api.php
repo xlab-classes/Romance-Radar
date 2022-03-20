@@ -405,7 +405,7 @@ function update_preferences($user_id, $preferences) {
                 echo 'Sub-Categoty does not exist';
                 return 0;
             }
-            $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
+            $query = sprintf("UPDATE %s SET %s=? WHERE id=?", $cat, $sub_cat);
             $result = exec_query($query, [$value, $user_id]);
             if (!$result){
                 echo 'No executed';
