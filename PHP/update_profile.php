@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Entertainment preferences
-    if (!empty($_POST["Entertainment")]) {  // If true, allow all entertainment types
+    if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
         $prefs['Entertainment']['concerts'] = "1";
         $prefs['Entertainment']['hiking'] = "1";
         $prefs['Entertainment']['bars'] = "1";
@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Food preferences
-    if (!empty($_POST["Food")]) {  // If true, allow all food types
+    if (!empty($_POST["Food"])) {  // If true, allow all food types
         $prefs["Food"]['resturants'] = "1";
         $prefs["Food"]['cafes'] = "1";
         $prefs["Food"]['fast_food'] = "1";
