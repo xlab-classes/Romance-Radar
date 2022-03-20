@@ -359,7 +359,7 @@ function get_preferences($user_id) {
     }
 
     $preferences = [];
-    $preferences_categories = array('food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
+    $preferences_categories = array('Food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
     
     foreach($preferences_categories as $cat){
         $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);

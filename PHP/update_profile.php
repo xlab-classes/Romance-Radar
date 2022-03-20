@@ -3,6 +3,7 @@
 require "db_api.php";
 require "profile_page.php";
 
+// TODO: Clear inputs after using??
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Get user ID and make sure user is logged in
@@ -49,61 +50,96 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     /**** PREFERENCES ****/
-    $prefs = array();
+    $prefs = get_preferences($user_id);
+
+    # Only update preferences if they are not empty
+    
 
     // Preferences for cost,distance,and time
-    $prefs['Date_preferences']['cost'] = $_POST['MaxCost'];
-    $prefs['Date_preferences']['distance'] = $_POST['MaxDist'];
-    $prefs['Date_preferences']['length'] = $_POST['PreDateLen'];
+    if (!empty($_POST["MaxCost"])) {
+        $prefs['Date_preferences']['cost'] = $_POST['MaxCost'];
+    }
+    if (!empty($_POST["MaxDist"]) {
+        $prefs['Date_preferences']['distance'] = $_POST['MaxDist'];
+    }
+    if (!empty($_POST["PreDateLen"])) {
+        $prefs['Date_preferences']['length'] = $_POST['PreDateLen'];
+    }
 
     // Entertainment preferences
-    if ($_POST["Entertainment"]) {  // If true, allow all entertainment types
+    if (!empty($_POST["Entertainment")]) {  // If true, allow all entertainment types
         $prefs['Entertainment']['concerts'] = "1";
         $prefs['Entertainment']['hiking'] = "1";
         $prefs['Entertainment']['bars'] = "1";
     }
     else {
-        $prefs['Entertainment']['concerts'] = $_POST["Concerts"];
-        $prefs['Entertainment']['hiking'] = $_POST["Hiking"];
-        $prefs['Entertainment']['bars'] = $_POST["Bars"];
+        if (!empty($_POST["Concerts"])) {
+            $prefs['Entertainment']['concerts'] = $_POST["Concerts"];
+        }
+        if (!empty($_POST["Hiking"])) {
+            $prefs['Entertainment']['hiking'] = $_POST["Hiking"];
+        }
+        if (!empty($_POST["Bars"])) {
+            $prefs['Entertainment']['bars'] = $_POST["Bars"];
+        }
     }
 
     // Food preferences
-    if ($_POST["Food"]) {  // If true, allow all food types
+    if (!empty($_POST["Food")]) {  // If true, allow all food types
         $prefs["Food"]['resturants'] = "1";
         $prefs["Food"]['cafes'] = "1";
         $prefs["Food"]['fast_food'] = "1";
         $prefs["food"]['alcohol'] = "1";
     }
     else {
-        $prefs["Food"]['resturants'] = $_POST["Restaurant"];
-        $prefs["Food"]['cafes'] = $_POST["Cafe"];
-        $prefs["Food"]['fast_food'] = $_POST["FastFood"];
-        $prefs["food"]['alcohol'] = $_POST["Alcohol"];
+        if (!empty($_POST["Restaurant"])) {
+            $prefs["Food"]['resturants'] = $_POST["Restaurant"];
+        }
+        if (!empty($_POST["Cafe"])) {
+            $prefs["Food"]['cafes'] = $_POST["Cafe"];
+        }
+        if (!empty($_POST["FastFood"])) {
+            $prefs["Food"]['fast_food'] = $_POST["FastFood"];
+        }
+        if (!empty($_POST["Alcohol"])) {
+            $prefs["food"]['alcohol'] = $_POST["Alcohol"];
+        }
     }
     
     // Venue preferences
-    if ($venue = $_POST["Venue"]) {  // If true, allow all venues
+    if (!empty($_POST["Venue")]) {  // If true, allow all venues
         $prefs['Venue']['indoors'] = "1";
         $prefs['Venue']['outdoors'] = "1";
         $prefs['Venue']['social_events'] = "1";
     }
     else {
-        $prefs['Venue']['indoors'] = $_POST["Indoors"];
-        $prefs['Venue']['outdoors'] = $_POST["Outdoors"];
-        $prefs['Venue']['social_events'] = $_POST["SocialEvents"];
+        if (!empty($_POST["Indoors"])) {
+            $prefs['Venue']['indoors'] = $_POST["Indoors"];
+        }
+        if (!empty($_POST["Outdoors"])) {
+            $prefs['Venue']['outdoors'] = $_POST["Outdoors"];
+        }
+        if (!empty($_POST["SocialEvents"])) {
+            $prefs['Venue']['social_events'] = $_POST["SocialEvents"];
+        }
     }
     
     // Time preferences
-    if ($_POST["Anytime"]) {  // If true, allow all times
+    if (!empty($_POST["Date_time")]) {  // If true, allow all times
         $prefs['Date_time']['morning'] = "1";
         $prefs['Date_time']['afternoon'] = "1";
         $prefs['Date_time']['evening'] = "1";
     }
     else {
-        $prefs['Date_time']['morning'] = $_POST["Morning"];
-        $prefs['Date_time']['afternoon'] = $_POST["Afternoon"];
-        $prefs['Date_time']['evening'] = $_POST["Evening"];
+        if (!empty($_POST["Morning"])) {
+            $prefs['Date_time']['morning'] = $_POST["Morning"];
+        }
+        if (!empty($_POST["Afternoon"])) {
+            $prefs['Date_time']['afternoon'] = $_POST["Afternoon"];
+        }
+        if (!empty($_POST["Evening"])) {
+            $prefs['Date_time']['evening'] = $_POST["Evening"];
+        }
     }
 
     update_preferences($user_id, $prefs);
