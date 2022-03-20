@@ -91,27 +91,27 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black">Preferred Catagories</h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Entertainment" id="Entertainment">
+                        <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment">
                         <label class="form-check-label text-black h6" for="Entertainment">
                         Entertainment
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Concerts" id="Concerts">
+                        <input class="form-check-input" type="checkbox" value="true" name="Concerts" id="Concerts">
                         <label class="form-check-label text-black h6" for="Concerts">
                         Concerts
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Hiking" id="Hiking">
+                        <input class="form-check-input" type="checkbox" value="true" name="Hiking" id="Hiking">
                         <label class="form-check-label text-black h6" for="Hiking">
                         Hiking
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Bars" id="Bars">
+                        <!-- <input class="form-check-input" type="checkbox" value="true" name="Bars" id="Bars">
                         <label class="form-check-label text-black h6" for="Bars">
                         Bars
-                        </label>
+                        </label> -->
                         </div>
                         </div>
                     </div>
@@ -120,30 +120,30 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4">    </h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Entertainment" id="Entertainment">
+                        <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment">
                         <label class="form-check-label text-black h6" for="Entertainment">
                         Food
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Restaurant" id="Restaurant">
+                        <input class="form-check-input" type="checkbox" value="true" name="Restaurant" id="Restaurant">
                         <label class="form-check-label text-black h6" for="Restaurant">
                         Restaurant
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Cafe" id="Cafe">
+                        <input class="form-check-input" type="checkbox" value="true" name="Cafe" id="Cafe">
                         <label class="form-check-label text-black h6" for="Cafe">
                         Cafe
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="FastFood" id="FastFood">
+                        <input class="form-check-input" type="checkbox" value="true" name="FastFood" id="FastFood">
                         <label class="form-check-label text-black h6" for="FastFood">
                         Fast Food
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Alcohol" id="Alcohol">
+                        <input class="form-check-input" type="checkbox" value="true" name="Alcohol" id="Alcohol">
                         <label class="form-check-label text-black h6" for="Alcohol">
                         Alcohol
                         </label>
@@ -155,24 +155,24 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Venue" id="Venue">
+                        <input class="form-check-input" type="checkbox" value="true" name="Venue" id="Venue">
                         <label class="form-check-label text-black h6" for="Venue">
                         Venue
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Indoors" id="Indoors">
+                        <input class="form-check-input" type="checkbox" value="true" name="Indoors" id="Indoors">
                         <label class="form-check-label text-black h6" for="Indoors">
                         Indoors
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Outdoors" id="Outdoors">
+                        <input class="form-check-input" type="checkbox" value="true" name="Outdoors" id="Outdoors">
                         <label class="form-check-label text-black h6" for="Outdoors">
                         Outdoors
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="SocialEvents" id="SocialEvents">
+                        <input class="form-check-input" type="checkbox" value="true" name="SocialEvents" id="SocialEvents">
                         <label class="form-check-label text-black h6" for="SocialEvents">
                         Social Events
                         </label>
@@ -184,24 +184,24 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Anytime" id="Anytime">
+                        <input class="form-check-input" type="checkbox" value="true" name="Anytime" id="Anytime">
                         <label class="form-check-label text-black h6" for="Anytime">
                         Anytime
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Morning" id="Morning">
+                        <input class="form-check-input" type="checkbox" value="true" name="Morning" id="Morning">
                         <label class="form-check-label text-black h6" for="Morning">
                         Morning
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Afternoon" id="Afternoon">
+                        <input class="form-check-input" type="checkbox" value="true" name="Afternoon" id="Afternoon">
                         <label class="form-check-label text-black h6" for="Afternoon">
                         Afternoon
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" name="Evening" id="Evening">
+                        <input class="form-check-input" type="checkbox" value="true" name="Evening" id="Evening">
                         <label class="form-check-label text-black h6" for="Evening">
                             Evening
                         </label>
