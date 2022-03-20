@@ -4,7 +4,7 @@
 require_once('../db_api.php');
 use PHPUnit\Framework\TestCase;
 
-final class TestUpdatePreferences extends TestCase
+final class TestUpdateProfile extends TestCase
 {
 
     private $name = "Alex Eastman";
