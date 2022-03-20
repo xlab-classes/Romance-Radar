@@ -8,7 +8,7 @@ print("WE OUT HERE \n");
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get user ID and make sure user is logged in
-    start_session();
+    session_start();
     $user_id = (int) $_SESSION["user"]["id"];
     if (!$user_id) {
         print("NO USER WITH THIS ID\n");
@@ -47,7 +47,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
     
     // Update email
-    $email = $email = $_POST['Email'];
+    $email = $email = $_POST['CngEmail'];
     if (!empty($email)) {
         update_email($user_id, $email);
     }
