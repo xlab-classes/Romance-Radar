@@ -1,6 +1,6 @@
 <?php
 
-require './db_api.php';
+require_once 'db_api.php';
 
 // Update a user's first and last name
 // Returns
@@ -22,7 +22,7 @@ function update_name($id, $name) {
     }
 
     # Craft the query
-    $query = "UPDATE users SET name=? WHERE id =?";
+    $query = "UPDATE Users SET name=? WHERE id =?";
 
     # Execute the query
     $result = exec_query($query, [$name, $id]);
@@ -84,10 +84,10 @@ function update_email($id, $email) {
     }
 
     # Craft the query
-    $query = "UPDATE users SET email=? WHERE id=?";
+    $query = "UPDATE Users SET email=? WHERE id=?";
 
     # Check if the query was successful
-    $result = exec_query($query, [$email, $user_id]);
+    $result = exec_query($query, [$email, $id]);
     if (!$result) {
         echo "Failed to update email. The query was not successful.";
         return 0;
@@ -126,7 +126,7 @@ function update_dob($id, $dob) {
     }
 
     // Craft the query
-    $query = "UPDATE users SET dob=? WHERE id=?";
+    $query = "UPDATE Users SET dob=? WHERE id=?";
     
     // Check if the query was successful
     $result = exec_query($query, [$dob, $id]);
