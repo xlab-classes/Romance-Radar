@@ -50,7 +50,9 @@ final class TestUpdatePreferences extends TestCase
         $this->sendRequestToServer($data);
 
         $prefs = get_preferences($this->user_id);
-        echo $prefs;
+        foreach ($prefs as $k=>$v) {
+            echo $k;
+        }
         $this->assertSame($prefs["Date_preferences"]["cost"], "100");
         $this->assertSame($prefs["Date_preferences"]["distance"], "10");
         $this->assertSame($prefs["Date_preferences"]["length"], "2");
