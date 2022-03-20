@@ -213,7 +213,9 @@ if(!isset($_SESSION['user'])){
             <div class="row justify-content-end">
                 <div class="col-4 mt-4 pe-4">
                 <button type="submit" class="btn btn-success">Save Changes</button>
-                <button type="button" class="btn btn-danger">Delete Account</button>
+                </form>
+            <form method="post" action="../PHP/delete_profile.php">
+                <button type="submit" class="btn btn-danger">Delete Account</button>
                 </div>
             </div>
         </form>

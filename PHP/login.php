@@ -19,9 +19,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header('Location: ../HTML/profile_page.php');
                 exit();
             }else{
+                header("Location: ../HTML/login.html");
                 exit('error occured');
             }
         }else{
+            header("Location: ../HTML/login.html");
             exit("Failed to login");
         }
 }

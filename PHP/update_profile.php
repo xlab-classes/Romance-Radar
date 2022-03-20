@@ -2,13 +2,11 @@
 
 require "./profile_page.php";
 
-print("WE OUT HERE \n");
-
 // TODO: Clear inputs after using??
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get user ID and make sure user is logged in
-    start_session();
+    session_start();
     $user_id = (int) $_SESSION["user"]["id"];
     if (!$user_id) {
         print("NO USER WITH THIS ID\n");
@@ -47,27 +45,27 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
     
     // Update email
-    $email = $email = $_POST['Email'];
+    $email = $_POST['CngEmail'];
     if (!empty($email)) {
         update_email($user_id, $email);
     }
 
 
     /**** PREFERENCES ****/
-    $prefs = get_preferences($user_id);
+    $prefs = array();
 
     # Only update preferences if they are not empty
     
 
     // Preferences for cost,distance,and time
     if (!empty($_POST["MaxCost"])) {
-        $prefs['Date_preferences']['cost'] = $_POST['MaxCost'];
+        $prefs['Date_preferences']['cost'] = (int)$_POST['MaxCost'];
     }
     if (!empty($_POST["MaxDist"])) {
-        $prefs['Date_preferences']['distance'] = $_POST['MaxDist'];
+        $prefs['Date_preferences']['distance'] = (int)$_POST['MaxDist'];
     }
     if (!empty($_POST["PreDateLen"])) {
-        $prefs['Date_preferences']['length'] = $_POST['PreDateLen'];
+        $prefs['Date_preferences']['length'] = (int)$_POST['PreDateLen'];
     }
 
     // Entertainment preferences
@@ -150,5 +148,3 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 }
 
 header("Location: ../HTML/profile_page.html");
-
-?>
