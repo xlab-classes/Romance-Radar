@@ -40,7 +40,6 @@ final class TestUpdatePreferences extends TestCase
         update_preferences($this->user_id, $data);
 
         $prefs = get_preferences($this->user_id);
-        print_r($prefs);
         $this->assertSame($prefs["Date_preferences"]["cost"], 100);
         $this->assertSame($prefs["Date_preferences"]["distance"], 10);
         $this->assertSame($prefs["Date_preferences"]["length"], 2);
