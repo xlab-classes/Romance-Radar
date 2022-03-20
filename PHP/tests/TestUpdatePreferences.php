@@ -53,8 +53,7 @@ final class TestUpdatePreferences extends TestCase
         $data["MaxCost"] = "100";
         $data["MaxDist"] = "10";
         $data["PreDateLen"] = "2";
-
-        start_session();
+        
         $_SESSION["user"]["id"] = $user_id;
 
         sendRequestToServer($data);
