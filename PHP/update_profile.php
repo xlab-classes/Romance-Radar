@@ -3,7 +3,7 @@
 require "./profile_page.php";
 
 // TODO: Clear inputs after using??
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get user ID and make sure user is logged in
     start_session();
