@@ -52,8 +52,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit('Failed to insert security questions');
             }
             header("Location: ../HTML/login.html");
+            exit();
         }else{
             echo "Failed to register";
         }
+}else{
+// header("Location: ../HTML/registration.php");
 }
-header("Location: ../HTML/registration.php");
