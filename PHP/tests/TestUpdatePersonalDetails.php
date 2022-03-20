@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
 # Import db_api.php
-require_once('db_api.php');
-require_once('profile_page.php');
+require_once('../db_api.php');
+require_once('../profile_page.php');
 use PHPUnit\Framework\TestCase;
 
 final class TestUpdatePersonalDetails extends TestCase
