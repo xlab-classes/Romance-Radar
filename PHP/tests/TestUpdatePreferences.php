@@ -35,7 +35,6 @@ final class TestUpdatePreferences extends TestCase
 
     function setUp(): void
     {
-        start_session();
         create_user($this->name, $this->email, $this->pass, $this->addr, $this->zip, $this->bday);
         $this->user_id = get_user_id($this->email);
         $_SESSION["user"]["id"] = $this->user_id;
@@ -53,7 +52,7 @@ final class TestUpdatePreferences extends TestCase
         $data["MaxCost"] = "100";
         $data["MaxDist"] = "10";
         $data["PreDateLen"] = "2";
-        
+
         $_SESSION["user"]["id"] = $user_id;
 
         sendRequestToServer($data);
