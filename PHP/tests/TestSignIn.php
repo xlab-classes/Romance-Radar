@@ -2,7 +2,7 @@
 use PHPUnit\Framework\TestCase;
 require_once('../db_api.php');
 # Create a PHPUnit test case class
-final class SignInTest extends TestCase
+final class TestSignIn extends TestCase
 {
 
     public $email_ = "doe.jon@gmail.com";

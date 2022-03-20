@@ -5,7 +5,7 @@ require_once('../db_api.php');
 use PHPUnit\Framework\TestCase;
 
 
- final class ChangePasswordTest extends TestCase {
+ final class TestChangePassword extends TestCase {
 
      # Creating class variables
 
