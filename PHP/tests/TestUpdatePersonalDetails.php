@@ -9,60 +9,67 @@ final class TestUpdatePersonalDetails extends TestCase
 {
     # Class varibles represnetaive of the user's personal information.
     private $name = "John Doe";
-    private $address = "123 Main Street";
+    private $street_address = "123 Main Street";
     private $zip = 12345;
     private $city = "Anytown";
     private $email = "jdoe@faang.co";
     private $password = "password";
-    private $bday = "1990/01/01";
+    private $birthday = "1990/01/01";
+    private $id;
+    private $user;
 
+    function setUp(): void
+    {
+        create_user($this->name, $this->email, $this->password, $this->address, $this->city, $this->zip, $this->bday);
+        $this->id = get_user_id($this->email);
+    }
 
+    function tearDown(): void
+    {
+        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->name, $this->email]);
+    }
+
+    
 
     public function testUpdateName()
     {
-        # Create a new test user.
-        $user = create_user($this->name, $this->address, $this->zip, $this->city, $this->email, $this->password, $this->bday);
-
-        # Assert that the user was created.
-        $this->assertNotNull($user, "User was not created.");
 
         # Serach for the user in the database via their email.
-        $user = exec_query("SELECT * FROM Users WHERE email=?" , [$this->email]);
+        $our_user = exec_query("SELECT * FROM Users WHERE email=?" , [$this->email]);
         
         # Get a assoc array of the user's information.
-        $user = $user->fetch_assoc();
+        $our_user_info = $our_user->fetch_assoc();
 
         # Assert that the user's name is correct.
-        $this->assertEquals($this->name, $user['name']);
+        $this->assertEquals($our_user_info['name'],$this->name, "The user's name is incorrect.");
 
         # Update the user's name.
-        $user = update_name($user, "Jane Doe");
+        $user = update_name(get_user_id($this->email), "Jane Doe");
+
+        $this->name = "Jane Doe";
+        
         # Assert that $user is 1. Indcicating that the user was updated.
         $this->assertEquals(1, $user, "User was not updated.");
 
         # Serach for the user in the database via their email again.
-        $user = exec_query("SELECT * FROM Users WHERE email = $this->email");
+        $user = exec_query("SELECT * FROM Users WHERE email =?", [$this->email]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
         
         $this->assertEquals("Jane Doe", $user['name'], "The user's name was not updated.");
 
-        exec_query("DELETE FROM Users WHERE email=?", [$this->email_]);
-
     }
 
     public function testUpdateEmail()
     {
-        # Create a new test user.
-        $user = create_user($this->name, $this->address, $this->zip, $this->city, $this->email, $this->password, $this->bday);
-
-        # Assert that the user was created.
-        $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = exec_query('SELECT * FROM Users WHERE user_id =?', [get_user_id($this->email)]);
+        $user = exec_query('SELECT * FROM Users WHERE id =?', [$this->id]);
        
+        # assert that the query returned a result.
+        $this->assertNotNull($user);
+
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
@@ -70,81 +77,91 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals($this->email, $user['email'], "The user's email is not correct.");
 
         # Update the user's email.
-        $user = update_email($user, "johndoe@buffalo.edu");
+        $user = update_email($this->id, "johndoe@gmail.com");
         # Assert that $user is 1. Indcicating that the user's email was updated.
 
-        # Serach for the user in the database again via their user_id.
-        $user = exec_query("SELECT * FROM Users WHERE user_id =?", [get_user_id($this->email)]);
+        $this->name = "johndoe@gmail.com";
+
+        # Serach for the user in the database again via their name and password.
+        $user = exec_query("SELECT * FROM Users WHERE email =?", ["johndoe@gmail.com"]);
+        
+        # assert that the query returned a result.
+        $this->assertNotNull($user, "The user was not found.");
 
         # Get a assoc array of the user's information.
-        $user = $user->fetch_assoc();
+        $user_info = $user->fetch_assoc();
 
-        $this->assertEquals("johndoe@buffalo.edu", $user['email'], "The user's email was not updated.");
+        # Assert that the user's fetched info is correct.
+        $this->assertNotNull($user_info, "The user's info was not found.");
+
+        $this->assertEquals("johndoe@gmail.com", $user_info['email'], "The user's email was not updated.");
+   
     }
 
     public function testUpdateDateOfBirth()
     {
-        # Create a new test user.
-        $user = create_user($this->name, $this->address, $this->zip, $this->city, $this->email, $this->password, $this->bday);
-
-        # Assert that the user was created.
-        $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = exec_query("SELECT * FROM Users WHERE user_id=?",[get_user_id($this->email)]);
+        $user = exec_query("SELECT * FROM Users WHERE id=?",[$this->id]);
        
+        # assert that the query returned a result.
+        $this->assertNotNull($user, "The user was not found.");
+
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
+        # Assert that the users info was found.
+        $this->assertNotNull($user, "The user's info was not found.");
+
         # Assert that the user's email is correct.
-        $this->assertEquals($this->bday, $user['bday'], "The user's bday is not correct.");
+        $this->assertEquals($this->birthday, $user['birthday'], "The user's bday is not correct.");
 
         # Update the user's email.
-        $user = update_bday($user, "2000/01/01");
+        $user = update_bday($this->id, "2000/01/01");
         
         # Assert that $user is 1. Indcicating that the user's email was updated.
         $this->assertEquals(1, $user, "The user's date of birth was not updated.");
 
         # Serach for the user in the database again via their user_id.
-        $user = exec_query("SELECT * FROM users WHERE user_id =?", [get_user_id($this->email)]);
+        $user = exec_query("SELECT * FROM Users WHERE id =?", [$this->id]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
-        $this->assertEquals("2000/01/01", $user['bday'], "The user's bday was not updated.");
+        $this->assertEquals("2000/01/01", $user['birthday'], "The user's bday was not updated.");
 
     }
 
     public function testUpdateAddress()
     {
-        # Create a new test user.
-        $user = create_user($this->name, $this->address, $this->zip, $this->city, $this->email, $this->password, $this->bday);
-
         # Assert that the user was created.
         $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
-        $user = exec_query("SELECT * FROM users WHERE user_id =?", [get_user_id($this->email)]);
+        $user = exec_query("SELECT * FROM Users WHERE id =?", [$this->id]);
        
+        # assert that the query returned a result.
+        $this->assertNotNull($user);
+
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
         # Assert that the user's email is correct.
-        $this->assertEquals($this->address, $user['address'], "The user's address is not correct.");
+        $this->assertEquals($this->address, $user['street_address'], "The user's address is not correct.");
 
         # Update the user's email.
-        $user = update_address($user, "123 Main Street");
+        $user = update_address($this->id, "123 Main Street");
         
         # Assert that $user is 1. Indcicating that the user's email was updated.
         $this->assertEquals(1, $user, "The user's address was not updated.");
 
         # Serach for the user in the database again via their user_id.
-        $user = exec_query("SELECT * FROM users WHERE user_id =?" ,[get_user_id($this->email)]);
+        $user = exec_query("SELECT * FROM Users WHERE id =?" ,[$this->id]);
 
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
-        $this->assertEquals("123 Main Street", $user['address'], "The user's address was not updated.");
+        $this->assertEquals("123 Main Street", $user['street_address'], "The user's address was not updated.");
     }
 
 }
