@@ -145,6 +145,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     update_preferences($user_id, $prefs);
 }
 
-header("Location: ../HTML/profile_page.html");
+header("Location: https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442j/HTML/profile_page.html");
 
 ?>
