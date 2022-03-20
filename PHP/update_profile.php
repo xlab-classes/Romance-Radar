@@ -9,7 +9,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get user ID and make sure user is logged in
     start_session();
     $user_id = (int) $_SESSION["user"]["id"];
-    if (!$user_id) return;      // User not logged in
+    if (!$user_id) {
+        exit();
+        }     // User not logged in
 
 
     /**** PERSONAL INFORMATION ****/
@@ -43,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Update email
-    $email = $email = $_POST['Email']; ;
+    $email = $email = $_POST['Email'];
     if (!empty($email)) {
         update_email($user_id, $email);
     }
@@ -107,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Venue preferences
-    if (!empty($_POST["Venue")]) {  // If true, allow all venues
+    if (!empty($_POST["Venue"])) {  // If true, allow all venues
         $prefs['Venue']['indoors'] = "1";
         $prefs['Venue']['outdoors'] = "1";
         $prefs['Venue']['social_events'] = "1";
