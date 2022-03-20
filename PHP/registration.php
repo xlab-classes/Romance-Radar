@@ -57,7 +57,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }else{
             echo "Failed to register";
+            header("Location: ./registration.php");
+            exit();
         }
 }else{
     header("Location: ./registration.php");
+    exit();
 }
