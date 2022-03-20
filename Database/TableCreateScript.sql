@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS Users(
     street_address VARCHAR(100) NOT NULL,
     zipcode INT NOT NULL,
     birthday DATE NOT NULL,
-    city VARCHAR(100) NOT NULL,
     partner INT,
+    city VARCHAR(100) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
     );
