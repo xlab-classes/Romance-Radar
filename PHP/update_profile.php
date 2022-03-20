@@ -1,7 +1,7 @@
 <?php
 
-require "db_api.php";
-require "profile_page.php";
+require "./db_api.php";
+require "./profile_page.php";
 
 // TODO: Clear inputs after using??
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -38,8 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Change password
     $old_pass = $_POST['OldPwd'] ;
-    $new_pass = $_POST['NewPwd'] ; 
-    $new_pass_v = $_POST['RenPwd'] ;     // verification
+    $new_pass = $_POST['NewPwd'] ;
+    $new_pass_v = $_POST['RenPwd'] ;    // verification
     if ($new_pass == $new_pass_v) {
         update_password($user_id, $old_pass, $new_pass);
     }
