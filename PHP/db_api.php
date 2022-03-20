@@ -403,6 +403,8 @@ function update_preferences($user_id, $preferences) {
         foreach($changes as $sub_cat => $value){
             if(!isset($preferences_categories[$sub_cat][$value])){
                 echo 'Sub-Category does not exist';
+                echo "Category: " . $cat;
+                echo "Sub-category: " . $sub_cat;
                 return 0;
             }
             $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
