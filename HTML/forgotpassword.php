@@ -87,7 +87,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Email'])) {
         if(!$result){
             echo 'Failed to change password';
         }else{
-            echo 'failed';
+            $password_changed = TRUE;
         }
     }else {
         echo 'Failed to change password';
