@@ -156,8 +156,6 @@ function sign_in($email, $password) {
     }
     else if (password_verify($password, $row['password'])) {
         // NEED TO SET TO ONLINE. Jesus swastik.
-        session_status();
-        $_SESSION["user"] = $row;
         return 1;
     }
     # Couldn't get results from query
