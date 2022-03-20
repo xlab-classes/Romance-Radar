@@ -117,7 +117,8 @@ function exec_query($query, $data) {
 # Check if there is an existing account with this user_id
 function user_exists($user_id) {
     $result = getUser($user_id, NULL);
-    return $result->num_rows > 0;
+    if ($result == NULL) return false;
+    else return $result->num_rows > 0;
 }
 
 # Check if a $user_id's password matches $password
