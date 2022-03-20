@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($_POST["MaxCost"])) {
         $prefs['Date_preferences']['cost'] = $_POST['MaxCost'];
     }
-    if (!empty($_POST["MaxDist"]) {
+    if (!empty($_POST["MaxDist"])) {
         $prefs['Date_preferences']['distance'] = $_POST['MaxDist'];
     }
     if (!empty($_POST["PreDateLen"])) {
