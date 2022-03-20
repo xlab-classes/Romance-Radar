@@ -1,6 +1,5 @@
 <?php
 
-require "./db_api.php";
 require "./profile_page.php";
 
 echo "WE OUT HERE\n";
