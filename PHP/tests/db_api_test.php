@@ -1,7 +1,7 @@
 <?php
 
 # Import db_api.php
-require_once('db_api.php');
+require_once('../db_api.php');
 
 # Create a function that tests the db_api.php sign_in function
 function test_sign_in() {

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Users(
 CREATE TABLE IF NOT EXISTS Food(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
-    restraunt BIT NOT NULL,
+    restaraunt BIT NOT NULL,
     cafe BIT NOT NULL,
     fast_food BIT NOT NULL,
     alcohol BIT NOT NULL,
