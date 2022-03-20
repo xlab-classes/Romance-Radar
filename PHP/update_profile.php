@@ -3,6 +3,8 @@
 require "db_api.php";
 require "profile_page.php";
 
+header("Location: ../../HTML/profile_page.html");
+
 // TODO: Clear inputs after using??
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -144,7 +146,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     update_preferences($user_id, $prefs);
 }
-
-header("Location: ../../HTML/profile_page.html");
 
 ?>
