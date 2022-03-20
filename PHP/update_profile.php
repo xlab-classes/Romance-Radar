@@ -2,8 +2,6 @@
 
 require "./profile_page.php";
 
-print("WE OUT HERE \n");
-
 // TODO: Clear inputs after using??
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
