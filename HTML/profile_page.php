@@ -1,3 +1,11 @@
+<?php
+session_start();
+if(!isset($_SESSION['user'])){
+    echo 'Not logged in';
+    header('Location: ./login.html');
+}
+?>
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -71,12 +79,12 @@
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="p-5 bg">
-                        <h5>Member Profile Photo</h5>
+                        <h5></h5>
                     <div class="text-center">
-                        <img src="./Alex.png" class="rounded" alt="...">
+                        
                     </div>
-                        <p class="lead text-center text-black">Alex</p>
-                        <h7>Member since: 02/02/2022</h7>
+                        <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
+                        <h7></h7>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
