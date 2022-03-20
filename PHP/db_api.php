@@ -223,7 +223,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $email_used = get_user_id($email);
     
     if ($email_used != 0) {
-        echo "User already exists";
+        echo "User already exists\n";
         return 0;
     }
 
@@ -239,7 +239,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 
     $id = get_user_id($email);
     if (!initialize_preferences($id)) {
-        echo "Couldn't initialize preferences for new user!";
+        echo "Couldn't initialize preferences for new user!\n";
     }
     return 1;
 }
@@ -307,7 +307,7 @@ function add_connection_request($sent_from, $sent_to) {
     $sent_to = getUser($sent_to, NULL)->fetch_assoc();
     
     if(!$sent_from && !$sent_to){
-        echo "Fault in quering";
+        echo "Fault in querying\n";
     }
     remove_connection_request($sent_from['id']);
     remove_connection_request($sent_to['id']);
@@ -434,7 +434,7 @@ function initialize_preferences($user_id){
         $query = sprintf("INSERT INTO %s %s VALUES %s", $cat, $placeholders[0], $placeholders[1]);
         $result = exec_query($query, array_merge($placeholders[2], [$user_id]));
         if(!$result){
-            echo "Error in execution";
+            echo "Error in execution\n";
             return 0;
         }
     }
