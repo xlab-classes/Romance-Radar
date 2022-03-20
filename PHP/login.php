@@ -17,10 +17,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 session_start();
                 $_SESSION['user'] = $user;
             }else{
-                echo 'error occured';
+                exit('error occured');
             }
         }else{
-            echo "Failed to login";
+            exit("Failed to login");
         }
 }
 header("Location: ../HTML/login.html");

@@ -49,8 +49,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             );
             $sq = addSecurityQuestions($user_id, $data);
             if(!$sq){
-                echo 'Failed to insert security questions';
+                exit('Failed to insert security questions');
             }
+            header("Location: ../HTML/login.html");
         }else{
             echo "Failed to register";
         }
