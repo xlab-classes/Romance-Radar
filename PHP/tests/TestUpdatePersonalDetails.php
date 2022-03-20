@@ -14,7 +14,7 @@ final class TestUpdatePersonalDetails extends TestCase
     private $city = "Anytown";
     private $email = "jdoe@faang.co";
     private $password = "password";
-    private $birthday = "1990/01/01";
+    private $birthday = "1990-01-01";
     private $id;
 
     function setUp(): void
@@ -116,7 +116,8 @@ final class TestUpdatePersonalDetails extends TestCase
         $this->assertEquals($this->birthday, $user['birthday'], "The user's bday is not correct.");
 
         # Update the user's email.
-        $user = update_bday($this->id, "2000/01/01");
+        $user = update_dob($this->id, "2000-01-01");
+
         
         # Assert that $user is 1. Indcicating that the user's email was updated.
         $this->assertEquals(1, $user, "The user's date of birth was not updated.");
@@ -127,14 +128,12 @@ final class TestUpdatePersonalDetails extends TestCase
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
-        $this->assertEquals("2000/01/01", $user['birthday'], "The user's bday was not updated.");
+        $this->assertEquals("2000-01-01", $user['birthday'], "The user's bday was not updated.");
 
     }
 
     public function testUpdateAddress()
     {
-        # Assert that the user was created.
-        $this->assertNotNull($user);
 
         # Serach for the user in the database via their user_id.
         $user = exec_query("SELECT * FROM Users WHERE id =?", [$this->id]);
@@ -145,11 +144,14 @@ final class TestUpdatePersonalDetails extends TestCase
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
+        # Assert that the user's info was found.
+        $this->assertNotNull($user, "The user's info was not found.");
+
         # Assert that the user's email is correct.
-        $this->assertEquals($this->address, $user['street_address'], "The user's address is not correct.");
+        $this->assertEquals($this->zip, $user['zipcode'], "The user's zipcode is not correct.");
 
         # Update the user's email.
-        $user = update_address($this->id, "123 Main Street");
+        $user = update_address($this->id, 11368);
         
         # Assert that $user is 1. Indcicating that the user's email was updated.
         $this->assertEquals(1, $user, "The user's address was not updated.");
@@ -160,7 +162,7 @@ final class TestUpdatePersonalDetails extends TestCase
         # Get a assoc array of the user's information.
         $user = $user->fetch_assoc();
 
-        $this->assertEquals("123 Main Street", $user['street_address'], "The user's address was not updated.");
+        $this->assertEquals(11368, $user['zipcode'], "The user's address was not updated.");
     }
 
 }

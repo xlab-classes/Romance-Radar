@@ -43,16 +43,18 @@ function update_name($id, $name) {
 // TODO: Update other aspects of the address 
 function update_address($id, $zip) {
 
-    if (empty($id) || empty($address) || empty($zip) || empty($city)) {
+    if (empty($id)  || empty($zip)) {
         return 0;       // Can't have empty inputs
     }
 
     $user_exists = user_exists($id);
-    if ($user_exists == false) return 1;            // User must exist
+    if ($user_exists == false) {return 1;}            // User must exist
     else {
         $result = exec_query("UPDATE Users SET zipcode=? WHERE id=?", [$zip, $id]);
-        if ($result == NULL) return 0;  // Failed to execute query
-        else return 1;
+        if ($result == NULL) {
+            return 0;
+         } // Failed to execute query
+        return 1;
     }
 }
 
@@ -126,7 +128,7 @@ function update_dob($id, $dob) {
     }
 
     // Craft the query
-    $query = "UPDATE Users SET dob=? WHERE id=?";
+    $query = "UPDATE Users SET birthday=? WHERE id=?";
     
     // Check if the query was successful
     $result = exec_query($query, [$dob, $id]);
