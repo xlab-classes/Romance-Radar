@@ -17,7 +17,7 @@ final class TestUpdatePreferences extends TestCase
 
     function sendRequestToServer($data): void
     {
-        $url = "https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442j/PHP/registration.php";
+        $url = "https://www-student.cse.buffalo.edu/CSE442-542/2022-Spring/cse-442j/PHP/update_profile.php";
         $options = array(
             "http" => array(
                 "header" => "Content-type: application/x-www-form-urlencoded\r\n",
