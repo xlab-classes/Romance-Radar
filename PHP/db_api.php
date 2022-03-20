@@ -156,7 +156,6 @@ function sign_in($email, $password) {
     }
     else if (password_verify($password, $row['password'])) {
         // NEED TO SET TO ONLINE. Jesus swastik.
-        
         return 1;
     }
     # Couldn't get results from query
@@ -422,5 +421,32 @@ function initialize_preferences($user_id){
             return 0;
         }
     }
+    return 1;
+}
+
+function get_question($question_id){
+    $query = 'SELECT question FROM Security_questions WHERE id=?';
+    $result = exec_query($query, [(int)$question_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No question Found');
+    }
+
+    return $result->fetch_assoc()['question'];
+}
+
+function addSecurityQuestions($user_id, $data){
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    
+    $query = "INSERT INTO User_security_questions(user_id, question_id_1, question_id_2, question_id_3, answer_1, answer_2, answer_3) VALUES (?,?,?,?,?,?,?)";
+
+    if(!exec_query($query, $data)){
+        echo 'Could not insert security questions';
+        return 0;
+    }
+
     return 1;
 }
