@@ -12,7 +12,7 @@ final class TestUpdatePreferences extends TestCase
     private $pass = "password";
     private $addr = "123 Cherry Road";
     private $city = "Buffalo";
-    private $zip = "14224"
+    private $zip = "14224";
     private $bday = "1999/12/12";
     private $user_id;
 
