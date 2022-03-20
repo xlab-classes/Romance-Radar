@@ -44,16 +44,16 @@ final class TestUpdateProfile extends TestCase
     function testBasic(): void
     {
         $data = array();
-        $data["MaxCost"] = "100";
-        $data["MaxDist"] = "10";
-        $data["PreDateLen"] = "2";
+        $data["MaxCost"] = 100;
+        $data["MaxDist"] = 10;
+        $data["PreDateLen"] = 2;
 
         $this->sendRequestToServer($data);
 
         $prefs = get_preferences($this->user_id);
-        $this->assertSame($prefs["Date_preferences"]["cost"], "100");
-        $this->assertSame($prefs["Date_preferences"]["distance"], "10");
-        $this->assertSame($prefs["Date_preferences"]["length"], "2");
+        $this->assertSame($prefs["Date_preferences"]["cost"], 100);
+        $this->assertSame($prefs["Date_preferences"]["distance"], 10);
+        $this->assertSame($prefs["Date_preferences"]["length"], 2);
     }
 
 }
