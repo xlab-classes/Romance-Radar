@@ -59,8 +59,8 @@ final class TestConnections extends TestCase
 
         // Make sure that user A received the request and user B sent the
         // request
-        $this->assertEquals($this->id_a, $receiving_id);
-        $this->assertEquals($this->id_b, $requesting_id);
+        $this->assertEquals($this->id_a, $receiving_id, "Receiving id (A's ID) is wrong");
+        $this->assertEquals($this->id_b, $requesting_id, "Requesting id (B's ID) is wrong");
     }
 
 }
