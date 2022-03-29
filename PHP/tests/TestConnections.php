@@ -51,7 +51,9 @@ final class TestConnections extends TestCase
         // for user B
         $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
 
-        $this->assertNotNull($result);
+        $this->assertNotNull($result, "Result was null after executing query on Connection_requests table");
+        $this->assertGreaterThan($result->num_rows, 0);
+
 
         $arr = $result->fetch_assoc();
         $requesting_id = $arr["sent_from"];
