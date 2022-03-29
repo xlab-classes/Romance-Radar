@@ -27,7 +27,7 @@ final class TestConnections extends TestCase
 
     function setUp(): void
     {
-        create_user($this->connection_a, $this->email_a, $this->password_a, $this->addresss_a, $this->city_a, $this->zip_a, $this->birthday_a);
+        create_user($this->connection_a, $this->email_a, $this->password_a, $this->address_a, $this->city_a, $this->zip_a, $this->birthday_a);
         create_user(
             $this->connection_b, $this->email_b, $this->password_b, $this->address_b, $this->city_b, $this->zip_b, $this->birthday_b
         );
