@@ -52,6 +52,15 @@ final class TestConnections extends TestCase
         $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
 
         $this->assertNotNull($result);
+
+        $arr = $result->fetch_assoc();
+        $requesting_id = $arr["sent_from"];
+        $receiving_id = $arr["sent_to"];
+
+        // Make sure that user A received the request and user B sent the
+        // request
+        $this->assertEquals($this->id_a, $receiving_id);
+        $this->assertEquals($this->id_b, $requesting_id);
     }
 
 }
