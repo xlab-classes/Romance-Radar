@@ -42,4 +42,16 @@ final class TestConnections extends TestCase
         exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_b, $this->email_b]);
     }
 
+    function testAddConnectionRequest(): void
+    {
+        // Send a request from user A to user B
+        add_connection_request($this->id_a, $this->id_b);
+
+        // Get the connections requests row from the Connection_requests table
+        // for user B
+        $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
+
+        $this->assertNotNull($result);
+    }
+
 }
