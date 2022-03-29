@@ -18,11 +18,11 @@ final class TestConnections extends TestCase
     private $id_b;
     private $connection_b = "Hazel";
     private $email_b = "hazel@yahoo.co";
-    private $street_address = "123 Main Street";
+    private $address_b = "123 Main Street";
     private $zip_b = 67891;
-    private $city = "Finger Lakes";
-    private $password = "password";
-    private $birthday = "2000-01-21";
+    private $city_b = "Finger Lakes";
+    private $password_b = "password";
+    private $birthday_b = "2000-01-21";
 
 
     function setUp(): void
