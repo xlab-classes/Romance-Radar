@@ -327,7 +327,7 @@ function add_connection_request($sent_from, $sent_to) {
     $sent_from_partner = get_partner($sent_from);
     if ($sent_from_partner != NULL && $sent_from_partner > 0) {
         echo "One of these connections has a partner! Cannot create new connection\n";
-        return 1;
+        return 0;
     }
 
     // Insert this connection into the Connection_requests table
