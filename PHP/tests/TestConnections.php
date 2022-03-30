@@ -60,6 +60,8 @@ final class TestConnections extends TestCase
         $receiving_id = $arr["sent_to"];
         $normal_id = $arr["id"];
 
+        echo "REQUESTING ID IS " . $requesting_id . "\n";
+        echo "RECEIVING ID IS " . $receiving_id . "\n";
         echo "NORMAL ID IS " . $normal_id . "\n";
 
         // Make sure that user B received the request and user A sent the
