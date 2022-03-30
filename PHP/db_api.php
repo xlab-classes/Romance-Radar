@@ -331,8 +331,8 @@ function add_connection_request($sent_from, $sent_to) {
     }
 
     // Insert this connection into the Connection_requests table
-    $insert_query = "UPDATE Connection_requests SET (sent_from, sent_to) VALUE (?,?) WHERE id=?";
-    if (exec_query($insert_query, [$sent_from, $sent_to, $sent_to])){
+    $insert_query = "UPDATE Connection_requests SET (sent_from, sent_to) VALUES (?,?)";
+    if (exec_query($insert_query, [$sent_from, $sent_to])){
         return 1;
     }
 
