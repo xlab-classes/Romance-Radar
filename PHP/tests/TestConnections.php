@@ -45,7 +45,9 @@ final class TestConnections extends TestCase
     function testAddConnectionRequest(): void
     {
         // Send a request from user A to user B
-        add_connection_request($this->id_a, $this->id_b);
+        $add_attempt = add_connection_request($this->id_a, $this->id_b);
+
+        $this->assertEqual($add_attempt, 0, "Failed to add connection request");
 
         // Get the connections requests row from the Connection_requests table
         // for user B
