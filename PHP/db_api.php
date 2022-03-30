@@ -230,7 +230,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Attempt to create this user
     $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday, $city];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
@@ -238,9 +238,11 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     $id = get_user_id($email);
+
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
     }
+
     return 1;
 }
 
