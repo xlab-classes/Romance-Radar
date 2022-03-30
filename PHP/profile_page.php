@@ -141,3 +141,41 @@ function update_dob($id, $dob) {
     // Return 1 if successful
     return 1;
 }
+
+function update_profile_picture($id, $previous_picture, $picture, $ext){
+
+    // Checking the validtiy of the inputs
+    if(empty($id) || empty($picture) || empty($previous_picture)) {
+        echo "User ID or provided picture cannot be empty.";
+        return 0;
+    }
+    
+    // Check if the user with $user_id exists
+    $user = user_exists($id);
+    if ($user == false) {
+        echo "User does not exist. Cannot update email.";
+        return 0;
+    }
+
+    if($previous_picture != '../assets/generic_profile_picture.jpg' && !unlink($previous_picture)){
+        echo 'previous picture could not be removed';
+        return 0;
+    }
+
+    $new_profile_picture_path = '../assets/profile_pictures/image'. strval($id) . $ext;
+    
+    if(!file_put_contents($new_profile_picture_path, $picture)){
+        echo 'Could not create new profile picture';
+        return 0;
+    }
+
+    $query = 'UPDATE users SET user_picture=? WHERE id=?';
+
+    if(!exec_query($query, [$new_profile_picture_path, $id])){
+        echo 'Could not execute user_picture update query';
+        return 0;
+    }
+
+    return 1;
+    
+}
