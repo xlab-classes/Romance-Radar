@@ -54,15 +54,14 @@ final class TestConnections extends TestCase
         $this->assertNotNull($result, "Result was null after executing query on Connection_requests table");
         $this->assertGreaterThan($result->num_rows, 0);
 
-
         $arr = $result->fetch_assoc();
         $requesting_id = $arr["sent_from"];
         $receiving_id = $arr["sent_to"];
 
-        // Make sure that user A received the request and user B sent the
+        // Make sure that user B received the request and user A sent the
         // request
-        $this->assertEquals($this->id_a, $receiving_id, "Receiving id (A's ID) is wrong");
-        $this->assertEquals($this->id_b, $requesting_id, "Requesting id (B's ID) is wrong");
+        $this->assertEquals($this->id_b, $receiving_id, "Receiving id (A's ID) is wrong");
+        $this->assertEquals($this->id_a, $requesting_id, "Requesting id (B's ID) is wrong");
     }
 
 }

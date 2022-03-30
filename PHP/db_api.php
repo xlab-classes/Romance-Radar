@@ -306,17 +306,17 @@ function add_connection_request($sent_from, $sent_to) {
     $sent_from = getUser($sent_from, NULL)->fetch_assoc();
     $sent_to = getUser($sent_to, NULL)->fetch_assoc();
     
-    if(!$sent_from && !$sent_to){
+    if(!$sent_from || !$sent_to){
         echo "Fault in querying\n";
     }
     remove_connection_request($sent_from['id']);
     remove_connection_request($sent_to['id']);
-    if (!$sent_from['partner'] && !$sent_to['partner']){
+    //if (!$sent_from['partner'] && !$sent_to['partner']){
         $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
         if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
             return 1;
         }
-    }
+    //}
     return 0;
 
 }
