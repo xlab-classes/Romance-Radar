@@ -237,7 +237,11 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
         return 0;
     }
 
+    // Add an entry for this user to the Connection_requests table
     $id = get_user_id($email);
+    $query = "INSERT INTO Connection_requests (id, sent_from, sent_to) VALUES (?,?,?)";
+    $result = exec_query($query, [$id, 0, 0]);
+
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
     }
@@ -327,8 +331,8 @@ function add_connection_request($sent_from, $sent_to) {
     }
 
     // Insert this connection into the Connection_requests table
-    $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-    if (exec_query($insert_query, [$sent_from, $sent_to])){
+    $insert_query = "UPDATE Connection_requests SET (sent_from, sent_to) VALUE (?,?) WHERE id=?";
+    if (exec_query($insert_query, [$sent_from, $sent_to, $sent_to])){
         return 1;
     }
 
