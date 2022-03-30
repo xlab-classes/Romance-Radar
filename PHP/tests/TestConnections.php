@@ -53,7 +53,7 @@ final class TestConnections extends TestCase
         $result = exec_query("SELECT * FROM Connection_requests", []);
 
         $this->assertNotNull($result, "Result was null after executing query on Connection_requests table");
-        $this->assertGreaterThan($result->num_rows, 0);
+        $this->assertGreaterThan(0, $result->num_rows);
 
         $arr = $result->fetch_assoc();
         $requesting_id = $arr["sent_from"];
