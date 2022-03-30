@@ -303,17 +303,17 @@ function add_connection_request($sent_from, $sent_to) {
         return 0;
     }
     
-    $sent_from = getUser($sent_from, NULL)->fetch_assoc();
-    $sent_to = getUser($sent_to, NULL)->fetch_assoc();
+    $sent_from_arr = getUser($sent_from, NULL)->fetch_assoc();
+    $sent_to_arr = getUser($sent_to, NULL)->fetch_assoc();
     
-    if(!$sent_from || !$sent_to){
+    if(!$sent_from_arr || !$sent_to_arr){
         echo "Fault in querying\n";
     }
-    remove_connection_request($sent_from['id']);
-    remove_connection_request($sent_to['id']);
+    remove_connection_request($sent_from_arr['id']);
+    remove_connection_request($sent_to_arr['id']);
     //if (!$sent_from['partner'] && !$sent_to['partner']){
         $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
+        if (exec_query($insert_query, [$sent_from_arr['id'], $sent_to_arr['id']])){
             return 1;
         }
     //}
