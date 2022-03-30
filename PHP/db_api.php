@@ -298,27 +298,41 @@ function remove_connection($user_id) {
 }
 
 function add_connection_request($sent_from, $sent_to) {
+
+    // Regardless of it $sent_to has a connection, allow the connection request
+    // If $sent_from has a connection, do not allow a connection request
+    // If $sent_from has an existing connection request to another user, delete
+    // that before sending the new one
+
+    /*
+        TODO: Prompt user that sending a new connection request will delete their
+        current conection request
+    */
+
+    // Make sure both users exist
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    $sent_from_arr = getUser($sent_from, NULL)->fetch_assoc();
-    $sent_to_arr = getUser($sent_to, NULL)->fetch_assoc();
-    
-    if(!$sent_from_arr || !$sent_to_arr){
-        echo "Fault in querying\n";
-    }
-    remove_connection_request($sent_from_arr['id']);
-    remove_connection_request($sent_to_arr['id']);
-    //if (!$sent_from['partner'] && !$sent_to['partner']){
-        $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from_arr['id'], $sent_to_arr['id']])){
-            return 1;
-        }
-    //}
-    return 0;
 
+    // Each user can only send one connection request at a time, so if $sent_from
+    // has an existing request, remove it
+    remove_connection_request($sent_from);
+
+    // Make sure that sent_from doesn't have a connection already
+    $sent_from_partner = get_partner($sent_from);
+    if ($sent_from_partner != NULL && $sent_from_partner > 0) {
+        echo "One of these connections has a partner! Cannot create new connection\n";
+        return 1;
+    }
+
+    // Insert this connection into the Connection_requests table
+    $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
+    if (exec_query($insert_query, [$sent_from, $sent_to])){
+        return 1;
+    }
+
+    return 0;
 }
 
 function remove_connection_request($sent_from) {
