@@ -21,9 +21,10 @@ if(!isset($_SESSION['user'])){
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             color: #9F1111;
         }
-
-
-
+        #profile_picture{
+            height: 200px;
+            width: 200px;
+        }
     </style>
 
   </head>
@@ -78,13 +79,14 @@ if(!isset($_SESSION['user'])){
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <div class="p-5 bg">
-                        <h5></h5>
+                    <div class="p-4 bg">
                     <div class="text-center">
-                        
-                    </div>
+                        <?php
+                            echo '<img id="profile_picture" src="'.$_SESSION['user']['user_picture'].'" class="border-0 img-thumbnail rounded-circle">'
+                        ?>
+                        <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
-                        <h7></h7>
+                    </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
