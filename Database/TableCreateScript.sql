@@ -107,8 +107,8 @@ CREATE TABLE IF NOT EXISTS Connection_requests(
     sent_from INT NOT NULL,
     sent_to INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE, INSERT,
-    FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE, INSERT
+    FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Security_questions(
