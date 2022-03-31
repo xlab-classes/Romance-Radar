@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
 CREATE TABLE IF NOT EXISTS Connection_requests(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
-    sent_to INT,
+    sent_to INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE
