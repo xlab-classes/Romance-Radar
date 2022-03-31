@@ -240,7 +240,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     // Add an entry for this user to the Connection_requests table
     $id = get_user_id($email);
     $query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUES (?,?)";
-    $result = exec_query($query, [$id, 0]);
+    $result = exec_query($query, [$id, $id]);
 
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
@@ -323,9 +323,10 @@ function add_connection_request($sent_from, $sent_to) {
     // has an existing request, remove it
     remove_connection_request($sent_from);
 
-    // Make sure that sent_from doesn't have a connection already
-    $sent_from_partner = get_partner($sent_from);
-    if ($sent_from_partner != NULL && $sent_from_partner > 0) {
+    // Make sure that sent_from doesn't have a connection already. Their partner
+    // will be themselves if they don't already have one
+    $sent_from_partner_id = get_partner($sent_from);
+    if ($sent_from_partner_id == NULL || $sent_from_partner_id != $sent_from) {
         echo "One of these connections has a partner! Cannot create new connection\n";
         return 0;
     }

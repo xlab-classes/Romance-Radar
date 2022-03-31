@@ -94,7 +94,11 @@ final class TestCreateUser extends TestCase
         $arr = $qres->fetch_assoc();
         $this->assertNotNull($arr);
         $this->assertNotFalse($arr);
+
+        // Initially, connection request will exist from a user to themself. This
+        // indicates there is no actual connection request currently
         $this->assertEquals($arr["sent_from"], $user_id);
+        $this->assertEquals($arr["sent_to"], $user_id);
     }
 
 }
