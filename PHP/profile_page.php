@@ -6,6 +6,7 @@ require_once 'db_api.php';
 // Returns
 //      0 on failure
 //      1 on successs
+session_start();
 function update_name($id, $name) {
 
     # Check if user exists
@@ -175,7 +176,7 @@ function update_profile_picture($id, $previous_picture, $picture, $ext){
         echo 'Could not execute user_picture update query';
         return 0;
     }
-
+    $_SESSION['user']['user_picture'] = $new_profile_picture_path;
     return 1;
     
 }
