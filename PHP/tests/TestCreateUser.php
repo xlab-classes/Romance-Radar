@@ -13,7 +13,7 @@ final class TestCreateUser extends TestCase
     private $address = "123 Apple Orchard Rd";
     private $city = "Buffalo";
     private $zipcode = 12345;
-    private $birthday = "1999/12/12";
+    private $birthday = "1999-12-12";
 
     // Called after every test function. Should contain cleanup code
     public function tearDown(): void
