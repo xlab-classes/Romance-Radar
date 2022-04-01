@@ -351,8 +351,11 @@ function remove_connection_request($sent_from) {
         return 0;
     }
     
-    $delete_query = "DELETE FROM Connection_requests WHERE sent_from=?";
-    if (exec_query($delete_query, [$sent_from])){
+    // $delete_query = "DELETE FROM Connection_requests WHERE sent_from=?";
+
+    // Reset sent_to value == sent_from to indicate there is no outgoing request
+    $update_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
+    if (exec_query($delete_query, [$sent_from, $sent_from])){
         return 1;
     }
     return 0;

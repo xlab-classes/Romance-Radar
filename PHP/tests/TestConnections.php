@@ -54,8 +54,8 @@ final class TestConnections extends TestCase
 
         // Get the connections requests row from the Connection_requests table
         // for user B
-        $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
-        // $result = exec_query("SELECT * FROM Connection_requests WHERE sent_from=?", [$this->id_a]);
+        // $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
+        $result = exec_query("SELECT * FROM Connection_requests WHERE sent_from=?", [$this->id_a]);
 
         $this->assertNotNull($result, "Result was null after executing query on Connection_requests table");
         $this->assertGreaterThan(0, $result->num_rows, "No one in connection requests has sent_from's ID");
