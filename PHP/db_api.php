@@ -237,7 +237,15 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
         return 0;
     }
 
+    // Add an entry for this user to the Connection_requests table
     $id = get_user_id($email);
+    $query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUES (?,?)";
+    $result = exec_query($query, [$id, $id]);
+
+    // Set new user's partner to themselves to indicate that they don't have a
+    // partner
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+    $result = exec_query($query, [$id, $id]);
 
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
@@ -263,77 +271,183 @@ function delete_user($user_id) {
 }
 
 
-function add_connection($user_id_a, $user_id_b) {
-    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
+function add_connection($sent_from, $sent_to) {
+    // Make sure both users exist
+    if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID in delete_user\n";
         return 0;
     }
-    remove_connection($user_id_a);
-    remove_connection($user_id_b);
-    $update_query = "UPDATE Users SET partner=? WHERE id=?";
-    if (exec_query($update_query, [$user_id_a, $user_id_b]) &&
-        exec_query($update_query, [$user_id_b, $user_id_a])){
-            remove_connection_request($user_id_a);
-            remove_connection_request($user_id_b);
-            return 1;
-     }else{
-         echo "Failed to update partners\n";
-         return 0;
-     }
+
+    // Make sure that sent_from has sent a connection request to sent_to
+    $outgoing_request_query =
+        "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($outgoing_request_query, [$sent_from]);
+    if ($result == NULL || $result->num_rows <= 0) {
+        print("There is no entry in Connection_requests with user ID sent_from");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_to) {
+        print("There is no connection request from user sent_from to user sent_to\n");
+        return 0;
+    }
+
+    // Make sure that sent_to has a connection request from sent_from
+    $incoming_requests = get_requests($sent_to);
+    if (!in_array($sent_from, $incoming_requests)) {
+        print("User sent_to has not received a request from user sent_from\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't have a partner
+    if (get_partner($sent_from) != $sent_from) {
+        print("User sent_from already has a partner!\n");
+        return 0;
+    }
+
+    // Make sure that sent_to doesn't have a partner
+    if (get_partner($sent_to) != $sent_to) {
+        print("User sent_to already has a partner!\n");
+        return 0;
+    }
+
+    // Complete the connection
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+
+    // Add sent_from as a partner to sent_to
+    $result = exec_query($query, [$sent_from, $sent_to]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    // Add sent_to as a partner to sent_from
+    $result = exec_query($query, [$sent_to, $sent_from]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    return 1;
 }
 
-function remove_connection($user_id) {
-    if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user\n";
+function remove_connection($user_id_a, $user_id_b) {
+    // Make sure the users exist
+    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
+        print("One of these users does not exist in remove connection!\n");
         return 0;
     }
 
-    $user = getUser($user_id, NULL)->fetch_assoc();
-    if($partner = $user["partner"]){
-        $update_query = "UPDATE Users SET partner = NULL WHERE id=? OR id=?";
-        if(exec_query($update_query, [$user_id, $partner])){
-            return 1;
-        }
+    // Make sure that user A's partner is user B
+    if (get_partner($user_id_a) != $user_id_b) {
+        print("These users don't have a connection to remove\n");
+        return 0;
     }
 
-    return 0;
+    // Make sure that user B's partner is user A
+    if (get_partner($user_id_b) != $user_id_a) {
+        print("These users have a lopsided connection!\n");
+        return 0;
+    }
+
+    $update_query = "UPDATE Users SET partner=? WHERE id=?";
+    $result = exec_query($update_query, [$user_id_a, $user_id_a]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in remove_connection\n");
+        return 0;
+    }
+    
+    $result = exec_query($update_query, [$user_id_b, $user_id_b]);
+    if ($result == NULL) {
+        print("Coudln't exec_query on user B in remove_connection\n");
+        return 0;
+    }
+
+    return 1;
 }
 
 function add_connection_request($sent_from, $sent_to) {
+
+    // Regardless of it $sent_to has a connection, allow the connection request
+    // If $sent_from has a connection, do not allow a connection request
+    // If $sent_from has an existing connection request to another user, delete
+    // that before sending the new one
+
+    /*
+        TODO: Prompt user that sending a new connection request will delete their
+        current conection request
+    */
+
+    // Make sure both users exist
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    $sent_from = getUser($sent_from, NULL)->fetch_assoc();
-    $sent_to = getUser($sent_to, NULL)->fetch_assoc();
-    
-    if(!$sent_from && !$sent_to){
-        echo "Fault in querying\n";
-    }
-    remove_connection_request($sent_from['id']);
-    remove_connection_request($sent_to['id']);
-    if (!$sent_from['partner'] && !$sent_to['partner']){
-        $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
-            return 1;
-        }
-    }
-    return 0;
 
+    // Each user can only send one connection request at a time. Make sure
+    // sent_from doesn't have an existing outgoing request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in add_connection_request\n");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_from) {
+        print("sent_from already has an outgoing request!\n");
+        return 0;
+    }
+    
+    // Make sure that sent_from doesn't already have a request from sent_to
+    $sent_from_requesting = get_requests($sent_from);
+    if (in_array($sent_to, $sent_from_requesting)) {
+        print("Can't send a request to someone that's already requesting you!\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't have a connection already. Their partner
+    // will be themselves if they don't already have one
+    $sent_from_partner_id = get_partner($sent_from);
+    if ($sent_from_partner_id != $sent_from) {
+        echo "One of these connections has a partner! Cannot create new connection\n";
+        return 0;
+    }
+
+    // Insert this connection into the Connection_requests table
+    $insert_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
+    if (exec_query($insert_query, [$sent_to, $sent_from])){
+        return 1;
+    }
+
+    return 0;
 }
 
 function remove_connection_request($sent_from) {
+    // Make sure user exists
     if (!user_exists($sent_from)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    $delete_query = "DELETE FROM Connection_requests WHERE sent_from=?";
-    if (exec_query($delete_query, [$sent_from])){
-        return 1;
+
+    // Make sure user has an outgoing connection request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't SELECT from Connection_requests in remove_connection_request\n");
+        return 0;
     }
-    return 0;
+    if ($result->fetch_assoc()["sent_to"] == $sent_from) {
+        print("There is no outgoing request to remove\n");
+        return 0;
+    }
+
+    // Reset sent_to value == sent_from to indicate there is no outgoing request
+    $update_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
+    $result = exec_query($update_query, [$sent_from, $sent_from]);
+    if ($result == NULL) {
+        print("Couldn't UPDATE Connection_requests in remove_connection_request\n");
+        return 0;
+    }
+
+    return 1;
 }
 
 function get_requests($user_id) {
