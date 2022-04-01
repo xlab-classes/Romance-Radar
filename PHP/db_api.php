@@ -573,7 +573,7 @@ function has_requests($user_id) {
         return -1;
     }
     $result = exec_query("SELECT * FROM Connection_requests WHERE sent_to=?", [$user_id]);
-    if (result != NULL) {
+    if ($result != NULL) {
         return ($result->num_rows > 0);
     }
     else return -1;
@@ -598,7 +598,7 @@ function has_partner($user_id) {
     }
     $result = exec_query("SELECT partner FROM Users WHERE id=?", [$user_id]);
     if ($result != NULL) {
-        return $result != $user_id;
+        return $result->fetch_assoc()["partner"] != $user_id;
     }
     else return -1;
 }
