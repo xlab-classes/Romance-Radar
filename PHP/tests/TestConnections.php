@@ -70,4 +70,27 @@ final class TestConnections extends TestCase
         $this->assertEquals($this->id_a, $requesting_id, "Requesting id (B's ID) is wrong");
     }
 
+    function testAddConnection(): void
+    {
+        // Send a request from user A to user B
+        $add_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($add_attempt, 1, "Failed to add connection request");
+
+        // add_connection is called when the person who received the connection
+        // request accepts it
+
+        // Simulate user A accepting request (should fail)
+        $accept_attempt = add_connection($this->id_b, $this->id_a);
+        $this->assertEquals($accept_attempt, 0, "Added connection when it should have failed");
+
+        // Simulate user B accepting request (should succeed)
+        $accept_attempt = add_connection($this->id_a, $this->id_b);
+        $this->assertEquals($accept_attempt, 1, "Couldn't add connection when I should be able to");
+
+        // Simulate user B accepting request again (should fail, already accepted)
+        $accept_attempt = add_connection($this->id_a, $this->id_b);
+        $this->assertEquals($accept_attempt, 0, "Added connection when it was already accepted");
+
+    }
+
 }

@@ -270,12 +270,65 @@ function delete_user($user_id) {
 }
 
 
-function add_connection($user_id_a, $user_id_b) {
-    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
+function add_connection($sent_from, $sent_to) {
+    // Make sure both users exist
+    if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID in delete_user\n";
         return 0;
     }
-    remove_connection($user_id_a);
+
+    // Make sure that sent_from has sent a connection request to sent_to
+    $outgoing_request_query =
+        "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($outgoing_request_query, [$sent_from]);
+    if ($result == NULL || $result->num_rows <= 0) {
+        print("There is no entry in Connection_requests with user ID sent_from");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_to) {
+        print("There is no connection from user sent_from to user sent_to\n");
+        return 0;
+    }
+
+    // Make sure that sent_to has a connection request from sent_from
+    $incoming_requests = get_requests($sent_to);
+    if (!in_array($sent_from, $incoming_requests)) {
+        print("User sent_to has not received a request from user sent_from\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't have a partner
+    if (get_partner($sent_from) != $sent_from) {
+        print("User sent_from already has a partner!\n");
+        return 0;
+    }
+
+    // Make sure that sent_to doesn't have a partner
+    if (get_partner($sent_to) != $sent_to) {
+        print("User sent_to already has a partner!\n");
+        return 0;
+    }
+
+    // Complete the connection
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+
+    // Add sent_from as a partner to sent_to
+    $result = exec_query($query, [$sent_from, $sent_to]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    // Add sent_to as a partner to sent_from
+    $result = exec_query($query, [$sent_to, $sent_from]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    return 1;
+    
+    /*remove_connection($user_id_a);
     remove_connection($user_id_b);
     $update_query = "UPDATE Users SET partner=? WHERE id=?";
     if (exec_query($update_query, [$user_id_a, $user_id_b]) &&
@@ -286,7 +339,7 @@ function add_connection($user_id_a, $user_id_b) {
      }else{
          echo "Failed to update partners\n";
          return 0;
-     }
+     }*/
 }
 
 function remove_connection($user_id) {
@@ -297,8 +350,8 @@ function remove_connection($user_id) {
 
     $user = getUser($user_id, NULL)->fetch_assoc();
     if($partner = $user["partner"]){
-        $update_query = "UPDATE Users SET partner = NULL WHERE id=? OR id=?";
-        if(exec_query($update_query, [$user_id, $partner])){
+        $update_query = "UPDATE Users SET partner = ? WHERE id=? OR id=?";
+        if(exec_query($update_query, [$user_id, $user_id, $partner])){
             return 1;
         }
     }
