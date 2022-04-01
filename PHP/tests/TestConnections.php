@@ -160,4 +160,53 @@ final class TestConnections extends TestCase
 
     }
 
+    function testGetPartner(): void
+    {
+        // Send a request from user A to user B
+        $send_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($send_attempt, 1, "Couldn't add connection request");
+
+        // Accept the request
+        $accept_attempt = add_connetion($this->id_a, $this->id_b);
+        $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
+
+        // Make sure that both users have a partner
+        $a_has_partner = has_partner($this->id_a);
+        $this->assertTrue($a_has_partner, "A should have a partner, but doesn't");
+
+        $b_has_partner = has_partner($this->id_b);
+        $this->assertTrue($b_has_partner, "B should have a partner, but doesn't");
+
+        // Make sure that A's partner is B, and vice versa
+        $a_partner = get_partner($this->id_a);
+        $this->assertEquals($a_partner, $this->id_b, "A's partner isn't B");
+
+        $b_partner = get_partner($this->id_b);
+        $this->assertEquals($b_partner, $this->id_a, "B's partner isn't A");
+    }
+
+    function testGetRequests(): void
+    {
+        // Send a request from user A to user B
+        $send_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($send_attempt, 1, "Couldn't add connection request");
+
+        // Accept the request
+        $accept_attempt = add_connetion($this->id_a, $this->id_b);
+        $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
+
+        // Make sure that user A has an incoming request
+        $a_has_request = has_request($this->id_a);
+        $this->assertTrue($a_has_request, "A didn't have a request when it should");
+
+        // Make sure that user B has sent a request
+        $b_sent_request = sent_request($this->id_b);
+        $this->assertTrue($b_sent_request, "B didn't send a request when it should");
+
+        // Make sure that A's request came from B
+        $a_requests = get_requests($this->id_a);
+        $this->assertNotEmpty($a_requests, "No requests found for A");
+        $this->assertTrue(in_array($this->id_a, $a_requests), "B's ID not found in A's request list");
+    }
+
 }
