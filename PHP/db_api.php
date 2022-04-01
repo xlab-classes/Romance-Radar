@@ -286,7 +286,7 @@ function add_connection($sent_from, $sent_to) {
         return 0;
     }
     if ($result->fetch_assoc()["sent_to"] != $sent_to) {
-        print("There is no connection from user sent_from to user sent_to\n");
+        print("There is no connection request from user sent_from to user sent_to\n");
         return 0;
     }
 
