@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Users(
 CREATE TABLE IF NOT EXISTS Food(
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
-    restaraunt BIT NOT NULL,
+    restaurant BIT NOT NULL,
     cafe BIT NOT NULL,
     fast_food BIT NOT NULL,
     alcohol BIT NOT NULL,
@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS Entertainment(
     user_id INT NOT NULL,
     concerts BIT NOT NULL,
     hiking BIT NOT NULL,
+    bar BIT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
     );
