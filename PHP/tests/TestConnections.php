@@ -195,13 +195,22 @@ final class TestConnections extends TestCase
         $accept_attempt = add_connection($this->id_a, $this->id_b);
         $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
 
-        // Make sure that user A has an incoming request
+        // Make sure that user A doesn't have an incoming request
         $a_has_request = has_requests($this->id_a);
-        $this->assertTrue($a_has_request, "A didn't have a request when it should");
+        $this->assertFalse($a_has_request, "A had a request when it shouldn't have");
 
-        // Make sure that user B has sent a request
+        // Make sure that user B hasn't sent a request
         $b_sent_request = sent_request($this->id_b);
-        $this->assertTrue($b_sent_request, "B didn't send a request when it should");
+        $this->assertFalse($b_sent_request, "B sent a request when it shouldn't have");
+
+        // Make sure that user A has sent a request
+        $a_sent_request = sent_request($this->id_a);
+        $this->assertTrue($a_sent_request, "A didn't sent a request when it should have");
+
+        // Make sure that B has received a request
+        $b_has_request = has_requests($this->id_b);
+        $this->assertTrue($b_has_request, "B didn't have a request when it should have");
+
 
         // Make sure that A's request came from B
         $a_requests = get_requests($this->id_a);
