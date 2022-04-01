@@ -420,18 +420,29 @@ function add_connection_request($sent_from, $sent_to) {
 }
 
 function remove_connection_request($sent_from) {
+    // Make sure user exists
     if (!user_exists($sent_from)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    // $delete_query = "DELETE FROM Connection_requests WHERE sent_from=?";
+
+    // Make sure user has an outgoing connection request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't SELECT from Connection_requests in remove_connection_request\n");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] == $sent_from) {
+        print("There is no outgoing request to remove\n");
+        return 0;
+    }
 
     // Reset sent_to value == sent_from to indicate there is no outgoing request
     $update_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
     $result = exec_query($update_query, [$sent_from, $sent_from]);
     if ($result == NULL) {
-        print("Couldn't exec_query in remove_connection_request\n");
+        print("Couldn't UPDATE Connection_requests in remove_connection_request\n");
         return 0;
     }
 
