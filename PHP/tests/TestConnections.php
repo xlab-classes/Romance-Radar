@@ -122,7 +122,7 @@ final class TestConnections extends TestCase
         $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
 
         // Remove the request
-        $remove_attempt = remove_connection($this->id_a);
+        $remove_attempt = remove_connection($this->id_a, $this->id_b);
         $this->assertEquals($remove_attempt, 1, "Failed to remove connection");
 
         // Make sure that user A's partner was reset to user A's id
