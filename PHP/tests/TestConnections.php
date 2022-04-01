@@ -167,7 +167,7 @@ final class TestConnections extends TestCase
         $this->assertEquals($send_attempt, 1, "Couldn't add connection request");
 
         // Accept the request
-        $accept_attempt = add_connetion($this->id_a, $this->id_b);
+        $accept_attempt = add_connection($this->id_a, $this->id_b);
         $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
 
         // Make sure that both users have a partner
