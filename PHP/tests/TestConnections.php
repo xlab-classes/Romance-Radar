@@ -111,4 +111,33 @@ final class TestConnections extends TestCase
         $this->assertEquals($result->fetch_assoc()["sent_to"], $this->id_a, "sent_to column improperly updated");
     }
 
+    function testRemoveConnection(): void
+    {
+        // Send a request from user A to user B
+        $add_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($add_attempt, 1, "Failed to add connection request");
+
+        // Accept the request
+        $accept_attempt = add_connection($this->id_a, $this->id_b);
+        $this->assertEquals($accept_attempt, 1, "Failed to accept connection request");
+
+        // Remove the request
+        $remove_attempt = remove_connection($this->id_a);
+        $this->assertEquals($remove_attempt, 1, "Failed to remove connection");
+
+        // Make sure that user A's partner was reset to user A's id
+        $query = "SELECT * FROM Users WHERE id=?";
+        $result = exec_query($query, [$this->id_a]);
+        $this->assertNotNull($result, "Failed to exec_query in testRemoveConnection");
+        $this->assertGreaterThan(0, $result->num_rows, "No user with ID matching user A's ID");
+        $this->assertEquals($result->fetch_assoc()["partner"], $this->id_a, "Improperly removed user A's connection");
+
+        // Make sure that user B's partner was reset to user B's id
+        $result = exec_query($query, [$this->id_b]);
+        $this->assertNotNull($result, "Failed to exec_query in testRemoveConnection");
+        $this->assertGreaterThan(0, $result->num_rows, "No user with ID matching user B's ID");
+        $this->assertEquals($result->fetch_assoc()["partner"], $this->id_b, "Improperly removed user B's connection");
+
+    }
+
 }
