@@ -242,6 +242,11 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUES (?,?)";
     $result = exec_query($query, [$id, $id]);
 
+    // Set new user's partner to themselves to indicate that they don't have a
+    // partner
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+    $result = exec_query($query, [$id, $id]);
+
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
     }

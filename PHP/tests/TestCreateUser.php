@@ -101,6 +101,33 @@ final class TestCreateUser extends TestCase
         $this->assertEquals($arr["sent_to"], $user_id);
     }
 
+    // Test that a user's partner is themself when they are first created
+    public function testEmptyConnectionRequest(): void
+    {
+        // Create a user and ensure the return value indicates success
+        $create_result = create_user(
+            $this->name, $this->email, $this->password, $this->address, $this->city, $this->zipcode, $this->birthday);
+        $this->assertEquals($create_result, 1);
+
+        $user_id = get_user_id($this->email);
+
+        // Ensure that the user has a partner that is themselves
+        $qres = exec_query("SELECT * FROM Users WHERE id=?", [$user_id]);
+        $this->assertNotNull($qres);
+        $this->assertNotFalse($qres);
+
+        // There should be exactly 1 row in the Users table that matches this ID
+        $this->assertSame(1, $qres->num_rows);
+
+        // Get a key:value mapping from our query result
+        $arr = $qres->fetch_assoc();
+        $this->assertNotNull($arr);
+        $this->assertNotFalse($arr);
+
+        // Partner is themself
+        $this->assertEquals($arr["partner"], $user_id);
+    }    
+
 }
 
 
