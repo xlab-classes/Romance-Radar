@@ -394,7 +394,13 @@ function add_connection_request($sent_from, $sent_to) {
         print("sent_from already has an outgoing request!\n");
         return 0;
     }
-    // remove_connection_request($sent_from);
+    
+    // Make sure that sent_from doesn't already have a request from sent_to
+    $sent_from_requesting = get_requests($sent_from);
+    if (in_array($sent_to, $sent_from_requesting)) {
+        print("Can't send a request to someone that's already requesting you!\n");
+        return 0;
+    }
 
     // Make sure that sent_from doesn't have a connection already. Their partner
     // will be themselves if they don't already have one

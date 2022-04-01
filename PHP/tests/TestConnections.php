@@ -68,6 +68,14 @@ final class TestConnections extends TestCase
         // request
         $this->assertEquals($this->id_b, $receiving_id, "Receiving id (A's ID) is wrong");
         $this->assertEquals($this->id_a, $requesting_id, "Requesting id (B's ID) is wrong");
+
+        // Attempt to send another request from A to B (should fail)
+        $add_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($add_attempt, 0, "Successfully added an existing connection request");
+
+        // Attempt to send a request from B to A (should fail)
+        $add_attempt = add_connection_request($this->id_b, $this->id_a);
+        $this->assertEquals($add_attempt, 0, "Successfully sent a request to someone request a connection");
     }
 
     function testAddConnection(): void
@@ -99,6 +107,10 @@ final class TestConnections extends TestCase
         $add_attempt = add_connection_request($this->id_a, $this->id_b);
         $this->assertEquals($add_attempt, 1, "Failed to add connection request");
 
+        // Attempt to remove the connection request with the sender as B (should fail)
+        $remove_attempt = remove_connection_request($this->id_b);
+        $this->assertEquals($remove_attempt, 0, "Removed a connection request sent by a user that didn't send one");
+
         // Attempt to remove the connection request
         $remove_attempt = remove_connection_request($this->id_a);
         $this->assertEquals($remove_attempt, 1, "Failed to remove connection request");
@@ -109,6 +121,10 @@ final class TestConnections extends TestCase
         $this->assertNotNull($result, "Failed to exec_query in testRemoveConnectionRequest");
         $this->assertGreaterThan(0, $result->num_rows, "No row where sent_from equal to id_a in Connection_requests");
         $this->assertEquals($result->fetch_assoc()["sent_to"], $this->id_a, "sent_to column improperly updated");
+
+        // Attempt to remove a non-existent connection request (should fail)
+        $remove_attempt = remove_connection_request($this->id_a);
+        $this->assertEquals($remove_attempt, 0, "Successfully removed a non-existent connection request");
     }
 
     function testRemoveConnection(): void
@@ -137,6 +153,10 @@ final class TestConnections extends TestCase
         $this->assertNotNull($result, "Failed to exec_query in testRemoveConnection");
         $this->assertGreaterThan(0, $result->num_rows, "No user with ID matching user B's ID");
         $this->assertEquals($result->fetch_assoc()["partner"], $this->id_b, "Improperly removed user B's connection");
+
+        // Remove the request again (should fail)
+        $remove_attempt = remove_connection($this->id_a, $this->id_b);
+        $this->assertEquals($remove_attempt, 0, "Successfully removed a non-existent connection request");
 
     }
 
