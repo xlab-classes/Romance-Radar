@@ -331,7 +331,7 @@ function add_connection_request($sent_from, $sent_to) {
     // Make sure that sent_from doesn't have a connection already. Their partner
     // will be themselves if they don't already have one
     $sent_from_partner_id = get_partner($sent_from);
-    if ($sent_from_partner_id == NULL || $sent_from_partner_id != $sent_from) {
+    if ($sent_from_partner_id != $sent_from) {
         echo "One of these connections has a partner! Cannot create new connection\n";
         return 0;
     }
