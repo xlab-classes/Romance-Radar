@@ -50,14 +50,12 @@ final class TestConnections extends TestCase
         // Send a request from user A to user B
         $add_attempt = add_connection_request($this->id_a, $this->id_b);
 
-        print("USER ID A IS " . $this->id_a . "USER ID B IS " . $this->id_b . "\n");
-
         $this->assertEquals($add_attempt, 1, "Failed to add connection request");
 
         // Get the connections requests row from the Connection_requests table
         // for user B
-        // $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
-        $result = exec_query("SELECT * FROM Connection_requests WHERE sent_from=?", [$this->id_a]);
+        $result = exec_query("SELECT * FROM Connection_requests WHERE id=?", [$this->id_b]);
+        // $result = exec_query("SELECT * FROM Connection_requests WHERE sent_from=?", [$this->id_a]);
 
         $this->assertNotNull($result, "Result was null after executing query on Connection_requests table");
         $this->assertGreaterThan(0, $result->num_rows, "No one in connection requests has sent_from's ID");
