@@ -377,9 +377,19 @@ function add_connection_request($sent_from, $sent_to) {
         return 0;
     }
 
-    // Each user can only send one connection request at a time, so if $sent_from
-    // has an existing request, remove it
-    remove_connection_request($sent_from);
+    // Each user can only send one connection request at a time. Make sure
+    // sent_from doesn't have an existing outgoing request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in add_connection_request\n");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_from) {
+        print("sent_from already has an outgoing request!\n");
+        return 0;
+    }
+    // remove_connection_request($sent_from);
 
     // Make sure that sent_from doesn't have a connection already. Their partner
     // will be themselves if they don't already have one
