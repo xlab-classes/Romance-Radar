@@ -327,36 +327,41 @@ function add_connection($sent_from, $sent_to) {
     }
 
     return 1;
-    
-    /*remove_connection($user_id_a);
-    remove_connection($user_id_b);
-    $update_query = "UPDATE Users SET partner=? WHERE id=?";
-    if (exec_query($update_query, [$user_id_a, $user_id_b]) &&
-        exec_query($update_query, [$user_id_b, $user_id_a])){
-            remove_connection_request($user_id_a);
-            remove_connection_request($user_id_b);
-            return 1;
-     }else{
-         echo "Failed to update partners\n";
-         return 0;
-     }*/
 }
 
-function remove_connection($user_id) {
-    if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user\n";
+function remove_connection($user_id_a, $user_id_b) {
+    // Make sure the users exist
+    if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
+        print("One of these users does not exist in remove connection!\n");
         return 0;
     }
 
-    $user = getUser($user_id, NULL)->fetch_assoc();
-    if($partner = $user["partner"]){
-        $update_query = "UPDATE Users SET partner = ? WHERE id=? OR id=?";
-        if(exec_query($update_query, [$user_id, $user_id, $partner])){
-            return 1;
-        }
+    // Make sure that user A's partner is user B
+    if (get_partner($user_id_a) != $user_id_b) {
+        print("These users don't have a connection to remove\n");
+        return 0;
     }
 
-    return 0;
+    // Make sure that user B's partner is user A
+    if (get_partner($user_id_b) != $user_id_a) {
+        print("These users have a lopsided connection!\n");
+        return 0;
+    }
+
+    $update_query = "UPDATE Users SET partner=? WHERE id=?";
+    $result = exec_query($update_query, [$user_id_a, $user_id_a]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in remove_connection\n");
+        return 0;
+    }
+    
+    $result = exec_query($update_query, [$user_id_b, $user_id_b]);
+    if ($result == NULL) {
+        print("Coudln't exec_query on user B in remove_connection\n");
+        return 0;
+    }
+
+    return 1;
 }
 
 function add_connection_request($sent_from, $sent_to) {
