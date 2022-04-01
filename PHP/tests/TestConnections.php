@@ -93,4 +93,22 @@ final class TestConnections extends TestCase
 
     }
 
+    function testRemoveConnectionRequest(): void
+    {
+        // Send a request from user A to user B
+        $add_attempt = add_connection_request($this->id_a, $this->id_b);
+        $this->assertEquals($add_attempt, 1, "Failed to add connection request");
+
+        // Attempt to remove the connection request
+        $remove_attempt = remove_connection_request($this->id_a);
+        $this->assertEquals($remove_attempt, 1, "Failed to remove connection request");
+
+        // Ensure that sent_from's sent_to column was appropriately updated
+        $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+        $result = exec_query($query, [$this->id_a]);
+        $this->assertNotNull($result);
+        $this->assertGreaterThan($result->num_rows, 0);
+        $this->assertEquals($result->fetch_assoc()["sent_to"], $this->id_a);
+    }
+
 }

@@ -418,10 +418,13 @@ function remove_connection_request($sent_from) {
 
     // Reset sent_to value == sent_from to indicate there is no outgoing request
     $update_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
-    if (exec_query($update_query, [$sent_from, $sent_from])){
-        return 1;
+    $result = exec_query($update_query, [$sent_from, $sent_from]);
+    if (result == NULL) {
+        print("Couldn't exec_query in remove_connection_request\n");
+        return 0;
     }
-    return 0;
+
+    return 1;
 }
 
 function get_requests($user_id) {
