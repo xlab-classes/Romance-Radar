@@ -211,11 +211,10 @@ final class TestConnections extends TestCase
         $b_has_request = has_requests($this->id_b);
         $this->assertTrue($b_has_request, "B didn't have a request when it should have");
 
-
-        // Make sure that A's request came from B
-        $a_requests = get_requests($this->id_a);
-        $this->assertNotEmpty($a_requests, "No requests found for A");
-        $this->assertTrue(in_array($this->id_a, $a_requests), "B's ID not found in A's request list");
+        // Make sure that B's request came from A
+        $b_requests = get_requests($this->id_b);
+        $this->assertNotEmpty($b_requests, "No requests found for B");
+        $this->assertTrue(in_array($this->id_b, $b_requests), "A's ID not found in B's request list");
     }
 
 }
