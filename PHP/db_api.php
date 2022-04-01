@@ -420,6 +420,7 @@ function remove_connection($user_id_a, $user_id_b) {
 //      sent_from and sent_to MUST NOT be the same user
 //      sent_from MUST NOT have an outgoing connection request already
 //      sent_from MUST NOT have a partner already
+//      sent_from MUST NOT have a request from sent_to
 function add_connection_request($sent_from, $sent_to) {
     // Make sure both users exist
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
@@ -443,6 +444,13 @@ function add_connection_request($sent_from, $sent_to) {
     }
     if ($result->fetch_assoc()["sent_to"] != $sent_from) {
         print("sent_from already has an outgoing request!\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't already have a request from sent_to
+    $sent_from_requesting = get_requests($sent_from);
+    if (in_array($sent_to, $sent_from_requesting)) {
+        print("Can't send a request to someone that's already requesting you!\n");
         return 0;
     }
 
