@@ -34,6 +34,9 @@ final class TestConnections extends TestCase
 
         $this->id_a = get_user_id($this->email_a);
         $this->id_b = get_user_id($this->email_b);
+
+        $this->assertGreaterThan(0, $this->id_a, "Error getting ID of user A in setUp() function");
+        $this->assertGreaterThan(0, $this->id_b, "Error getting ID of user B in setUp() function");
     }
 
     function tearDown(): void
