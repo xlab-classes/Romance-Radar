@@ -106,9 +106,9 @@ final class TestConnections extends TestCase
         // Ensure that sent_from's sent_to column was appropriately updated
         $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
         $result = exec_query($query, [$this->id_a]);
-        $this->assertNotNull($result);
-        $this->assertGreaterThan($result->num_rows, 0);
-        $this->assertEquals($result->fetch_assoc()["sent_to"], $this->id_a);
+        $this->assertNotNull($result, "Failed to exec_query in testRemoveConnectionRequest");
+        $this->assertGreaterThan($result->num_rows, 0, "No row where sent_from equal to id_a in Connection_requests");
+        $this->assertEquals($result->fetch_assoc()["sent_to"], $this->id_a, "sent_to column improperly updated");
     }
 
 }
