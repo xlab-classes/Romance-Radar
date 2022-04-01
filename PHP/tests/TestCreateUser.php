@@ -102,7 +102,7 @@ final class TestCreateUser extends TestCase
     }
 
     // Test that a user's partner is themself when they are first created
-    public function testEmptyConnectionRequest(): void
+    public function testInitialPartner(): void
     {
         // Create a user and ensure the return value indicates success
         $create_result = create_user(
