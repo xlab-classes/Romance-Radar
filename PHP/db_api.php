@@ -596,7 +596,7 @@ function has_partner($user_id) {
         print("No user with this ID in has_partner\n");
         return -1;
     }
-    $result = exec_query("SELECT partner FROM Users WHERE id=?", $[user_id]);
+    $result = exec_query("SELECT partner FROM Users WHERE id=?", [$user_id]);
     if ($result != NULL) {
         return $result != $user_id;
     }
