@@ -17,10 +17,6 @@ if(!$_SESSION['user']['partner']){
     exit();
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    addChatMessages($_SESSION['user']['id'], $_SESSION['user']['partner'], $_POST['message']);
-}
-
 $messages = getChatMessages($_SESSION['user']['id'], $_SESSION['user']['partner']);
 
 $display_messages = '';
@@ -43,13 +39,7 @@ foreach($messages as $msg){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-    <form action="./chat.php" method="post" enctype="multipart/form-data">
-        <lable for="message">Send a message</label>
-        <textarea id="story" name="message" rows="5" cols="33" required></textarea>
-        <input type='submit'/>
-    </form>
-<hr/>
-<iframe src='./messages.php'>
+<body onload='setTimeout(()=>{location.reload()}, 5000)'>
+    <?php echo $display_messages;?>
 </body>
 </html>
