@@ -244,6 +244,19 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     return 1;
 }
 
+/* Get verification status */
+function get_verification_status($user_id) {
+    $query = "SELECT * FROM Users WHERE id = ?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if (!$result) {
+        echo "Couldn't get verification status\n";
+        return 0;
+    }
+    $row = $result->fetch_assoc();
+    return $row['verified'];
+}
+
 
 # Removes all of a user's data from the database
 function delete_user($user_id) {

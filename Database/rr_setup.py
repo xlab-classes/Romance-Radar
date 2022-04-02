@@ -20,6 +20,7 @@ TABLES['users'] = (
     "  `email` varchar(255) NOT NULL,"
     "  `password` varchar(255) NOT NULL,"
     "  `phone_number` varchar(255) NOT NULL,"
+    "   'verified' boolean NOT NULL DEFAULT FALSE,"
     "  PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB")
 
