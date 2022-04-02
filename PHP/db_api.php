@@ -755,12 +755,13 @@ function getChatMessages($sent_from, $sent_to){
 
     $query = 'SELECT message, sent_from, sent_to FROM Chat_Messages WHERE (sent_from=? AND sent_to=?) OR (sent_from=? AND sent_to=?) ORDER BY date';
     $result = exec_query($query, [$sent_from, $sent_to, $sent_to, $sent_from]);
-    if(!$messages = $result->fetch_assoc()){
-        echo 'Failed to retrive results';
-        return 0;
+    $return = array();
+    while($message = $result->fetch_assoc()){
+        $return[] = $message;
     }
-    return $messages;
+    return $return;
 }
+
 
 function addChatMessages($sent_from, $sent_to, $message){
     if($message == ""){
