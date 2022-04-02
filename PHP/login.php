@@ -17,7 +17,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 session_start();
                 $_SESSION['user'] = $user;
                 if($user['partner']){
-                    $_SESSION['partner'] = getUser($id, NULL)->fetch_assoc();
+                    $_SESSION['partner'] = getUser($user['partner'], NULL)->fetch_assoc();
                 }
                 header('Location: ../HTML/profile_page.php');
                 exit();
