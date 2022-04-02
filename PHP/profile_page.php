@@ -6,6 +6,7 @@ require_once 'db_api.php';
 // Returns
 //      0 on failure
 //      1 on successs
+session_start();
 function update_name($id, $name) {
 
     # Check if user exists
@@ -32,6 +33,7 @@ function update_name($id, $name) {
         echo "Failed to update name. The query was not successful.";
         return 0;
     }
+    $_SESSION['user']['name'] = $name;
     # Return true if successful
     return 1;
 }
@@ -54,7 +56,8 @@ function update_address($id, $zip) {
         if ($result == NULL) {
             return 0;
          } // Failed to execute query
-        return 1;
+         $_SESSION['user']['zipcode'] = $zip;
+         return 1;
     }
 }
 
@@ -95,6 +98,7 @@ function update_email($id, $email) {
         return 0;
     }
     # Return 1 if successful
+    $_SESSION['user']['email'] = $email;
     return 1;
 }
 
@@ -137,7 +141,45 @@ function update_dob($id, $dob) {
         echo "Failed to update date of birth. The query was not successful.";
         return 0;
     }
-
+    $_SESSION['user']['birthday'] = $dob;
     // Return 1 if successful
     return 1;
+}
+
+function update_profile_picture($id, $previous_picture, $picture, $ext){
+
+    // Checking the validtiy of the inputs
+    if(empty($id) || empty($picture) || empty($previous_picture)) {
+        echo "User ID or provided picture cannot be empty.";
+        return 0;
+    }
+    
+    // Check if the user with $user_id exists
+    $user = user_exists($id);
+    if ($user == false) {
+        echo "User does not exist. Cannot update email.";
+        return 0;
+    }
+
+    if($previous_picture != '../assets/generic_profile_picture.jpg' && !unlink($previous_picture)){
+        echo 'previous picture could not be removed';
+        return 0;
+    }
+
+    $new_profile_picture_path = '../assets/profile_pictures/image'. strval($id) . $ext;
+    
+    if(!file_put_contents($new_profile_picture_path, $picture)){
+        echo 'Could not create new profile picture';
+        return 0;
+    }
+
+    $query = 'UPDATE users SET user_picture=? WHERE id=?';
+
+    if(!exec_query($query, [$new_profile_picture_path, $id])){
+        echo 'Could not execute user_picture update query';
+        return 0;
+    }
+    $_SESSION['user']['user_picture'] = $new_profile_picture_path;
+    return 1;
+    
 }

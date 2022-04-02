@@ -230,17 +230,27 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Attempt to create this user
     $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday, $city];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
         return 0;
     }
 
+    // Add an entry for this user to the Connection_requests table
     $id = get_user_id($email);
+    $query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUES (?,?)";
+    $result = exec_query($query, [$id, $id]);
+
+    // Set new user's partner to themselves to indicate that they don't have a
+    // partner
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+    $result = exec_query($query, [$id, $id]);
+
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
     }
+
     return 1;
 }
 
@@ -273,80 +283,261 @@ function delete_user($user_id) {
     return 1;
 }
 
+// Add a connection between these users
+//
+// parameter: sent_from     [int]
+//      The user ID of the user that sent the connection request
+//
+// parameter: sent_to       [int]
+//      The user ID of the user accepting the connection request
+//
+// returns:
+//      0 on failure
+//      1 on success
+//
+// constraints:
+//      sent_from and sent_to MUST exist
+//      sent_from MUST have sent a request to sent_to
+//      sent_from MUST NOT already have a partner
+//      sent_to MUST NOT already have a partner
+//      sent_to MUST have received a request from sent_from
+function add_connection($sent_from, $sent_to) {
+    // Make sure both users exist
+    if (!user_exists($sent_from) || !user_exists($sent_to)) {
+        echo "No user with this ID in delete_user\n";
+        return 0;
+    }
 
-function add_connection($user_id_a, $user_id_b) {
+    // Make sure that sent_from has sent a connection request to sent_to
+    $outgoing_request_query =
+        "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($outgoing_request_query, [$sent_from]);
+    if ($result == NULL || $result->num_rows <= 0) {
+        print("There is no entry in Connection_requests with user ID sent_from");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_to) {
+        print("There is no connection request from user sent_from to user sent_to\n");
+        return 0;
+    }
+
+    // Make sure that sent_to has a connection request from sent_from
+    $incoming_requests = get_requests($sent_to);
+    if (!in_array($sent_from, $incoming_requests)) {
+        print("User sent_to has not received a request from user sent_from\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't have a partner
+    if (get_partner($sent_from) != $sent_from) {
+        print("User sent_from already has a partner!\n");
+        return 0;
+    }
+
+    // Make sure that sent_to doesn't have a partner
+    if (get_partner($sent_to) != $sent_to) {
+        print("User sent_to already has a partner!\n");
+        return 0;
+    }
+
+    // Complete the connection
+    $query = "UPDATE Users SET partner=? WHERE id=?";
+
+    // Add sent_from as a partner to sent_to
+    $result = exec_query($query, [$sent_from, $sent_to]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    // Add sent_to as a partner to sent_from
+    $result = exec_query($query, [$sent_to, $sent_from]);
+    if ($result == NULL) {
+        print("Failed to exec_query in add_connection\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Remove an existing connection between these users
+//
+// parameter: user_id_a     [int]
+//      The user ID of one of the users in the connection to be removed
+//
+// parameter: user_id_b     [int]
+//      The user ID of the other user in the connection to be removed
+//
+// returns:
+//      0 on failure
+//      1 on success
+//
+// constraints:
+//      user_id_a and user_id_b MUST exist
+//      There MUST be a connection between these users
+//      user_id_a and user_id_b MUST NOT be the same user
+function remove_connection($user_id_a, $user_id_b) {
+    // Make sure the users exist
     if (!user_exists($user_id_a) || !user_exists($user_id_b)) {
-        echo "No user with this ID in delete_user\n";
+        print("One of these users does not exist in remove connection!\n");
         return 0;
     }
-    remove_connection($user_id_a);
-    remove_connection($user_id_b);
+
+    // Make sure that user_id_a and user_id_b are different users
+    if ($user_id_a == $user_id_b) {
+        print("Cannot remove a connection between the same user!\n");
+        return 0;
+    }
+
+    // Make sure that user A's partner is user B
+    if (get_partner($user_id_a) != $user_id_b) {
+        print("These users don't have a connection to remove\n");
+        return 0;
+    }
+
+    // Make sure that user B's partner is user A
+    if (get_partner($user_id_b) != $user_id_a) {
+        print("These users have a lopsided connection!\n");
+        return 0;
+    }
+
     $update_query = "UPDATE Users SET partner=? WHERE id=?";
-    if (exec_query($update_query, [$user_id_a, $user_id_b]) &&
-        exec_query($update_query, [$user_id_b, $user_id_a])){
-            remove_connection_request($user_id_a);
-            remove_connection_request($user_id_b);
-            return 1;
-     }else{
-         echo "Failed to update partners\n";
-         return 0;
-     }
-}
-
-function remove_connection($user_id) {
-    if (!user_exists($user_id)) {
-        echo "No user with this ID in delete_user\n";
+    $result = exec_query($update_query, [$user_id_a, $user_id_a]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in remove_connection\n");
+        return 0;
+    }
+    
+    $result = exec_query($update_query, [$user_id_b, $user_id_b]);
+    if ($result == NULL) {
+        print("Coudln't exec_query on user B in remove_connection\n");
         return 0;
     }
 
-    $user = getUser($user_id, NULL)->fetch_assoc();
-    if($partner = $user["partner"]){
-        $update_query = "UPDATE Users SET partner = NULL WHERE id=? OR id=?";
-        if(exec_query($update_query, [$user_id, $partner])){
-            return 1;
-        }
-    }
-
-    return 0;
+    return 1;
 }
 
+// Send a request from one user to another
+//
+// parameter: sent_from     [int]
+//      The user ID of the user sending the request
+//
+// parameter: sent_to       [int]
+//      The user ID of the user receiving the request
+//
+// returns:
+//      0 on failure
+//      1 on success
+//
+// constraints:
+//      sent_from and sent_to MUST exist
+//      sent_from and sent_to MUST NOT be the same user
+//      sent_from MUST NOT have an outgoing connection request already
+//      sent_from MUST NOT have a partner already
+//      sent_from MUST NOT have a request from sent_to
 function add_connection_request($sent_from, $sent_to) {
+    // Make sure both users exist
     if (!user_exists($sent_from) || !user_exists($sent_to)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    $sent_from = getUser($sent_from, NULL)->fetch_assoc();
-    $sent_to = getUser($sent_to, NULL)->fetch_assoc();
-    
-    if(!$sent_from && !$sent_to){
-        echo "Fault in querying\n";
-    }
-    remove_connection_request($sent_from['id']);
-    remove_connection_request($sent_to['id']);
-    if (!$sent_from['partner'] && !$sent_to['partner']){
-        $insert_query = "INSERT INTO Connection_requests (sent_from, sent_to) VALUE (?,?)";
-        if (exec_query($insert_query, [$sent_from['id'], $sent_to['id']])){
-            return 1;
-        }
-    }
-    return 0;
 
+    // Make sure a user isn't sending a request to themselves
+    if ($sent_from == $sent_to) {
+        print("Can't add a connection request between the same user!\n");
+        return 0;   
+    }
+
+    // Each user can only send one connection request at a time. Make sure
+    // sent_from doesn't have an existing outgoing request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't exec_query in add_connection_request\n");
+        return 0;
+    }
+    if ($result->fetch_assoc()["sent_to"] != $sent_from) {
+        print("sent_from already has an outgoing request!\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't already have a request from sent_to
+    $sent_from_requesting = get_requests($sent_from);
+    if (in_array($sent_to, $sent_from_requesting)) {
+        print("Can't send a request to someone that's already requesting you!\n");
+        return 0;
+    }
+
+    // Make sure that sent_from doesn't have a connection already. Their partner
+    // will be themselves if they don't already have one
+    $sent_from_partner_id = get_partner($sent_from);
+    if ($sent_from_partner_id != $sent_from) {
+        echo "One of these connections has a partner! Cannot create new connection\n";
+        return 0;
+    }
+
+    // Insert this connection into the Connection_requests table
+    $insert_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
+    if (exec_query($insert_query, [$sent_to, $sent_from])){
+        return 1;
+    }
+
+    return 0;
 }
 
+// Remove the connection request sent by this user
+//
+// parameter: sent_from     [int]
+//      The user ID of a user that has sent a connection request
+//
+// returns:
+//      0 on failure
+//      1 on success
+//
+// constraints:
+//      sent_from MUST exist
+//      sent_from MUST have sent a connection request to someone
 function remove_connection_request($sent_from) {
+    // Make sure user exists
     if (!user_exists($sent_from)) {
         echo "No user with this ID\n";
         return 0;
     }
-    
-    $delete_query = "DELETE FROM Connection_requests WHERE sent_from=?";
-    if (exec_query($delete_query, [$sent_from])){
-        return 1;
+
+    // Make sure user has an outgoing connection request
+    $query = "SELECT * FROM Connection_requests WHERE sent_from=?";
+    $result = exec_query($query, [$sent_from]);
+    if ($result == NULL) {
+        print("Couldn't SELECT from Connection_requests in remove_connection_request\n");
+        return 0;
     }
-    return 0;
+    if ($result->fetch_assoc()["sent_to"] == $sent_from) {
+        print("There is no outgoing request to remove\n");
+        return 0;
+    }
+
+    // Reset sent_to value == sent_from to indicate there is no outgoing request
+    $update_query = "UPDATE Connection_requests SET sent_to=? WHERE sent_from=?";
+    $result = exec_query($update_query, [$sent_from, $sent_from]);
+    if ($result == NULL) {
+        print("Couldn't UPDATE Connection_requests in remove_connection_request\n");
+        return 0;
+    }
+
+    return 1;
 }
 
+// Get the incoming connection requests sent to this user
+//
+// parameter: user_id       [int]
+//      The user ID whose incoming connection requests we're retrieving
+//
+// returns:
+//      0 on failure
+//      An array of user ID's requesting connections on success
+//
+// contraints:
+//      user_id MUST exist
 function get_requests($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
@@ -354,6 +545,10 @@ function get_requests($user_id) {
     }
     $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
     $result = exec_query($query, [$user_id]);
+    if ($result == NULL) {
+        print("Couldn't SELECT from Connection_requests in get_requests\n");
+        return 0;
+    }
     $return = array();
     while($row = $result->fetch_assoc()){
         array_push($return, $row['sent_from']);
@@ -361,6 +556,18 @@ function get_requests($user_id) {
     return $return;
 }
 
+// Get the partner (current connection) of this user
+//
+// parameter: user_id       [int]
+//      The user ID whose partner we want to get
+//
+// returns:
+//      0 on failure
+//      The user ID of user_id's partner on success
+//      user_id if this user does not have a partner
+//
+// constraints:
+//      user_id MUST exist
 function get_partner($user_id){
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
@@ -368,6 +575,78 @@ function get_partner($user_id){
     }
     $user = getUser($user_id, NULL);
     return $user->fetch_assoc()['partner'];
+}
+
+// Check whether this user has incoming connection requests
+//
+// parameter: user_id       [int]
+//      The user ID to check for incoming connection requests
+//
+// returns:
+//      false if the user has no incoming connection requests
+//      -1 on failure
+//      true if the user has incoming connection requests
+//
+// constraints:
+//      user_id MUST exist
+function has_requests($user_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in has_requests\n");
+        return -1;
+    }
+    $result = exec_query("SELECT * FROM Connection_requests WHERE sent_to=?", [$user_id]);
+    if ($result != NULL) {
+        return ($result->num_rows > 0);
+    }
+    else return -1;
+}
+
+// Check whether this user has a partner
+//
+// parameter: user_id       [int]
+//      The user ID to check for a partner
+//
+// returns:
+//      false if the user doesn't have a partner
+//      -1 on failure
+//      true if the user does have a partner
+//
+// constraints:
+//      user_id MUST exist
+function has_partner($user_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in has_partner\n");
+        return -1;
+    }
+    $result = exec_query("SELECT partner FROM Users WHERE id=?", [$user_id]);
+    if ($result != NULL) {
+        return $result->fetch_assoc()["partner"] != $user_id;
+    }
+    else return -1;
+}
+
+// Check whether this user has sent a connection request
+//
+// parameter: user_id       [int]
+//      The user ID to check for a sent request
+//
+// returns:
+//      false if the user has not sent a request
+//      -1 on failure
+//      true if the user has sent a request
+//
+// constraints;
+//      user_id MUST exist
+function sent_request($user_id) {
+    if (!user_exists($user_id)) {
+        print("User with this ID couldn't be found in sent_request\n");
+        return -1;
+    }
+    $result = exec_query("SELECT * FROM Connection_requests WHERE sent_from=? and sent_to!=?", [$user_id, $user_id]);
+    if ($result != NULL) {
+        return ($result->num_rows > 0);
+    }
+    else return -1;
 }
 
 function get_preferences($user_id) {
@@ -397,8 +676,8 @@ function get_preferences($user_id) {
 function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
-                     'Food' => array('restaraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
-                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
+                     'Food' => array('restaurant' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bar'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
                      'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
@@ -436,8 +715,8 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
-        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Food' => ['(restaurant, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, bar, user_id)', '(?,?,?,?)', [0,0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]
