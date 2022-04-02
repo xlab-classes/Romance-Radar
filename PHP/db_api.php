@@ -663,8 +663,8 @@ function get_preferences($user_id) {
 function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
-                     'Food' => array('restaraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
-                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
+                     'Food' => array('restaurant' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bar'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
                      'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
@@ -702,8 +702,8 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
-        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Food' => ['(restaurant, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, bar, user_id)', '(?,?,?,?)', [0,0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]

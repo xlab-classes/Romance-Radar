@@ -33,6 +33,7 @@ function update_name($id, $name) {
         echo "Failed to update name. The query was not successful.";
         return 0;
     }
+    $_SESSION['user']['name'] = $name;
     # Return true if successful
     return 1;
 }
@@ -55,7 +56,8 @@ function update_address($id, $zip) {
         if ($result == NULL) {
             return 0;
          } // Failed to execute query
-        return 1;
+         $_SESSION['user']['zipcode'] = $zip;
+         return 1;
     }
 }
 
@@ -96,6 +98,7 @@ function update_email($id, $email) {
         return 0;
     }
     # Return 1 if successful
+    $_SESSION['user']['email'] = $email;
     return 1;
 }
 
@@ -138,7 +141,7 @@ function update_dob($id, $dob) {
         echo "Failed to update date of birth. The query was not successful.";
         return 0;
     }
-
+    $_SESSION['user']['birthday'] = $dob;
     // Return 1 if successful
     return 1;
 }

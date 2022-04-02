@@ -82,7 +82,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
         $prefs['Entertainment']['concerts'] = true;
         $prefs['Entertainment']['hiking'] = true;
-        $prefs['Entertainment']['bars'] = true;
+        $prefs['Entertainment']['bar'] = true;
     }
     else {
         if (!empty($_POST["Concerts"])) {
@@ -92,7 +92,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             $prefs['Entertainment']['hiking'] = $_POST["Hiking"];
         }
         if (!empty($_POST["Bars"])) {
-            $prefs['Entertainment']['bars'] = $_POST["Bars"];
+            $prefs['Entertainment']['bar'] = $_POST["Bars"];
         }
     }
 
