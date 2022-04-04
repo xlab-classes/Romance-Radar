@@ -134,3 +134,16 @@ CREATE TABLE IF NOT EXISTS User_security_questions(
     FOREIGN KEY (question_id_2) REFERENCES Security_questions(id) ON DELETE SET NULL,
     FOREIGN KEY (question_id_3) REFERENCES Security_questions(id) ON DELETE SET NULL
 );
+
+/* Create a table for capcha images */
+CREATE TABLE IF NOT EXISTS Capcha(
+    id INT  NOT NULL AUTO_INCREMENT,
+    image VARCHAR(100) NOT NULL,
+    code VARCHAR(100) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+INSERT INTO Capcha (id,image, code) VALUES 
+(1,'assets/Capchas/2cegf.png', '2cegf'),
+(2,'assets/Capchas/24f6w.png', '24f6w'),
+(3,'assets/Capchas/226md.png', '226md');
