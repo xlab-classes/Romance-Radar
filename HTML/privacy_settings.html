@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -108,13 +109,15 @@
     </div>
      </div>
     </div>
+  
     <!-- User verification -->
-    <div class="col">
+    <!-- This section should only be visible to the user if they are not verified -->
+    <div class="<?php echo $_SESSION['verified'] == 0 ? 'show' : 'hidden';?>"
      <div class="p-3 bg">
         <h3 class="text-center">Additional Settings</h3>
         <h5 class="text-center">User verification</h5>
         <div class="d-grid gap-2 col-4 mx-auto">
-            <button class="btn btn-primary" type="button">Verify User</button>
+            <button class="btn btn-primary" type="button" name="VerifyBtn">Verify User</button>
         </div>
      </div>
     </div>

@@ -254,19 +254,6 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     return 1;
 }
 
-/* Get verification status */
-function get_verification_status($user_id) {
-    $query = "SELECT * FROM Users WHERE id = ?";
-    $data = [$user_id];
-    $result = exec_query($query, $data);
-    if (!$result) {
-        echo "Couldn't get verification status\n";
-        return 0;
-    }
-    $row = $result->fetch_assoc();
-    return $row['verified'];
-}
-
 
 # Removes all of a user's data from the database
 function delete_user($user_id) {
@@ -669,8 +656,26 @@ function get_preferences($user_id) {
     }
 
     return $preferences;
-
 }
+
+/* Get verification status */
+function get_verification_status($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $query = "SELECT * FROM Users WHERE id = ?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if (!$result) {
+        echo "Couldn't get verification status\n";
+        return 0;
+    }
+    $row = $result->fetch_assoc();
+    return $row['verified'];
+}
+
 
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
