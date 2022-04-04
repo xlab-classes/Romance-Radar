@@ -1,0 +1,192 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+
+body {
+    background: #FFC0CB;
+}
+
+h1 {
+    position: absolute;
+    width: 249px;
+    height: 74px;
+    left: 100px;
+    top: 100px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 25px;
+    line-height: 52px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    color: #000000;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+h2 {
+    position: absolute;
+    width: 361px;
+    height: 65px;
+    left: 100px;
+    top: 150px;
+
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 21px;
+    display: flex;
+    align-items: center;
+
+    color: #535353;
+
+}
+
+h3 {
+
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 100px;
+    top: 210px;
+}
+
+h4 {
+
+    position: absolute;
+    width: 240px;
+    height: 30px;
+    left: 132px;
+    top: 205px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 29px;
+    /* identical to box height */
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    color: #000000;
+
+}
+
+h5 {
+
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 100px;
+    top: 240px;
+}
+
+h6 {
+
+
+    position: absolute;
+    width: 240px;
+    height: 30px;
+    left: 132px;
+    top: 232px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 29px;
+    /* identical to box height */
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    color: #000000;
+
+}
+
+p {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 100px;
+    top: 260px;
+}
+
+.address {
+    position: absolute;
+    width: 460px;
+    height: 49px;
+    left: 130px;
+    top: 250px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 29px;
+    display: flex;
+    align-items: center;
+
+    color: #000000;
+
+}
+
+.distance1 {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 100px;
+    top: 290px;
+
+}
+
+.distance2 {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 130px;
+    top: 290px;
+}
+
+.money1 {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 100px;
+    top: 310px;
+}
+
+.money2 {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 130px;
+    top: 312px;
+}
+
+.date {
+    position: absolute;
+    width: 90px;
+    height: 30px;
+    left: 100px;
+    top: 400px;
+}
+
+.datepic {
+
+    width: 300px;
+    height: 300px;
+    left: 500px;
+    top: 500px;
+
+}
