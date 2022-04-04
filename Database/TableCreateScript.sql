@@ -136,14 +136,14 @@ CREATE TABLE IF NOT EXISTS User_security_questions(
 );
 
 /* Create a table for capcha images */
-CREATE TABLE IF NOT EXISTS Capcha(
+CREATE TABLE IF NOT EXISTS Captcha(
     id INT  NOT NULL AUTO_INCREMENT,
     image VARCHAR(100) NOT NULL,
     code VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO Capcha (id,image, code) VALUES 
+INSERT INTO Captcha (id,image, code) VALUES 
 (1,'assets/Capchas/2cegf.png', '2cegf'),
 (2,'assets/Capchas/24f6w.png', '24f6w'),
 (3,'assets/Capchas/226md.png', '226md');

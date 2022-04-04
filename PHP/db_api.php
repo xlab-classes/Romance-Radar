@@ -764,3 +764,13 @@ function addSecurityQuestions($user_id, $data){
 
     return 1;
 }
+
+function get_captcha_image($captcha_id){
+    $query = 'SELECT image FROM Captcha WHERE id=?';
+    $result = exec_query($query, [(int)$captcha_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No capcha Found');
+    }
+    return $result->fetch_assoc()['image'];
+}
