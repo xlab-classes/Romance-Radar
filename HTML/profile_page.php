@@ -43,6 +43,9 @@ function selectedSubCategory($cat, $sub){
         #profile_picture{
             height: 200px;
             width: 200px;
+            <?php if($_SESSION['user']['verified']){ ?>
+                box-shadow: 0 0 10px #0000FF;
+            <?php } ?>
         }
     </style>
 
