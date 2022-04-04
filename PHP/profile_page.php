@@ -170,7 +170,7 @@ function update_profile_picture($id, $previous_picture, $picture, $ext){
         return 0;
     }
 
-    $query = 'UPDATE users SET user_picture=? WHERE id=?';
+    $query = 'UPDATE Users SET user_picture=? WHERE id=?';
 
     if(!exec_query($query, [$new_profile_picture_path, $id])){
         echo 'Could not execute user_picture update query';
