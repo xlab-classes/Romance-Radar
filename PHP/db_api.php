@@ -746,3 +746,39 @@ function addSecurityQuestions($user_id, $data){
 
     return 1;
 }
+
+function getChatMessages($sent_from, $sent_to){
+    if(!user_exists($sent_from) || !user_exists($sent_to)){
+        echo 'user does not exist';
+        return 0;
+    }
+
+    $query = 'SELECT message, sent_from, sent_to FROM Chat_Messages WHERE (sent_from=? AND sent_to=?) OR (sent_from=? AND sent_to=?) ORDER BY date';
+    $result = exec_query($query, [$sent_from, $sent_to, $sent_to, $sent_from]);
+    $return = array();
+    while($message = $result->fetch_assoc()){
+        $return[] = $message;
+    }
+    return $return;
+}
+
+
+function addChatMessages($sent_from, $sent_to, $message){
+    if($message == ""){
+        echo 'message is empty';
+        return 0;
+    }
+    if(!user_exists($sent_from) || !user_exists($sent_to)){
+        echo 'user does not exist';
+        return 0;
+    }
+
+    $query = 'INSERT INTO Chat_Messages (sent_from, sent_to, message) VALUES (?,?,?)';
+    $result = exec_query($query, [$sent_from, $sent_to, htmlspecialchars($message)]);
+    if(!$result){
+        echo 'Could not insert new message';
+        return 0;
+    }
+
+    return 1;
+}

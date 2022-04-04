@@ -16,6 +16,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             if(sign_in($email, $password) && $user = getUser(NULL, $email)->fetch_assoc()){
                 session_start();
                 $_SESSION['user'] = $user;
+                if($user['partner']){
+                    $_SESSION['partner'] = getUser($user['partner'], NULL)->fetch_assoc();
+                }
                 header('Location: ../HTML/profile_page.php');
                 exit();
             }else{

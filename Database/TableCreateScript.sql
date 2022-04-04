@@ -133,3 +133,14 @@ CREATE TABLE IF NOT EXISTS User_security_questions(
     FOREIGN KEY (question_id_2) REFERENCES Security_questions(id) ON DELETE SET NULL,
     FOREIGN KEY (question_id_3) REFERENCES Security_questions(id) ON DELETE SET NULL
 );
+
+CREATE TABLE Chat_Messages(
+    id INT AUTO_INCREMENT,
+    sent_from INT NOT NULL,
+    sent_to INT NOT NULL,
+    message VARCHAR(200),
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE
+);
