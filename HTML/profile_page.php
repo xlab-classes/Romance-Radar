@@ -1,9 +1,28 @@
 <?php
+require_once '../PHP/db_api.php';
 session_start();
 if(!isset($_SESSION['user'])){
     echo 'Not logged in';
     header('Location: ./login.html');
+    exit();
 }
+$p = get_preferences($_SESSION['user']['id']);
+
+function selectedCategory($cat){
+    global $p;
+    foreach($p[$cat] as $c => $sc){
+        if(!$sc){
+            return "";
+        }
+    }
+    return "checked";
+}
+
+function selectedSubCategory($cat, $sub){
+    global $p;
+    return $p[$cat][$sub]? "checked":""; 
+}
+
 ?>
 
 <!doctype html>
@@ -21,9 +40,10 @@ if(!isset($_SESSION['user'])){
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             color: #9F1111;
         }
-
-
-
+        #profile_picture{
+            height: 200px;
+            width: 200px;
+        }
     </style>
 
   </head>
@@ -35,30 +55,43 @@ if(!isset($_SESSION['user'])){
                 <div class="col-md-6 col-lg-3">
                     <div class="p-5 bg">
                         <h5>Date Preference</h5>
-                        <label for="MaxCost" hidden>Maximum Cost</label>
-                        <input name="MaxCost" class="form-control left-align my-2 p-2" id="MaxCost" type="text" placeholder="Maximum Cost"/>
-
-                        <label for="MaxDist" hidden>Maximum Distance</label>
-                        <input name="MaxDist" class="form-control left-align my-2 p-2" id="MaxDist" type="text" placeholder="Maximum Distance"/>
-
-                        <label for="PreDateLen" hidden>Preferred date length (hours)</label>
-                        <input name="PreDateLen" class="form-control left-align my-2 p-2" id="PreDateLen" type="text" placeholder="Preferred Date Length (hrs)"/>
+                        <label for="MaxCost">Maximum Cost</label>
+                        <?php
+                            echo '<input name="MaxCost" value='.strval($p['Date_preferences']['cost']).' class="form-control left-align my-2 p-2" id="MaxCost" type="number" placeholder="Maximum Cost"/>';
+                        ?>
+                        <label for="MaxDist">Maximum Distance</label>
+                        <?php
+                            echo sprintf('<input name="MaxDist" value=%d class="form-control left-align my-2 p-2" id="MaxDist" type="text" placeholder="Maximum Distance"/>', $p['Date_preferences']['distance']);
+                        ?>
+                        <label for="PreDateLen">Preferred date length (hours)</label>
+                        <?php
+                            echo sprintf('<input name="PreDateLen" value=%d class="form-control left-align my-2 p-2" id="PreDateLen" type="text" placeholder="Preferred Date Length (hrs)"/>', $p['Date_preferences']['length']);
+                        ?>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="p-5 bg">
                         <h5>Personal Details</h5>
-                        <label for="CngFN" hidden>Change your first name</label>
-                        <input name="CngFN" class="form-control left-align my-2 p-2" id="CngFN" type="text" placeholder="Change your first name"/>
+                        <label for="CngFN">Change your first name</label>
+                        <?php 
+                            $name_split = explode(" ", $_SESSION['user']['name']);
+                            echo sprintf('<input value="%s" name="CngFN" class="form-control left-align my-2 p-2" id="CngFN" type="text" placeholder="Change your first name"/>', $name_split[0]);
+                        ?>
 
-                        <label for="CngLN" hidden>Change your last name</label>
-                        <input name="CngLN" class="form-control left-align my-2 p-2" id="CngLN" type="text" placeholder="Change your last name"/>
-
-                        <label for="CngZip" hidden>Change your zip code</label>
-                        <input name="CngZip" class="form-control left-align my-2 p-2" id="CngZip" type="text" placeholder="Change your zip code"/>
-
-                        <label for="CngDob" hidden>Change your date of birth</label>
-                        <input name="CngDob" class="form-control left-align my-2 p-2" id="CngDob" type="text" placeholder="Change your date of birth"/>
+                        <label for="CngLN" >Change your last name</label>
+                        <?php 
+                            $last_name = isset($name_split[1])?$name_split[1]:"";
+                            echo sprintf('<input value="%s" name="CngLN" class="form-control left-align my-2 p-2" id="CngLN" type="text"/>', $last_name);
+                        ?>
+                        <label for="CngZip" >Change your zip code</label>
+                        <?php 
+                            echo sprintf('<input value=%d name="CngZip" class="form-control left-align my-2 p-2" id="CngZip" type="number" placeholder="Change your zip code"/>', $_SESSION['user']['zipcode']);
+                        ?>
+                        
+                        <label for="CngDob">Change your date of birth</label>
+                        <?php 
+                            echo sprintf('<input name="CngDob" value="%s" class="form-control left-align my-2 p-2" id="CngDob" type="date" placeholder="Change your date of birth"/>', $_SESSION['user']['birthday']);
+                        ?>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
@@ -78,40 +111,41 @@ if(!isset($_SESSION['user'])){
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <div class="p-5 bg">
-                        <h5></h5>
+                    <div class="p-4 bg">
                     <div class="text-center">
-                        
-                    </div>
+                        <?php
+                            echo '<img id="profile_picture" src="'.$_SESSION['user']['user_picture'].'" class="border-0 img-thumbnail rounded-circle">'
+                        ?>
+                        <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
-                        <h7></h7>
+                    </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black">Preferred Catagories</h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment">
+                            <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment" <?php echo selectedCategory('Entertainment');?>>
                         <label class="form-check-label text-black h6" for="Entertainment">
                         Entertainment
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Concerts" id="Concerts">
+                            <input class="form-check-input" type="checkbox" value="true" name="Concerts" id="Concerts" <?php echo selectedSubCategory('Entertainment', 'concerts');?>>
                         <label class="form-check-label text-black h6" for="Concerts">
                         Concerts
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Hiking" id="Hiking">
+                            <input class="form-check-input" type="checkbox" value="true" name="Hiking" id="Hiking" <?php echo selectedSubCategory('Entertainment', 'hiking');?>>
                         <label class="form-check-label text-black h6" for="Hiking">
                         Hiking
                         </label>
                         </div>
                         <div class="form-check">
-                        <!-- <input class="form-check-input" type="checkbox" value="true" name="Bars" id="Bars">
-                        <label class="form-check-label text-black h6" for="Bars">
+                        <input class="form-check-input" type="checkbox" value="true" name="Bars" id="Bars">
+                        <label class="form-check-label text-black h6" for="Bars" <?php echo selectedSubCategory('Entertainment', 'bar');?>>
                         Bars
-                        </label> -->
+                        </label>
                         </div>
                         </div>
                     </div>
@@ -120,30 +154,30 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4">    </h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment">
-                        <label class="form-check-label text-black h6" for="Entertainment">
+                            <input class="form-check-input" type="checkbox" value="true" name="Food" id="Food" <?php echo selectedCategory('Food');?>>
+                        <label class="form-check-label text-black h6" for="Food">
                         Food
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Restaurant" id="Restaurant">
+                            <input class="form-check-input" type="checkbox" value="true" name="Restaurant" id="Restaurant" <?php echo selectedSubCategory('Food', 'restaurant');?>>
                         <label class="form-check-label text-black h6" for="Restaurant">
                         Restaurant
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Cafe" id="Cafe">
+                            <input class="form-check-input" type="checkbox" value="true" name="Cafe" id="Cafe" <?php echo selectedSubCategory('Food', 'cafe');?>>
                         <label class="form-check-label text-black h6" for="Cafe">
                         Cafe
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="FastFood" id="FastFood">
+                            <input class="form-check-input" type="checkbox" value="true" name="FastFood" id="FastFood" <?php echo selectedSubCategory('Food', 'fast_food');?>>
                         <label class="form-check-label text-black h6" for="FastFood">
                         Fast Food
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Alcohol" id="Alcohol">
+                            <input class="form-check-input" type="checkbox" value="true" name="Alcohol" id="Alcohol" <?php echo selectedSubCategory('Food', 'alcohol');?>>
                         <label class="form-check-label text-black h6" for="Alcohol">
                         Alcohol
                         </label>
@@ -155,24 +189,24 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Venue" id="Venue">
+                            <input class="form-check-input" type="checkbox" value="true" name="Venue" id="Venue" <?php echo selectedCategory('Venue');?>>
                         <label class="form-check-label text-black h6" for="Venue">
                         Venue
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Indoors" id="Indoors">
+                            <input class="form-check-input" type="checkbox" value="true" name="Indoors" id="Indoors" <?php echo selectedSubCategory('Venue', 'indoors');?>>
                         <label class="form-check-label text-black h6" for="Indoors">
                         Indoors
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Outdoors" id="Outdoors">
+                            <input class="form-check-input" type="checkbox" value="true" name="Outdoors" id="Outdoors" <?php echo selectedSubCategory('Venue', 'outdoors');?>>
                         <label class="form-check-label text-black h6" for="Outdoors">
                         Outdoors
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="SocialEvents" id="SocialEvents">
+                            <input class="form-check-input" type="checkbox" value="true" name="SocialEvents" id="SocialEvents" <?php echo selectedSubCategory('Venue', 'social_events');?>>
                         <label class="form-check-label text-black h6" for="SocialEvents">
                         Social Events
                         </label>
@@ -184,24 +218,24 @@ if(!isset($_SESSION['user'])){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Anytime" id="Anytime">
+                            <input class="form-check-input" type="checkbox" value="true" name="Anytime" id="Anytime" <?php echo selectedCategory('Date_time');?>>
                         <label class="form-check-label text-black h6" for="Anytime">
                         Anytime
                         </label>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Morning" id="Morning">
+                            <input class="form-check-input" type="checkbox" value="true" name="Morning" id="Morning" <?php echo selectedSubCategory('Date_time', 'morning');?>>
                         <label class="form-check-label text-black h6" for="Morning">
                         Morning
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Afternoon" id="Afternoon">
+                            <input class="form-check-input" type="checkbox" value="true" name="Afternoon" id="Afternoon" <?php echo selectedSubCategory('Date_time', 'afternoon');?>>
                         <label class="form-check-label text-black h6" for="Afternoon">
                         Afternoon
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Evening" id="Evening">
+                            <input class="form-check-input" type="checkbox" value="true" name="Evening" id="Evening" <?php echo selectedSubCategory('Date_time', 'evening');?>>
                         <label class="form-check-label text-black h6" for="Evening">
                             Evening
                         </label>

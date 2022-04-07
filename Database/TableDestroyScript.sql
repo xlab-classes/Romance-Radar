@@ -24,4 +24,6 @@ TRUNCATE TABLE User_security_questions;
 
 TRUNCATE TABLE Users;
 
+TRUNCATE TABLE Chat_Messages;
+
 SET FOREIGN_KEY_CHECKS=1;

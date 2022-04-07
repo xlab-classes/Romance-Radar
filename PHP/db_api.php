@@ -230,7 +230,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Attempt to create this user
     $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, 'Testing', $addr, $zipcode, $bday, $city];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
@@ -250,6 +250,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!\n";
     }
+
     return 1;
 }
 
@@ -662,8 +663,8 @@ function get_preferences($user_id) {
 function update_preferences($user_id, $preferences) {
     
     $preferences_categories = array(
-                     'Food' => array('restaraunt' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
-                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bars'=>1),
+                     'Food' => array('restaurant' => 1, 'cafe' =>1, 'fast_food'=>1, 'alcohol'=>1),
+                     'Entertainment' => array('concerts' => 1, 'hiking'=>1, 'bar'=>1),
                      'Venue' => array('indoors'=>1, 'outdoors'=>1, 'social_events'=>1),
                      'Date_time' => array('morning'=>1, 'afternoon'=>1, 'evening'=>1),
                      'Date_preferences'=>array('cost'=>1, 'distance'=>1, 'length'=>1));
@@ -701,8 +702,8 @@ function initialize_preferences($user_id){
     }
 
     $preferences_categories = array(
-        'Food' => ['(restaraunt, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
-        'Entertainment' => ['(concerts, hiking, user_id)', '(?,?,?)', [0,0]],
+        'Food' => ['(restaurant, cafe, fast_food, alcohol, user_id)', '(?,?,?,?,?)', [0,0,0,0]], 
+        'Entertainment' => ['(concerts, hiking, bar, user_id)', '(?,?,?,?)', [0,0,0]],
         'Venue' => ['(indoors, outdoors, social_events, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_time' => ['(morning, afternoon, evening, user_id)', '(?,?,?,?)', [0,0,0]],
         'Date_preferences' => ['(cost, distance, length, user_id)', '(?,?,?,?)', [0,0,0]]
@@ -740,6 +741,42 @@ function addSecurityQuestions($user_id, $data){
 
     if(!exec_query($query, $data)){
         echo 'Could not insert security questions';
+        return 0;
+    }
+
+    return 1;
+}
+
+function getChatMessages($sent_from, $sent_to){
+    if(!user_exists($sent_from) || !user_exists($sent_to)){
+        echo 'user does not exist';
+        return 0;
+    }
+
+    $query = 'SELECT message, sent_from, sent_to FROM Chat_Messages WHERE (sent_from=? AND sent_to=?) OR (sent_from=? AND sent_to=?) ORDER BY date';
+    $result = exec_query($query, [$sent_from, $sent_to, $sent_to, $sent_from]);
+    $return = array();
+    while($message = $result->fetch_assoc()){
+        $return[] = $message;
+    }
+    return $return;
+}
+
+
+function addChatMessages($sent_from, $sent_to, $message){
+    if($message == ""){
+        echo 'message is empty';
+        return 0;
+    }
+    if(!user_exists($sent_from) || !user_exists($sent_to)){
+        echo 'user does not exist';
+        return 0;
+    }
+
+    $query = 'INSERT INTO Chat_Messages (sent_from, sent_to, message) VALUES (?,?,?)';
+    $result = exec_query($query, [$sent_from, $sent_to, htmlspecialchars($message)]);
+    if(!$result){
+        echo 'Could not insert new message';
         return 0;
     }
 

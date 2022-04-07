@@ -7,6 +7,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 
     // Get user ID and make sure user is logged in
     session_start();
+
     $user_id = (int) $_SESSION["user"]["id"];
     if (!$user_id) {
         print("NO USER WITH THIS ID\n");
@@ -16,6 +17,15 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 
     /**** PERSONAL INFORMATION ****/
     
+    // update profile picture
+    
+    if(!empty($_FILES['profile_picture']['name'])) {
+        $extension_array = array('image/jpeg'=>'.jpg', 'image/png'=>'.png');
+        $new_profile_picture = $_FILES['profile_picture'];
+        $content = file_get_contents($new_profile_picture['tmp_name']);
+        update_profile_picture($user_id, $_SESSION["user"]["user_picture"], $content, $extension_array[$new_profile_picture['type']]);
+    } 
+
     // Update name
     $first_name = $_POST['CngFN'] ;
     $last_name =  $_POST['CngLN'];
@@ -72,7 +82,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
         $prefs['Entertainment']['concerts'] = true;
         $prefs['Entertainment']['hiking'] = true;
-        $prefs['Entertainment']['bars'] = true;
+        $prefs['Entertainment']['bar'] = true;
     }
     else {
         if (!empty($_POST["Concerts"])) {
@@ -82,7 +92,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             $prefs['Entertainment']['hiking'] = $_POST["Hiking"];
         }
         if (!empty($_POST["Bars"])) {
-            $prefs['Entertainment']['bars'] = $_POST["Bars"];
+            $prefs['Entertainment']['bar'] = $_POST["Bars"];
         }
     }
 
