@@ -144,3 +144,16 @@ CREATE TABLE Chat_Messages(
     FOREIGN KEY (sent_from) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (sent_to) REFERENCES Users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS Privacy_settings(
+    id INT AUTO_INCREMENT,
+    max_cost BIT NOT NULL,
+    max_distance BIT NOT NULL,
+    date_len BIT NOT NULL,
+    date_of_birth BIT NOT NULL,
+    time_pref BIT NOT NULL,
+    food_pref BIT NOT NULL,
+    ent_pref BIT NOT NULL,
+    venue_pref BIT NOT NULL,
+    PRIMARY KEY (id)
+);
