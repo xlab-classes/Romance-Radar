@@ -11,7 +11,7 @@ if(!isset($_SESSION['user'])){
 
 $user = $_SESSION['user'];
 
-if(!is_null($user['partner'])){
+if(is_null($user['partner'])){
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -45,7 +45,94 @@ if(!is_null($user['partner'])){
         </div>
     ', $user['user_picture'], $user['name']);
 }else{
-
+    $partner_preferences = get_preferences((int)$user['partner']);
+    $preferences_categories = array(
+        'Food' => array('restaurant' => 'Restaurant', 'cafe' =>'Cafe', 'fast_food'=>'Fast Food', 'alcohol'=>'Alcohol'),
+        'Entertainment' => array('concerts' => 'Concerts', 'hiking'=>'Hiking', 'bar'=>'Bar'),
+        'Venue' => array('indoors'=>'Indoors', 'outdoors'=>'Outdoors', 'social_events'=>'Social Events'),
+        'Date_time' => array('morning'=>'Morning', 'afternoon'=>'Afternoon', 'evening'=>'Afternoon'));
+    $selected_preferences = array();
+    foreach($preferences_categories as $cat => $sub_cats){
+        $selected_preferences[$cat] = '';
+        foreach($sub_cats as $sub_cat => $value){
+            if($partner_preferences[$cat][$sub_cat]){
+                $selected_preferences[$cat] .= sprintf('%s, ', $value);
+            }
+        }
+        $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
+    }
+    $preferences_html = sprintf('
+    <div class="ps-5 col-3">
+        <div class="row">
+            <div class="col"><h3>%s</h3></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p class="fst-italic fw-light font">“When I need a pick me up, I just think of your laugh and it makes me smile”</p>
+            </div>
+        </div>
+        <div class="row p-2">
+            <div class="col-3">
+                <img src="../assets/icons/entertainment.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%s</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-3">
+                <img src="../assets/icons/restaurant.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%s</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-3">
+                <img src="../assets/icons/map-locator.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%s</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-3">
+                <img src="../assets/icons/clock.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%s</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-3">
+                <img src="../assets/icons/distance.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%d</div>
+            <div class="col-3">
+                <img src="../assets/icons/dollar.png" alt="" class="img-fluid">
+            </div>
+            <div class="col">%d</div>
+        </div>
+    </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
+            , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
+    $display = sprintf('
+    <div class="row pt-5 gx-5 gy-5">
+            %s
+            <div class="col">
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <img src="../assets/generic_profile_picture.jpg" class="img-fluid rounded-circle">  
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col pt-3 text-center">
+                        <input type="button" value="Chat Now!" class="btn btn-custom fs-5">
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="row"><div class="col"><img src="../assets/generic_profile_picture.jpg" class="img-fluid rounded-circle"></div></div>
+                <div class="row"><div class="col text-center">Swastik</div></div>
+                <div class="row">
+                    <div class="col text-center pt-5">
+                        <input type="button" value="Moving On?" class="btn btn-custom">
+                    </div>
+                </div>
+            </div>
+        </div>
+    ', $preferences_html);
 }
 
 
@@ -70,11 +157,23 @@ if(!is_null($user['partner'])){
             border-radius: 0 25px 25px 0px;
             background-color: #FF4F4F;
         }
+        .font{
+            font-size: small;
+        }
+        .icon{
+            height: 30px;
+            width: 30px;
+        }
+        .btn-custom{
+            color: white;
+            background-color: #FF4F4F;
+            border-radius: 25px 25px 25px 25px;
+        }
         
     </style>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container">
         <?php
         echo $display;
         ?>
