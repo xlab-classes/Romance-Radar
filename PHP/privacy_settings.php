@@ -5,6 +5,24 @@ require_once 'db_api.php';
 
 session_start();
 
+/* This function will take a user id and update its privacy settings to either all true or all false */
+function update_privacy($id, $privacy_setting_choice) {
+    if (empty($id) || empty($privacy_settings)) {
+        return 0;       // Can't have empty inputs
+    }
+
+    $user_exists = user_exists($id);
+    if ($user_exists == false) {return 0;}            // User must exist
+    else {
+        $result = exec_query("UPDATE Privacy_settings SET * = ? WHERE id=?", [$privacy_setting_choice, $id]);
+        if ($result == NULL) {
+            return 0;
+         } // Failed to execute query
+         $_SESSION['user']['privacy_settings'] = $privacy_settings;
+         return 1;
+    }
+}
+
 /* Function that chjecks if privacy settings have been set */
 function all_privacy_settings_set($id) {
     // An array of the privacy settings
@@ -12,10 +30,10 @@ function all_privacy_settings_set($id) {
     // Check if at least one privacy setting has been set for the user if not return false
     foreach ($privacy_settings as $setting) {
         if(!isset($_POST[$setting])) {
-            return false;
+            return 0;
         }
     }
-    return true;
+    return 1;
 
 }
 /* Function that hides all the privacy settings for a user. */
@@ -30,7 +48,10 @@ function hide_all_privacy_settings($id) {
     // Check if user has any privacy settings ticked
     
     //TODO: Change it so that it checks if the select all privacy settings is ticked
-    if(all_privacy_settings_set($id) == true) {
+    
+    $privacy_setting = all_privacy_settings_set($id);
+    
+    if($privacy_setting == 1) {
         // Create a javascript script to hide all elemnts with the the resepctive id
         ?>
         <script language="javascript">
@@ -44,12 +65,10 @@ function hide_all_privacy_settings($id) {
             document.getElementById("VenuePref").style.display = "none";
         </script>
         <?
-        return 1;
+        return update_privacy($id, $privacy_setting);
         }
     else{
-        show_all_privacy_settings($id);
-    return 1;
-
+    return  show_all_privacy_settings($id);
 }
 
 /* Function that will show all the privacy settings for a user */
@@ -65,7 +84,11 @@ function show_all_privacy_settings($id) {
     // Check if user has any privacy settings ticked
     
     //TODO: Change it so that it checks if the select all privacy settings is ticked
-    if(all_privacy_settings_set($id) == false){
+    
+    $privacy_setting = all_privacy_settings_set($id);
+
+    
+    if($privacy_setting == 0){
         // Create a javascript script to show all elemnts with the the resepctive id
         ?>
         <script language="javascript">
@@ -79,11 +102,10 @@ function show_all_privacy_settings($id) {
             document.getElementById("VenuePref").style.display = "block";
         </script>
         <?
-        return 1;
+        return update_privacy($id, $privacy_setting);
         }
     else{
-        hide_all_privacy_settings($id);
-    return 1;
+        return hide_all_privacy_settings($id);
     }
     }
 }
