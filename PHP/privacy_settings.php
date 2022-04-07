@@ -7,18 +7,19 @@ session_start();
 
 /* This function will take a user id and update its privacy settings to either all true or all false */
 function update_privacy($id, $privacy_setting_choice) {
-    if (empty($id) || empty($privacy_settings)) {
+    if (empty($id) || empty($privacy_setting_choice)) {
         return 0;       // Can't have empty inputs
     }
 
     $user_exists = user_exists($id);
     if ($user_exists == false) {return 0;}            // User must exist
     else {
-        $result = exec_query("UPDATE Privacy_settings SET * = ? WHERE id=?", [$privacy_setting_choice, $id]);
+        // We are doing an either or on the privacy settings, so you either can see all or you can't
+        $result = exec_query("UPDATE Privacy_settings SET max_cost=? max_distance=? date_len=? date_of_birth=? time_pref=? food_pref=? ent_pref=? venue_pref=? WHERE id=?", [$privacy_setting_choice, $id]);
         if ($result == NULL) {
             return 0;
          } // Failed to execute query
-         $_SESSION['user']['privacy_settings'] = $privacy_settings;
+         $_SESSION['user']['privacy_settings'] = $privacy_setting_choice;
          return 1;
     }
 }
