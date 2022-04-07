@@ -18,7 +18,8 @@ function all_privacy_settings_set($id) {
     return true;
 
 }
-
+/* Function that hides all the privacy settings for a user. */
+/* Will return 0 if the user doesn not exist else hides all the privacy settings for the user*/
 function hide_all_privacy_settings($id) {
     // Check if user exists
     $user_exists = user_exists($id);
@@ -30,7 +31,7 @@ function hide_all_privacy_settings($id) {
     
     //TODO: Change it so that it checks if the select all privacy settings is ticked
     if(all_privacy_settings_set($id) == true) {
-        // Create a javascript script to show all elemnts with the the resepctive id
+        // Create a javascript script to hide all elemnts with the the resepctive id
         ?>
         <script language="javascript">
             document.getElementById("MaxCost").style.display = "none";
@@ -43,20 +44,11 @@ function hide_all_privacy_settings($id) {
             document.getElementById("VenuePref").style.display = "none";
         </script>
         <?
+        return 1;
         }
     else{
-        ?>
-        <script language="javascript">
-            document.getElementById("MaxCost").style.display = "none";
-            document.getElementById("MaxDistance").style.display = "none";
-            document.getElementById("DateLen").style.display = "none";
-            document.getElementById("DOB").style.display = "none";
-            document.getElementById("TimePref").style.display = "none";
-            document.getElementById("FoodPref").style.display = "none";
-            document.getElementById("EntPref").style.display = "none";
-            document.getElementById("VenuePref").style.display = "none";
-        </script>
-        <?    }
+        show_all_privacy_settings($id);
+    return 1;
 
 }
 
@@ -73,7 +65,7 @@ function show_all_privacy_settings($id) {
     // Check if user has any privacy settings ticked
     
     //TODO: Change it so that it checks if the select all privacy settings is ticked
-    if(all_privacy_settings_set($id) == true){
+    if(all_privacy_settings_set($id) == false){
         // Create a javascript script to show all elemnts with the the resepctive id
         ?>
         <script language="javascript">
@@ -87,18 +79,11 @@ function show_all_privacy_settings($id) {
             document.getElementById("VenuePref").style.display = "block";
         </script>
         <?
+        return 1;
         }
     else{
-        ?>
-        <script language="javascript">
-            document.getElementById("MaxCost").style.display = "block";
-            document.getElementById("MaxDistance").style.display = "block";
-            document.getElementById("DateLen").style.display = "block";
-            document.getElementById("DOB").style.display = "block";
-            document.getElementById("TimePref").style.display = "block";
-            document.getElementById("FoodPref").style.display = "block";
-            document.getElementById("EntPref").style.display = "block";
-            document.getElementById("VenuePref").style.display = "block";
-        </script>
-        <?    }
+        hide_all_privacy_settings($id);
+    return 1;
+    }
+    }
 }
