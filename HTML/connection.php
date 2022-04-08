@@ -11,7 +11,7 @@ if(!isset($_SESSION['user'])){
 
 $user = $_SESSION['user'];
 
-if(is_null($user['partner'])){
+if($user['partner'] == $user['id']){
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -113,22 +113,24 @@ if(is_null($user['partner'])){
             <div class="col">
                 <div class="row justify-content-center">
                     <div class="col-6">
-                        <img src="../assets/generic_profile_picture.jpg" class="img-fluid rounded-circle">  
+                        <img src="%s" class="img-fluid rounded-circle">  
                     </div>
                 </div>
                 <div class="row">
                     <div class="col pt-3 text-center">
-                        <input type="button" value="Chat Now!" class="btn btn-custom fs-5">
+                        <input type="button" value="Chat Now!" onclick="document.location.href=\'./chat.php\'" class="btn btn-custom fs-5">
                     </div>
                 </div>
             </div>
             <div class="col-2">
-                <div class="row"><div class="col"><img src="../assets/generic_profile_picture.jpg" class="img-fluid rounded-circle"></div></div>
-                <div class="row"><div class="col text-center">Swastik</div></div>
-                <div class="row">
-                <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#moveOnModal">
-                Moving On?
-                </button>
+                <div class="row"><div class="col"><img src="%s" class="img-fluid rounded-circle"></div></div>
+                <div class="row"><div class="col text-center">%s</div></div>
+                    <div class="row">
+                        <div class="col text-center">
+                        <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#moveOnModal">
+                            Moving On?
+                        </button>
+                    </div>
                 <!-- Button trigger modal -->
                 
                 <!-- Modal -->
@@ -143,11 +145,11 @@ if(is_null($user['partner'])){
                                     </p>   
                                 </div>
                                 <di class="row">
-                                    <div class="col">
+                                    <div class="col text-center">
                                         <button class="btn btn-custom">Move on</button>
                                     </div>
-                                    <div class="col">
-                                        <button class="btn btn-custom">Cancel</button>
+                                    <div class="col text-center">
+                                        <button class="btn btn-custom" data-bs-dismiss="modal">Cancel</button>
                                     </div>
                                 </di>
                             </div>
@@ -158,7 +160,7 @@ if(is_null($user['partner'])){
                 </div>
             </div>
         </div>
-    ', $preferences_html);
+    ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name']);
 }
 
 
