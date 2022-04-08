@@ -26,7 +26,7 @@ $messages = getChatMessages($_SESSION['user']['id'], $_SESSION['user']['partner'
 $display_messages = '';
 
 foreach($messages as $msg){
-    if($msg['sent_from'] == $_SESSION['user']['id']){
+    if($msg['sent_from'] == (int)$_SESSION['user']['id']){
         $display_messages.=sprintf('%s: ', $_SESSION['user']['name']);
     }else{
         $display_messages.=sprintf('%s: ', $_SESSION['partner']['name']);
