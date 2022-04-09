@@ -31,10 +31,10 @@ function all_privacy_settings_set($id) {
     // Check if at least one privacy setting has been set for the user if not return false
     foreach ($privacy_settings as $setting) {
         if(!isset($_POST[$setting])) {
-            return 0;
+            return 0; /* If at least one privacy setting has not been set, return 0 */
         }
     }
-    return 1;
+    return 1; /* If all privacy settings have been set, return 1 */
 
 }
 /* Function that hides all the privacy settings for a user. */
