@@ -651,6 +651,17 @@ function sent_request($user_id) {
     else return -1;
 }
 
+// Get the preferences for the user with this ID
+//
+// parameter: user_id   [int]
+//      The ID of the user whose preferences we want
+//
+// returns:
+//      An associative array of this user's preferences if the user exists
+//      0 if the user doesn't exist
+//
+// constraints:
+//      A user with this ID MUST exist
 function get_preferences($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
