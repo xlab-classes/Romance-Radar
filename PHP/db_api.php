@@ -824,6 +824,54 @@ function addChatMessages($sent_from, $sent_to, $message){
     return 1;
 }
 
+// Get an array of date ID's that have tags corresponding to these preferences
+//
+// parameter: preferences
+//      An associative array of the kind returned by get_preferences
+//
+// returns:
+//      An array of date ID's with tags corresponding to these preferences
+//      NULL on error
+//
+// contraints:
+//      None
+//
+// NB:
+//      This should not be called outside of generate_dates. It is a helper function
+function get_date_ids($preferences) {
+    $arr = array();
+
+    // For every category
+    foreach ($prefs as $category) {
+        // For every tag in this category
+        foreach ($category as $tag) {
+            // Get all rows from the Date_tags table with this tag
+            $query = "SELECT * FROM Date_tags WHERE tag=?";
+            $data = [$tag];
+            $result = exec_query($query, $data);
+
+            // Make sure we retrieved at least 1 row
+            if ($result == NULL) {
+                print("Failed to exec_query in get_date_ids\n");
+                return NULL;
+            }
+            else if ($result->num_rows <= 0) {
+                print("Encountered unknown tag in get_date_ids\n");
+                return NULL;
+            }
+
+            // For every row we found, add the date ID to the array of date IDs
+            $row = $result->fetch_assoc();
+            while ($row != NULL) {
+                if (!in_array($row["date_id"], $arr)) {
+                    array_push($arr, $row["date_id"]);
+                }
+            }
+        }
+    }
+    return $arr;
+}
+
 // Generate an array of date ideas for two users
 //
 // parameter: user_a    [int]
@@ -839,8 +887,9 @@ function addChatMessages($sent_from, $sent_to, $message){
 //
 // constraints:
 //      Both users MUST exist
-function GenerateDates($user_a, $user_b) {
+function generate_dates($user_a, $user_b) {
     if (!user_exists($user_a) || !user_exist($user_b)) {
+        print("User doesn't exist in generate_dates\n");
         return NULL;
     }
 
@@ -848,16 +897,26 @@ function GenerateDates($user_a, $user_b) {
     $ua_prefs = get_preferences($user_a);
     $ub_prefs = get_preferences($user_b);
     if ($ua_prefs == 0 || $ub_prefs == 0) {
+        print("Couldn't get preferences in generate_dates\n");
         return NULL;
     }
 
-    // Get date ideas with tags matching for the first user
-
+    // Get date ID's for each users' tags
+    $ua_dids = get_date_ids($ua_prefs, $ua_dids);
+    $ub_dids = get_date_ids($ub_prefs, $ub_dids);
 
     // Get date ideas with tags matching for the second user
+    $compatible_dates = array();
+    foreach ($ua_dids as $ua) {
+        foreach ($ub_dids as $ub) {
+            if ($ua == $ub && !in_array($ua, $compatible_dates)) {
+                array_push($compatible_dates, $ua);
+            }
+        }
+    }
 
     // Return overlapping date ideas
-
+    return $compatible_dates;
 }
 
 // Get information about the date with this ID
@@ -871,8 +930,23 @@ function GenerateDates($user_a, $user_b) {
 //
 // constraints:
 //      A date with this ID MUST exist
-function GetDateInformation($date_id) {
+function get_date_information($date_id) {
     if (!date_exists($date_id)) {
         return NULL;
     }
+
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_information\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in get_date_information\n");
+        return NULL;
+    }
+
+    return $result->fetch_assoc();
 }
