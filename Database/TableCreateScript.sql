@@ -147,13 +147,13 @@ CREATE TABLE Chat_Messages(
 
 CREATE TABLE IF NOT EXISTS Privacy_settings(
     id INT AUTO_INCREMENT,
-    max_cost BIT NOT NULL,
-    max_distance BIT NOT NULL,
-    date_len BIT NOT NULL,
-    date_of_birth BIT NOT NULL,
-    time_pref BIT NOT NULL,
-    food_pref BIT NOT NULL,
-    ent_pref BIT NOT NULL,
-    venue_pref BIT NOT NULL,
+    max_cost BIT NOT NULL DEFAULT 0,
+    max_distance BIT NOT NULL DEFAULT 0,
+    date_len BIT NOT NULL DEFAULT 0,
+    date_of_birth BIT NOT NULL DEFAULT 0,
+    time_pref BIT NOT NULL DEFAULT 0,
+    food_pref BIT NOT NULL DEFAULT 0,
+    ent_pref BIT NOT NULL DEFAULT 0,
+    venue_pref BIT NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
