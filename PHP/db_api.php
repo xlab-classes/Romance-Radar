@@ -657,7 +657,8 @@ function sent_request($user_id) {
 //      The ID of the user whose preferences we want
 //
 // returns:
-//      An associative array of this user's preferences if the user exists
+//      An associative array of associative arrays for this user's preferences,
+//          if the user exists
 //      0 if the user doesn't exist
 //
 // constraints:
@@ -820,6 +821,7 @@ function addChatMessages($sent_from, $sent_to, $message){
 // returns:
 //      An array of date idea ID's that are compatible with both users' preferences
 //      NULL if either user doesn't exist
+//      NULL if any other error occured
 //
 // constraints:
 //      Both users MUST exist
@@ -827,6 +829,21 @@ function GenerateDates($user_a, $user_b) {
     if (!user_exists($user_a) || !user_exist($user_b)) {
         return NULL;
     }
+
+    // Get the preferences for both users, as associative arrays
+    $ua_prefs = get_preferences($user_a);
+    $ub_prefs = get_preferences($user_b);
+    if ($ua_prefs == 0 || $ub_prefs == 0) {
+        return NULL;
+    }
+
+    // Get date ideas with tags matching for the first user
+
+
+    // Get date ideas with tags matching for the second user
+
+    // Return overlapping date ideas
+
 }
 
 // Get information about the date with this ID
@@ -840,7 +857,7 @@ function GenerateDates($user_a, $user_b) {
 //
 // constraints:
 //      A date with this ID MUST exist
-function GetDate($date_id) {
+function GetDateInformation($date_id) {
     if (!date_exists($date_id)) {
         return NULL;
     }
