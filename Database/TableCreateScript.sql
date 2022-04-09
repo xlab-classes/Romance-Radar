@@ -74,6 +74,14 @@ CREATE TABLE IF NOT EXISTS Date_ideas(
     PRIMARY KEY (id)
     );
 
+CREATE TABLE IF NOT EXISTS Date_tags(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    tag VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
 CREATE TABLE IF NOT EXISTS Date_liked(
     id INT AUTO_INCREMENT,
     date_id int NOT NULL,
