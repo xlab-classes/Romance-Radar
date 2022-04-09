@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS User_security_questions(
     FOREIGN KEY (question_id_3) REFERENCES Security_questions(id) ON DELETE SET NULL
 );
 
-CREATE TABLE Chat_Messages(
+CREATE TABLE IF NOT EXISTS Chat_Messages(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
     sent_to INT NOT NULL,
