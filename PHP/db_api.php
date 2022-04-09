@@ -722,6 +722,20 @@ function update_preferences($user_id, $preferences) {
 
 }
 
+// Set initial preference values for a new user
+//
+// parameter: user_id   [int]
+//      The user ID whose preferences are being initialized
+//
+// returns:
+//      1 if the preferences were set successfully
+//      0 on error
+//
+// constraints:
+//      The user with this ID MUST exist
+//
+// NB:
+//      All preferences are initialized to 0
 function initialize_preferences($user_id){
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
