@@ -4,7 +4,7 @@ VALUES
 ("Coffee", "Share a chat over some warm joe", "../assets/coffee.jpg",
     "2022-06-01 12:00:00", "123 Tim Hortons Lane");
 
-SET @coffee := SELECT id FROM Date_ideas WHERE name="Coffee";
+SET @coffee = SELECT id FROM Date_ideas WHERE name="Coffee";
 
 INSERT INTO Date_tags
 (date_id, tag)
