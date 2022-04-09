@@ -13,12 +13,11 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             color: #9F1111;
         }
-
-            .img {
+      .img {
         width:100%;
         height: 32px;
         margin-top:2px
-    }
+      }
 
     #profile_picture{
             height: 200px;
@@ -46,7 +45,9 @@
     </div>
     <div class="col">
       <div class="p-3 bg">
-          <p class="text-dark fst-italic fs-6">Let's face it, coming up with a date idea that's as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you're commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don't have a lot of creative juices left over when we're done for the day.</p>
+          <p class="text-dark fst-italic fs-6">
+            Let's face it, coming up with a date idea that's as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you're commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don't have a lot of creative juices left over when we're done for the day.
+          </p>
 
           <p class="text-dark fst-italic fs-6">Leave the creativity to us!</p>
 
@@ -67,9 +68,8 @@
   </div>
   </div>
   </form>
-
-      </div>
-    </div>
+  </div>
+  </div>
     <div class="col">
      <div class="p-3 bg">
          <div class="col-md-6 col-lg-3">
