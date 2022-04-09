@@ -33,3 +33,5 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         show_all_privacy_settings($user_id);
     }
 }
+
+header("Location: ../HTML/privacy_settings.php");
