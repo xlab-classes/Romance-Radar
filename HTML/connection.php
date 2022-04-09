@@ -32,7 +32,7 @@ if($user['partner'] == $user['id']){
                 <div class="row">
                     <div class="col">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control rounded-input opacity-75">
+                            <input type="text" name="connection_request" class="form-control rounded-input opacity-75">
                             <input value="submit" type="button" class="input-group-text rounded-submit"></input>
                         </div>
                     </div>
@@ -146,7 +146,9 @@ if($user['partner'] == $user['id']){
                                 </div>
                                 <di class="row">
                                     <div class="col text-center">
-                                        <button class="btn btn-custom">Move on</button>
+                                        <form action="../PHP/modify_connections.php" method="post" enctype="multipart/form-data">
+                                            <button type="submit" name="remove_connection" class="btn btn-custom">Move on</button>
+                                        </form>
                                     </div>
                                     <div class="col text-center">
                                         <button class="btn btn-custom" data-bs-dismiss="modal">Cancel</button>
