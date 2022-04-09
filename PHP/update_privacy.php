@@ -34,4 +34,4 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     }
 }
 
-header("Location: ../HTML/privacy_settings.php");
+header("Location: ../HTML/connectionected.html");
