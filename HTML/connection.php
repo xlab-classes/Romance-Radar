@@ -31,10 +31,12 @@ if($user['partner'] == $user['id']){
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="input-group mb-3">
-                            <input type="text" name="connection_request" class="form-control rounded-input opacity-75">
-                            <input value="submit" type="button" class="input-group-text rounded-submit"></input>
-                        </div>
+                        <form action="../PHP/modify_connections.php" method="post" enctype="multipart/form-data">
+                            <div class="input-group mb-3">
+                                <input name="connection_request" type="text" class="form-control rounded-input opacity-75" required>
+                                <input type="submit" class="input-group-text rounded-submit"></input>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
