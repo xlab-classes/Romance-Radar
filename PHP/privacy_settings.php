@@ -15,7 +15,7 @@ function update_privacy($id, $privacy_setting_choice) {
     if ($user_exists == false) {return 0;}            // User must exist
     else {
         // We are doing an either or on the privacy settings, so you either can see all or you can't
-        $result = exec_query("UPDATE Privacy_settings SET max_cost=? max_distance=? date_len=? date_of_birth=? time_pref=? food_pref=? ent_pref=? venue_pref=? WHERE id=?", [$privacy_setting_choice, $id]);
+        $result = exec_query("UPDATE Privacy_settings SET max_cost=?,max_distance=?,date_len=?, date_of_birth=?, time_pref=?, food_pref=?, ent_pref=?, venue_pref=?, WHERE id=?", [$privacy_setting_choice, $id]);
         if ($result == NULL) {
             return 0;
          } // Failed to execute query
