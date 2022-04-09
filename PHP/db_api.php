@@ -121,6 +121,21 @@ function user_exists($user_id) {
     else return $result->num_rows > 0;
 }
 
+// Check if there is a date in Date_ideas with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date to check for existence
+//
+// returns:
+//      true if a date with this ID exists
+//      false otherwise
+function date_exists($date_id) {
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+    return ($result != NULL && $result->num_rows > 0);
+}
+
 # Check if a $user_id's password matches $password
 function check_password($user_id, $password) {
     if (!user_exists($user_id)) return 1;           // User doesn't exist
@@ -781,4 +796,41 @@ function addChatMessages($sent_from, $sent_to, $message){
     }
 
     return 1;
+}
+
+// Generate an array of date ideas for two users
+//
+// parameter: user_a    [int]
+//      The user ID of one of the users
+//
+// parameter: user_b    [int]
+//      The user ID of the other user
+//
+// returns:
+//      An array of date idea ID's that are compatible with both users' preferences
+//      NULL if either user doesn't exist
+//
+// constraints:
+//      Both users MUST exist
+function GenerateDates($user_a, $user_b) {
+    if (!user_exists($user_a) || !user_exist($user_b)) {
+        return NULL;
+    }
+}
+
+// Get information about the date with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date whose information we want
+//
+// returns:
+//      An associative array of information for this date
+//      NULL if no date with this ID exists
+//
+// constraints:
+//      A date with this ID MUST exist
+function GetDate($date_id) {
+    if (!date_exists($date_id)) {
+        return NULL;
+    }
 }
