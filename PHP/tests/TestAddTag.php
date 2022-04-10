@@ -7,6 +7,10 @@ use PHPUnit\Framework\TestCase;
 final class TestAddTag extends TestCase
 {
 
+    private $coffee = get_date_id("Tim Hortons");
+    private $pasta = get_date_id("Chef's");
+    private $hiking = get_date_id("Chestnut Ridge");
+
     // This function is run *before every unit test*
     function setUp(): void
     {
@@ -16,22 +20,27 @@ final class TestAddTag extends TestCase
     // This function is run *after every unit test*
     function tearDown(): void
     {
-        // No teardown needed
+        // Remove the tags that we added
+        $query = "DELETE FROM Date_tags WHERE date_id=?";
+        $data = [$this->coffe, $this->pasta, $this->hiking];
+
+        foreach ($data as $d) {
+            $result = exec_query($query, [$d]);
+            $this->assertNotNull($result, "Couldn't cleanup tag");
+        }
     }
 
     function testBasic(): void
     {
-        $coffee = get_date_id("Tim Hortons");
-        $pasta = get_date_id("Chef's");
-        $hiking = get_date_id("Chestnut Ridge");
+        
 
-        $this->assertEquals(add_tag($coffee, "cafe"), 1, "Couldn't add tag for Tim Hortons");
-        $this->assertEquals(add_tag($pasta, "restaurant"), 1, "Couldn't add tag for Chef's");
-        $this->assertEquals(add_tag($hiking, "outdoors"), 1, "Couldn't add tag for Chestnut Ridge");
+        $this->assertEquals(add_tag($this->coffee, "cafe"), 1, "Couldn't add tag for Tim Hortons");
+        $this->assertEquals(add_tag($this->pasta, "restaurant"), 1, "Couldn't add tag for Chef's");
+        $this->assertEquals(add_tag($this->hiking, "outdoors"), 1, "Couldn't add tag for Chestnut Ridge");
 
         // Check the tag for Tim Horton's
         $query = "SELECT * FROM Date_tags WHERE date_id=?";
-        $data = [$coffee];
+        $data = [$this->coffee];
         $result = exec_query($query, $data);
         
         $this->assertNotNull($result, "Failed to exec query for Tim Hortons");
@@ -42,7 +51,7 @@ final class TestAddTag extends TestCase
 
         // Check the tag for Chef's
         $query = "SELECT * FROM Date_tags WHERE date_id=?";
-        $data = [$pasta];
+        $data = [$this->pasta];
         $result = exec_query($query, $data);
         
         $this->assertNotNull($result, "Failed to exec query for Chef's");
@@ -53,7 +62,7 @@ final class TestAddTag extends TestCase
 
         // Check the tag for Chestnut Ridge
         $query = "SELECT * FROM Date_tags WHERE date_id=?";
-        $data = [$hiking];
+        $data = [$this->hiking];
         $result = exec_query($query, $data);
         
         $this->assertNotNull($result, "Failed to exec query for Chestnut Ridge");
