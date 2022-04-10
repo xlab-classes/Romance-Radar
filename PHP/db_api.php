@@ -857,6 +857,7 @@ function get_date_ids($preferences) {
             }
             else if ($result->num_rows <= 0) {
                 print("Encountered unknown tag in get_date_ids\n");
+                print("Tag: " . $tag);
                 return NULL;
             }
 
