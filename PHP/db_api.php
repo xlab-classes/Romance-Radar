@@ -734,7 +734,7 @@ function update_preferences($user_id, $preferences) {
 // constraints:
 //      The user with this ID MUST exist
 //
-// NB:
+// Note:
 //      All preferences are initialized to 0
 function initialize_preferences($user_id){
     if (!user_exists($user_id)) {
@@ -836,7 +836,7 @@ function addChatMessages($sent_from, $sent_to, $message){
 // contraints:
 //      None
 //
-// NB:
+// Note:
 //      This should not be called outside of generate_dates. It is a helper function
 function get_date_ids($preferences) {
     $arr = array();
@@ -949,4 +949,65 @@ function get_date_information($date_id) {
     }
 
     return $result->fetch_assoc();
+}
+
+// Add an entry to the Date_tags table that tags this date with this tag
+//
+// parameter: date_id   [int]
+//      The ID of the date that we're tagging
+//
+// parameter: tag       [string]
+//      The tag to add
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A date with this ID MUST exist
+//      The tag should be a column name from one of the preferences tables
+//          e.g. "restaurant", "concerts", "morning", etc.
+function add_tag($date_id, $tag) {
+    if (!date_exists($date_id)) {
+        print("Date doesn't exist in add_tag\n");
+        return 0;
+    }
+
+    $query = "INSERT INTO Date_tags (date_id, tag) VALUES (?, ?)";
+    $date = [$date_id, $tag];
+    $result = exec_query($query, $date);
+    
+    if ($result == NULL) {
+        print("Couldn't exec_query in add_tag\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Calculate the distance between this date location and this user's location
+//
+// parameter: date_id   [int]
+//      The ID of the date to check the distance against
+//
+// parameter: user_id   [int]
+//      The ID of the user to check the distance against
+//
+// returns:
+//      The distance between this user and the date location, on success
+//      NULL on failure
+//
+// constraints:
+//      A date with this ID MUST exist
+//      A user with this ID MUST exist
+//
+// Note:
+//      This is a hard problem. For now, if the date and user exist, this
+//      function will always return 10
+function calc_distance($date_id, $user_id) {
+    if (!date_exists($date_id) || !user_exists($user_id)) {
+        print("Date or user doesn't exist in calc_distancen\n")
+        return NULL;
+    }
+    return 10;
 }
