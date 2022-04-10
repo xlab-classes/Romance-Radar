@@ -121,6 +121,32 @@ final class TestGetDateIds extends TestCase
         $this->assertEquals($result->fetch_assoc()["name"], "Tim Hortons");
     }
 
-    // Should return dates whose tags are 
+    // Should return dates whose tags are restaurant, indoors, or evening
+    // This test only works when the database is formatted a certain way
+    // There should be code to ensure the proper format in setup
+    function testRestaurants(): void
+    {
+        $ids = get_date_ids($this->rest_prefs);
+        $this->assertNotNull($ids, "There was an error getting date IDs");
+        $this->assertEquals(sizeof($ids), 4);
+
+        $query = "SELECT * FROM Date_ideas";
+        $data = NULL;
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertGreaterThan(0, $result->num_rows, "No dates with this ID found");
+        
+        $names = ("Mr.Goodbar", "Chef's", "Red Hot Chili Peppers", "Venu");
+        $row = $result->fetch_assoc();
+
+        // For every retrieved row, make sure the date name is one we expect
+        while ($row != NULL) {
+            $this->assertTrue(in_array($row["name"], $names), "Found unexpect date in testRestaurants");
+            $names = array_filter($names, static function ($element) {
+                return $element !== $row["name"];
+            });
+            $row = $result->fetch_assoc();
+        }
+    }
 
 }
