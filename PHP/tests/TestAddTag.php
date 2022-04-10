@@ -22,7 +22,7 @@ final class TestAddTag extends TestCase
     {
         // Remove the tags that we added
         $query = "DELETE FROM Date_tags WHERE date_id=?";
-        $data = [$this->coffe, $this->pasta, $this->hiking];
+        $data = [$this->coffee, $this->pasta, $this->hiking];
 
         foreach ($data as $d) {
             $result = exec_query($query, [$d]);
