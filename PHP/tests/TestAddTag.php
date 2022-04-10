@@ -7,14 +7,16 @@ use PHPUnit\Framework\TestCase;
 final class TestAddTag extends TestCase
 {
 
-    private $coffee = get_date_id("Tim Hortons");
-    private $pasta = get_date_id("Chef's");
-    private $hiking = get_date_id("Chestnut Ridge");
+    private $coffee;
+    private $pasta;
+    private $hiking;
 
     // This function is run *before every unit test*
     function setUp(): void
     {
-        // No setup needed
+        $this->coffee = get_date_id("Tim Hortons");
+        $this->pasta = get_date_id("Chef's");
+        $this->hiking = get_date_id("Chestnut Ridge");
     }
 
     // This function is run *after every unit test*
