@@ -47,10 +47,15 @@ echo -e "\n*** TESTING GET DATE INFORMATION ***\m"
 ./phpunit TestGetDateInformation.php
 echo "****************************************"
 
+echo -e "\n*** TESTING GENERATE DATES ***\n"
+./phpunit TestGenerateDates.php
+echo "****************************************"
+
+# This should be last, since it removes tags from the Date_tags table
 echo -e "\n*** TESTING ADD TAG ***\n"
 ./phpunit TestAddTag.php
 echo "****************************************"
 
-echo -e "\n*** TESTING GENERATE DATES ***\n"
-./phpunit TestGenerateDates.php
-echo "****************************************"
+# Cleanup
+echo "Cleaning up..."
+./reset_database.sh
