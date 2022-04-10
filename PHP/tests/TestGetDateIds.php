@@ -8,30 +8,18 @@ final class TestGetDateIds extends TestCase
 {
     // Private variables. Can be accessed inside any unit test with
     // $this->id , etc.
-    private $id;
-    private $prefs;
-    private $name = "Jon Doe";
-    private $email = "jon_doe@yahoo.co";
-    private $address = "123 Side Street";
-    private $zip = 12345;
-    private $city = "Buffalo";
-    private $password = "password";
-    private $birthday = "1999-12-12";
+    private $all_prefs;
+    private $cafe_prefs;
+    private $rest_prefs;
+    private $hike_prefs;
 
     // This function is run *before every unit test*
     function setUp(): void
     {
-        create_user(
-            $this->name, $this->email, $this->password, $this->address, $this->city, $this->zip, $this->birthday
-        );
-
-        // Set the member variable id
-        $this->id = get_user_id($this->email_a);
-        $this->assertGreaterThan(0, $this->id_a, "Error getting ID of user in setUp() function");
 
         // Set the member variable prefs
         // Anything with a 1 is "accepted", anything with a 0 in not
-        $this->prefs = array(
+        $this->all_prefs = array(
             "Food" => array(
                 "restaurant" => 1,
                 "cafe" => 1,
@@ -59,12 +47,51 @@ final class TestGetDateIds extends TestCase
                 "length" => 1000
             ),
         );
+
+        $this->cafe_prefs = array(
+            "Food" => array(
+                "cafe" => 1
+            ),
+            "Date_time" => array(
+                "morning" => 1
+            )
+        );
+
+        $this->rest_prefs = array(
+            "Food" => array(
+                "restaurant" => 1
+            ),
+            "Venue" => array(
+                "indoors" => 1
+            ),
+            "Date_time" => array(
+                "evening"
+            )
+        );
+
+        $this->hike_prefs = array(
+            "Entertainment" => array(
+                "hiking" => 1
+            ),
+            "Venue" => array(
+                "outdoors" => 1
+            ),
+            "Date_time" => array(
+                "afternoon" => 1
+            )
+        );
     }
 
     // This function is run *after every unit test*
     function tearDown(): void
     {
-        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->name, $this->email]);
+        // Shouldn't need teardown, since we're only getting
+    }
+
+    // Expect to get all possible date ID's
+    function testAll(): void
+    {
+
     }
 
 }
