@@ -136,7 +136,7 @@ final class TestGetDateIds extends TestCase
         $this->assertNotNull($result, "Couldn't exec_query");
         $this->assertGreaterThan(0, $result->num_rows, "No dates with this ID found");
         
-        $names = ("Mr.Goodbar", "Chef's", "Red Hot Chili Peppers", "Venu");
+        $names = array("Mr.Goodbar", "Chef's", "Red Hot Chili Peppers", "Venu");
         $row = $result->fetch_assoc();
 
         // For every retrieved row, make sure the date name is one we expect
