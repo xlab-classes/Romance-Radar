@@ -91,7 +91,36 @@ final class TestGetDateIds extends TestCase
     // Expect to get all possible date ID's
     function testAll(): void
     {
+        $ids = get_date_ids($this->all_prefs);
+        $this->assertNotNull($ids, "There was an error getting IDs");
 
+        $query = "SELECT * FROM Date_ideas";
+        $data = NULL;
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertGreaterThan(0, $result->num_rows, "No date ideas found");
+        $num_dates = $result->num_rows;
+
+        $this->assertEquals(sizeof($ids), $num_dates, "Missing dates");
     }
+
+    // Should return dates whose tags are morning or cafe
+    // This test only works when the database is formatted a certain way
+    // There should be code to ensure the proper format in setup
+    function testCafe(): void
+    {
+        $ids = get_date_ids($this->cafe_prefs);
+        $this->assertNotNull($ids, "There was an error getting date IDs");
+        $this->assertEquals(sizeof($ids), 1);
+
+        $query = "SELECT * FROM Date_ideas WHERE id=?";
+        $data = [$ids[0]];
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertGreaterThan(0, $result->num_rows, "No dates with this ID found");
+        $this->assertEquals($result->fetch_assoc()["name"], "Tim Hortons");
+    }
+
+    // Should return dates whose tags are 
 
 }
