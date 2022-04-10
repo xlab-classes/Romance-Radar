@@ -867,6 +867,7 @@ function get_date_ids($preferences) {
                 if (!in_array($row["date_id"], $arr)) {
                     array_push($arr, $row["date_id"]);
                 }
+                $row = $result->fetch_assoc();
             }
         }
     }
