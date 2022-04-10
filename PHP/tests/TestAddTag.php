@@ -38,7 +38,7 @@ final class TestAddTag extends TestCase
         $this->assertGreaterThan(0, $result->num_rows, "There are no tags for Tim Hortons");
 
         $tag = $result->fetch_assoc()["tag"];
-        $this->assertEqual("cafe", $tag, "Wrong tag added to Tim Hortons");
+        $this->assertEquals("cafe", $tag, "Wrong tag added to Tim Hortons");
 
         // Check the tag for Chef's
         $query = "SELECT * FROM Date_tags WHERE date_id=?";
@@ -49,7 +49,7 @@ final class TestAddTag extends TestCase
         $this->assertGreaterThan(0, $result->num_rows, "There are no tags for Chef's");
 
         $tag = $result->fetch_assoc()["tag"];
-        $this->assertEqual("restaurant", $tag, "Wrong tag added to Chef's");
+        $this->assertEquals("restaurant", $tag, "Wrong tag added to Chef's");
 
         // Check the tag for Chestnut Ridge
         $query = "SELECT * FROM Date_tags WHERE date_id=?";
@@ -60,7 +60,7 @@ final class TestAddTag extends TestCase
         $this->assertGreaterThan(0, $result->num_rows, "There are no tags for Chestnut Ridge");
 
         $tag = $result->fetch_assoc()["tag"];
-        $this->assertEqual("outdoors", $tag, "Wrong tag added to Chestnut Ridge");
+        $this->assertEquals("outdoors", $tag, "Wrong tag added to Chestnut Ridge");
 
     }
 
