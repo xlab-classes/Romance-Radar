@@ -3,7 +3,7 @@
 echo "OK to clear database for testing? y/N\n"
 read option
 
-if [$option -eq "y"];
+if [$(option) = "y"];
 then
     ./reset_database.sh
 fi
