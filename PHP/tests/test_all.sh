@@ -2,8 +2,7 @@
 
 read -p "OK to clear database for testing? Y/N: " option
 
-if [ $option == [yY] ];
-then
+if [[ $option == "y" || $option == "Y" ]]; then
     echo "Clearing database...\n"
     ./reset_database.sh
 fi
