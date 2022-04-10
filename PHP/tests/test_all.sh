@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "OK to clear database for testing? y/N\n"
 read option
 
