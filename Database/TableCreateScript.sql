@@ -71,13 +71,15 @@ CREATE TABLE IF NOT EXISTS Date_ideas(
     picture VARCHAR(100) NOT NULL,
     time DATETIME NOT NULL,
     location VARCHAR(100) NOT NULL,
+    est_cost INT NOT NULL,      -- Estimated cost
+    est_length INT NOT NULL,    -- Estimated date length
     PRIMARY KEY (id)
     );
 
 CREATE TABLE IF NOT EXISTS Date_tags(
     id INT AUTO_INCREMENT,
-    date_id INT NOT NULL,
-    tag VARCHAR(50) NOT NULL,
+    date_id INT NOT NULL,       -- ID of date to tag
+    tag VARCHAR(50) NOT NULL,   -- String name of tag
     PRIMARY KEY (id),
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
