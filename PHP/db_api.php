@@ -1006,7 +1006,7 @@ function add_tag($date_id, $tag) {
 //      function will always return 10
 function calc_distance($date_id, $user_id) {
     if (!date_exists($date_id) || !user_exists($user_id)) {
-        print("Date or user doesn't exist in calc_distancen\n")
+        print("Date or user doesn't exist in calc_distancen\n");
         return NULL;
     }
     return 10;
