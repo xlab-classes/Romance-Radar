@@ -1,3 +1,11 @@
+echo "OK to clear database for testing? y/N\n"
+read option
+
+if [$name -eq "y"]
+then
+    ./reset_database.sh
+fi
+
 echo "Testing create_user\n"
 ./phpunit TestCreateUser.php
 
@@ -19,6 +27,9 @@ echo "\tadd_connection\n"
 echo "\tremove_connection_request\n"
 echo "\tremove_connection\n"
 ./phpunit TestConnections.php
+
+echo "Testing get_date_id\n"
+./phpunit TestGetDateId.php
 
 echo "Testing get_date_ids\n"
 ./phpunit TestGetDateIds.php
