@@ -1026,7 +1026,7 @@ function calc_distance($date_id, $user_id) {
 function get_date_id($name) {
     $query = "SELECT * FROM Date_ideas WHERE name=?";
     $data = [$name];
-    $result = exec_query($query, data);
+    $result = exec_query($query, $data);
     if ($result == NULL) {
         print("Couldn't exec_query in get_date_id\n");
         return NULL;
