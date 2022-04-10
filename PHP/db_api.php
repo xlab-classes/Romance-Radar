@@ -1011,3 +1011,29 @@ function calc_distance($date_id, $user_id) {
     }
     return 10;
 }
+
+// Get the ID of the date with this name
+//
+// parameter: name  [int]
+//      The name of the date whose ID we are retrieving
+//
+// returns:
+//      The ID of the date with this name, if it exists
+//      NULL otherwise
+//
+// constraints:
+//      There MUST be a date with this name in Date_ideas
+function get_date_id($name) {
+    $query = "SELECT * FROM Date_ideas WHERE name=?";
+    $data = [$name];
+    $result = exec_query($query, data);
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_id\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No dates with this name in get_date_id\n");
+        return NULL;
+    }
+    return $result->fetch_assoc()["id"];
+}
