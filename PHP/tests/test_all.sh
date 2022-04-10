@@ -7,6 +7,8 @@ then
     ./reset_database.sh
 fi
 
+exit
+
 echo "Testing create_user\n"
 ./phpunit TestCreateUser.php
 
