@@ -1,9 +1,8 @@
 #!/bin/bash
 
-echo "OK to clear database for testing? y/N\n"
-read option
+read -p "OK to clear database for testing? y/N\n" option
 
-if [$(option) = "y"];
+if ["$option" = "y"];
 then
     ./reset_database.sh
 fi
