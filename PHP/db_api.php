@@ -842,7 +842,7 @@ function get_date_ids($preferences) {
     $arr = array();
 
     // For every category
-    foreach ($prefs as $category) {
+    foreach ($preferences as $category) {
         // For every tag in this category
         foreach ($category as $tag) {
             // Get all rows from the Date_tags table with this tag
