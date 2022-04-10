@@ -14,6 +14,10 @@ final class TestAddTag extends TestCase
     // This function is run *before every unit test*
     function setUp(): void
     {
+        // Remove existing tags
+        $query = "DELETE FROM Date_tags";
+        $result = exec_query($query, NULL);
+
         $this->coffee = get_date_id("Tim Hortons");
         $this->pasta = get_date_id("Chef's");
         $this->hiking = get_date_id("Chestnut Ridge");
