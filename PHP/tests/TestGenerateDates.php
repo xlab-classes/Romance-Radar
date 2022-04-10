@@ -4,7 +4,7 @@
 require_once('../db_api.php');
 use PHPUnit\Framework\TestCase;
 
-final class TestDateSelection extends TestCase
+final class TestGenerateDates extends TestCase
 {
     private $id_a;
     private $connection_a = "Alex";
