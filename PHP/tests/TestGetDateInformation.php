@@ -6,65 +6,42 @@ use PHPUnit\Framework\TestCase;
 
 final class TestGetDateInformation extends TestCase
 {
-    // Private variables. Can be accessed inside any unit test with
-    // $this->id , etc.
-    private $id;
-    private $prefs;
-    private $name = "Jon Doe";
-    private $email = "jon_doe@yahoo.co";
-    private $address = "123 Side Street";
-    private $zip = 12345;
-    private $city = "Buffalo";
-    private $password = "password";
-    private $birthday = "1999-12-12";
 
     // This function is run *before every unit test*
     function setUp(): void
     {
-        create_user(
-            $this->name, $this->email, $this->password, $this->address, $this->city, $this->zip, $this->birthday
-        );
-
-        // Set the member variable id
-        $this->id = get_user_id($this->email_a);
-        $this->assertGreaterThan(0, $this->id_a, "Error getting ID of user in setUp() function");
-
-        // Set the member variable prefs
-        // Anything with a 1 is "accepted", anything with a 0 in not
-        $this->prefs = array(
-            "Food" => array(
-                "restaurant" => 1,
-                "cafe" => 1,
-                "fast_food" => 1,
-                "alcohol" => 1
-            ),
-            "Entertainment" => array(
-                "concerts" => 1,
-                "hiking" => 1,
-                "bar" => 1
-            ),
-            "Venue" => array(
-                "indoors" => 1,
-                "outdoors" => 1,
-                "social_events" => 1
-            ),
-            "Date_time" => array(
-                "morning" => 1,
-                "afternoon" => 1,
-                "evening" => 1
-            ),
-            "Date_preferences" => array(
-                "cost" => 1000,
-                "distance" => 1000,
-                "length" => 1000
-            ),
-        );
+        // No setup needed
     }
 
     // This function is run *after every unit test*
     function tearDown(): void
     {
-        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->name, $this->email]);
+        // No teardown needed
+    }
+
+    // This relies on the database being formatted a certain way
+    // Code should be added to setUp to ensure this
+    function testAll(): void
+    {
+        // Test with three date IDs that we know exist
+        $coffee = get_date_information(1);
+        $goodbar = get_date_information(2);
+        $chefs = get_date_information(3);
+        $bad = get_date_information(-1);
+
+        $this->assertNull($bad, "Erroneously retrieved date information");
+
+        $this->assertEquals($coffee["name"], "Tim Hortons");
+        $this->assertEquals($coffee["picture"], "../assets/coffee.jpg");
+        $this->assertEquals($coffee["location"], "Lackawanna, NY");
+
+        $this->assertEquals($goodbar["name"], "Mr.Goodbar");
+        $this->assertEquals($goodbar["picture"], "../assets/beer.jp");
+        $this->assertEquals($goodbar["location"], "Buffalo, NY");
+
+        $this->assertEquals($chefs["name"], "Chef's");
+        $this->assertEquals($chefs["picture"], "../assets/steak.jpg");
+        $this->assertEquals($chefs["location"], "Buffalo, NY");
     }
 
 }
