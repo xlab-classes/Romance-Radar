@@ -130,8 +130,8 @@ final class TestGetDateIds extends TestCase
         $this->assertNotNull($ids, "There was an error getting date IDs");
         $this->assertEquals(sizeof($ids), 4);
 
-        $query = "SELECT * FROM Date_ideas";
-        $data = NULL;
+        $query = "SELECT * FROM Date_ideas WHERE id=? OR id=? OR id=? OR id=?";
+        $data = [$ids[0], $ids[1], $ids[2], $ids[3]];
         $result = exec_query($query, $data);
         $this->assertNotNull($result, "Couldn't exec_query");
         $this->assertGreaterThan(0, $result->num_rows, "No dates with this ID found");
@@ -141,7 +141,7 @@ final class TestGetDateIds extends TestCase
 
         // For every retrieved row, make sure the date name is one we expect
         while ($row != NULL) {
-            $this->assertTrue(in_array($row["name"], $names), "Found unexpect date in testRestaurants: " . $row["name"]);
+            $this->assertTrue(in_array($row["name"], $names), "Found unexpected date in testRestaurants: " . $row["name"]);
             $names = array_filter($names, static function ($element) {
                 return $element !== $row["name"];
             });
