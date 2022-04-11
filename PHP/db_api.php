@@ -712,7 +712,7 @@ function update_preferences($user_id, $preferences) {
                 return 0;
             }
             $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
-            print("Attempting to set value: $value\n");
+            print("Query: $query\n");
             $result = exec_query($query, [$value, $user_id]);
             if (!$result){
                 echo 'No executed\n';
