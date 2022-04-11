@@ -691,7 +691,9 @@ function get_preferences($user_id) {
 
         $row = $result->fetch_assoc();
         foreach ($row as $k => $v) {
-            $preferences[$category][$k] = $v;
+            if ($k != "user_id" && $k != "id") {
+                $preferences[$category][$k] = $v;
+            }
         }
     }
 
