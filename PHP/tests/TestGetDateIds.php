@@ -151,7 +151,7 @@ final class TestGetDateIds extends TestCase
     // There should be code to ensure the proper format in setup
     function testHike(): void
     {
-        $ids = get_date_ids($this->rest_prefs);
+        $ids = get_date_ids($this->hike_prefs);
         $this->assertNotNull($ids, "There was an error getting date IDs");
         $this->assertEquals(sizeof($ids), 1);
 
