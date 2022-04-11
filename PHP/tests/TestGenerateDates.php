@@ -261,7 +261,7 @@ final class TestGenerateDates extends TestCase
             }
             else if ($k == "ac") {
                 // a and c also match all dates
-                $this->assertEquals(6, sizeof($v))
+                $this->assertEquals(6, sizeof($v));
             }
             else {
                 // a and d match all but 1
