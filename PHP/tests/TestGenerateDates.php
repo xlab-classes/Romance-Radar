@@ -220,20 +220,16 @@ final class TestGenerateDates extends TestCase
     //      People connecting with Alex should ALWAYS have a date
     
     // Hazel
-    //      Prefers outdoor venues, does not like fast food
-    //      Nothing in the morning, prefers lower cost activities
+    //      restaurant      cafe        alcohol     concerts        hiking
+    //      bar             outdoors    social_events   afternoon   evening
 
     // Heather
-    //      More picky, open to less things
-    //      No alcohol or fast food, no concerts
-    //      Indoors, 1-on-1 only
-    //      Afternoon only
-    //      Low cost, close by
+    //      restaurant      cafe        hiking      indoors         afternoon
 
     // Adam
-    //      Extremely picky
-    //      Really only wants to go on coffee dates in the morning
-    //      Can only spare an hour
+    //      cafe            indoors     morning
+
+    // This test depends on the database being formatted a certain way
     function testBasic(): void
     {
         // a - alex
@@ -252,5 +248,26 @@ final class TestGenerateDates extends TestCase
         foreach ($date_ideas as $dates) {
             $this->assertNotNull($dates, "Date generated null");
         }
+
+        // NOTE: 'indoors' tag is ... useless
+
+        // none of the matches with 'a' should be empty
+        $a_dates = array("ab"=>$ab, "ac"=>$ac, "ad"=>$ad);
+        foreach ($a_dates as $k => $v) {
+            $this->assertGreaterThan(0, sizeof($v));
+            if ($k == "ab") {
+                // a and b match all dates
+                $this->assertEquals(6, sizeof($v));
+            }
+            else if ($k == "ac") {
+                // a and c also match all dates
+                $this->assertEquals(6, sizeof($v))
+            }
+            else {
+                // a and d match all but 1
+                $this->assertEquals(5, sizeof($v));
+            }
+        }
+
     }
 }
