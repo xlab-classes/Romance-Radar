@@ -146,4 +146,24 @@ final class TestGetDateIds extends TestCase
         }
     }
 
+    // Should return dates whose tags are hiking, outdoors, afternoon
+    // This test only works when the database is formatted a certain way
+    // There should be code to ensure the proper format in setup
+    function testHike(): void
+    {
+        $ids = get_date_ids($this->rest_prefs);
+        $this->assertNotNull($ids, "There was an error getting date IDs");
+        $this->assertEquals(sizeof($ids), 1);
+
+        $query = "SELECT * FROM Date_ideas WHERE id=?";
+        $data = [$ids[0]];
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertGreaterThan(0, $result->num_rows, "No dates with this ID found");
+        
+        $name = "Chestnut Ridge";
+        $row = $result->fetch_assoc();
+        $this->assertEquals($row["name"], $name, "Wrong date retrieved");
+    }
+
 }
