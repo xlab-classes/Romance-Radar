@@ -30,8 +30,8 @@ final class TestUnitTestSkeleton extends TestCase
         );
 
         // Set the member variable id
-        $this->id = get_user_id($this->email_a);
-        $this->assertGreaterThan(0, $this->id_a, "Error getting ID of user in setUp() function");
+        $this->id = get_user_id($this->email);
+        $this->assertGreaterThan(0, $this->id, "Error getting ID of user in setUp() function");
 
         // Set the member variable prefs
         // Anything with a 1 is "accepted", anything with a 0 in not
