@@ -905,6 +905,10 @@ function generate_dates($user_a, $user_b) {
     $ua_dids = get_date_ids($ua_prefs);
     $ub_dids = get_date_ids($ub_prefs);
 
+    foreach ($ub_dids as $ub) {
+        print("User B prefs: $ub\n");
+    }
+
     // Get date ideas with tags matching for the second user
     $compatible_dates = array();
     foreach ($ua_dids as $ua) {
