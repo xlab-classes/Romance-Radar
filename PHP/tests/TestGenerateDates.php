@@ -82,9 +82,7 @@ final class TestGenerateDates extends TestCase
         $this->assertNotEquals($this->id_c, $this->id_d);
 
         // Set preferences
-        // Alex
-        //      OK with anything, any cost, any distance, etc.
-        //      People connecting with Alex should ALWAYS have a date
+        // Alex - OK with everything (has all preferences)
         $alex_prefs = array(
             "Food" => array(
                 "restaurant" => 1,
@@ -113,15 +111,13 @@ final class TestGenerateDates extends TestCase
                 "length" => 1000
             ),
         );
+        $this->assertEquals(1, update_preferences($this->id_a, $alex_prefs));
 
         // Hazel
-        //      Prefers outdoor venues, does not like fast food
-        //      Nothing in the morning, prefers lower cost activities
         $hazel_prefs = array(
             "Food" => array(
                 "restaurant" => 1,
                 "cafe" => 1,
-                "fast_food" => 0,
                 "alcohol" => 1
             ),
             "Entertainment" => array(
@@ -130,12 +126,10 @@ final class TestGenerateDates extends TestCase
                 "bar" => 1
             ),
             "Venue" => array(
-                "indoors" => 0,
                 "outdoors" => 1,
                 "social_events" => 1
             ),
             "Date_time" => array(
-                "morning" => 0,
                 "afternoon" => 1,
                 "evening" => 1
             ),
@@ -145,34 +139,22 @@ final class TestGenerateDates extends TestCase
                 "length" => 1000
             ),
         );
+        $this->assertEquals(1, update_preferences($this->id_b, $hazel_prefs));
 
         // Heather
-        //      More picky, open to less things
-        //      No alcohol or fast food, no concerts
-        //      Indoors, 1-on-1 only
-        //      Afternoon only
-        //      Low cost, close by
         $heather_prefs = array(
             "Food" => array(
                 "restaurant" => 1,
-                "cafe" => 1,
-                "fast_food" => 0,
-                "alcohol" => 0
+                "cafe" => 1
             ),
             "Entertainment" => array(
-                "concerts" => 0,
-                "hiking" => 1,
-                "bar" => 0
+                "hiking" => 1
             ),
             "Venue" => array(
-                "indoors" => 1,
-                "outdoors" => 0,
-                "social_events" => 0
+                "indoors" => 1
             ),
             "Date_time" => array(
-                "morning" => 0,
-                "afternoon" => 1,
-                "evening" => 0
+                "afternoon" => 1
             ),
             "Date_preferences" => array(
                 "cost" => 15,
@@ -180,32 +162,18 @@ final class TestGenerateDates extends TestCase
                 "length" => 1000
             ),
         );
+        $this->assertEquals(1, update_preferences($this->id_c, $heather_prefs));
 
         // Adam
-        //      Extremely picky
-        //      Really only wants to go on coffee dates in the morning
-        //      Can only spare an hour
         $adam_prefs = array(
             "Food" => array(
-                "restaurant" => 0,
-                "cafe" => 1,
-                "fast_food" => 0,
-                "alcohol" => 0
-            ),
-            "Entertainment" => array(
-                "concerts" => 0,
-                "hiking" => 0,
-                "bar" => 0
+                "cafe" => 1
             ),
             "Venue" => array(
-                "indoors" => 1,
-                "outdoors" => 0,
-                "social_events" => 0
+                "indoors" => 1
             ),
             "Date_time" => array(
-                "morning" => 1,
-                "afternoon" => 0,
-                "evening" => 0
+                "morning" => 1
             ),
             "Date_preferences" => array(
                 "cost" => 10,
@@ -213,6 +181,7 @@ final class TestGenerateDates extends TestCase
                 "length" => 1
             ),
         );
+        $this->assertEquals(1, update_preferences($this->id_c, $adam_prefs));
     }
 
     function tearDown(): void
