@@ -902,7 +902,7 @@ function get_date_ids($preferences) {
 //
 // constraints:
 //      Both users MUST exist
-function generate_dates($user_a, $user_b) {
+function generate_dates($user_a, $user_b, $sauce) {
     if (!user_exists($user_a) || !user_exists($user_b)) {
         print("User doesn't exist in generate_dates\n");
         return NULL;
@@ -919,6 +919,12 @@ function generate_dates($user_a, $user_b) {
     // Get date ID's for each users' tags
     $ua_dids = get_date_ids($ua_prefs);
     $ub_dids = get_date_ids($ub_prefs);
+
+    if ($user_b == $sauce) {
+        foreach ($ub_dids as $ub) {
+            print("ID for sauce: $ub\n");
+        }
+    }
 
     // Get date ideas with tags matching for the second user
     $compatible_dates = array();
