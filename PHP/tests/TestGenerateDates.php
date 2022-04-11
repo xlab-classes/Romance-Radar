@@ -227,8 +227,9 @@ final class TestGenerateDates extends TestCase
             $this->assertNotNull($dates, "Date generated null");
         }
 
-        foreach ($ad as $da) {
-            print("In ad: $da\n");
+        $d = get_date_ids($this->id_d);
+        foreach ($d as $da) {
+            print("In d from get_date_ids: $da\n");
         }
 
         // NOTE: 'indoors' tag is ... useless
