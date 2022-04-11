@@ -41,6 +41,7 @@ final class TestGenerateDates extends TestCase
     private $city_d = "Cleveland, OH";
     private $password_d = "password";
     private $birthday_d = "1975-04-16";
+    private $prefs_d;
 
     function setUp(): void
     {
@@ -165,7 +166,7 @@ final class TestGenerateDates extends TestCase
         $this->assertEquals(1, update_preferences($this->id_c, $heather_prefs));
 
         // Adam
-        $adam_prefs = array(
+        $this->prefs_d = array(
             "Food" => array(
                 "cafe" => 1
             ),
@@ -181,7 +182,7 @@ final class TestGenerateDates extends TestCase
                 "length" => 1
             ),
         );
-        $this->assertEquals(1, update_preferences($this->id_d, $adam_prefs));
+        $this->assertEquals(1, update_preferences($this->id_d, $this->prefs_d));
     }
 
     function tearDown(): void
@@ -227,7 +228,7 @@ final class TestGenerateDates extends TestCase
             $this->assertNotNull($dates, "Date generated null");
         }
 
-        $d = get_date_ids($this->id_d);
+        $d = get_date_ids($this->prefs_d);
         foreach ($d as $da) {
             print("In d from get_date_ids: $da\n");
         }
