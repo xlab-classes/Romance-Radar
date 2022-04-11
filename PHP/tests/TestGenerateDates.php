@@ -182,6 +182,8 @@ final class TestGenerateDates extends TestCase
             ),
         );
         $this->assertEquals(1, update_preferences($this->id_d, $adam_prefs));
+
+        $this->assertSame($adam_prefs, get_preferences($this->id_d));
     }
 
     function tearDown(): void
