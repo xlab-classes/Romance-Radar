@@ -924,6 +924,11 @@ function generate_dates($user_a, $user_b, $sauce) {
         foreach ($ub_dids as $ub) {
             print("ID for sauce: $ub\n");
         }
+        foreach ($ub_prefs as $k => $v) {
+            foreach ($v as $kk => $vv) {
+                print("Key: $kk, Value: $vv\n");
+            }
+        }
     }
 
     // Get date ideas with tags matching for the second user
