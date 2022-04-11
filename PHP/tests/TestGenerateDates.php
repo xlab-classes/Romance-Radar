@@ -181,7 +181,7 @@ final class TestGenerateDates extends TestCase
                 "length" => 1
             ),
         );
-        $this->assertEquals(1, update_preferences($this->id_c, $adam_prefs));
+        $this->assertEquals(1, update_preferences($this->id_d, $adam_prefs));
     }
 
     function tearDown(): void
