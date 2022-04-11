@@ -188,6 +188,8 @@ final class TestGenerateDates extends TestCase
     {
         exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_a, $this->email_a]);
         exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_b, $this->email_b]);
+        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_c, $this->email_c]);
+        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_d, $this->email_d]);
     }
 
     // Set preferences
