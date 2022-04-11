@@ -121,6 +121,21 @@ function user_exists($user_id) {
     else return $result->num_rows > 0;
 }
 
+// Check if there is a date in Date_ideas with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date to check for existence
+//
+// returns:
+//      true if a date with this ID exists
+//      false otherwise
+function date_exists($date_id) {
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+    return ($result != NULL && $result->num_rows > 0);
+}
+
 # Check if a $user_id's password matches $password
 function check_password($user_id, $password) {
     if (!user_exists($user_id)) return 1;           // User doesn't exist
@@ -636,23 +651,50 @@ function sent_request($user_id) {
     else return -1;
 }
 
+// Get the preferences for the user with this ID
+//
+// parameter: user_id   [int]
+//      The ID of the user whose preferences we want
+//
+// returns:
+//      An associative array of associative arrays for this user's preferences,
+//          if the user exists
+//      0 if the user doesn't exist
+//
+// constraints:
+//      A user with this ID MUST exist
 function get_preferences($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
         return 0;
     }
 
-    $preferences = [];
-    $preferences_categories = array('Food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
-    
-    foreach($preferences_categories as $cat){
-        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
-        $result = exec_query($query, [$user_id]);
-        if(!$result || $result->num_rows == 0){
-            echo "Records don't exist\n";
-            return [];
+    $categories = array("Food", "Entertainment", "Venue", "Date_time",
+        "Date_preferences");
+
+    $preferences = array(
+        "Food" => array(),
+        "Entertainment" => array(),
+        "Venue" => array(),
+        "Date_time" => array(),
+        "Date_preferences" => array()
+    );
+
+    foreach ($categories as $category) {
+        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $category);
+        $data = [$user_id];
+        $result = exec_query($query, $data);
+        if ($result == NULL) {
+            print("Couldn't exec_query in get_preferences\n");
+            return 0;
         }
-        $preferences[$cat] = $result->fetch_assoc();
+
+        $row = $result->fetch_assoc();
+        foreach ($row as $k => $v) {
+            if ($k != "user_id" && $k != "id") {
+                $preferences[$category][$k] = $v;
+            }
+        }
     }
 
     return $preferences;
@@ -695,6 +737,20 @@ function update_preferences($user_id, $preferences) {
 
 }
 
+// Set initial preference values for a new user
+//
+// parameter: user_id   [int]
+//      The user ID whose preferences are being initialized
+//
+// returns:
+//      1 if the preferences were set successfully
+//      0 on error
+//
+// constraints:
+//      The user with this ID MUST exist
+//
+// Note:
+//      All preferences are initialized to 0
 function initialize_preferences($user_id){
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
@@ -781,4 +837,219 @@ function addChatMessages($sent_from, $sent_to, $message){
     }
 
     return 1;
+}
+
+// Get an array of date ID's that have tags corresponding to these preferences
+//
+// parameter: preferences
+//      An associative array of the kind returned by get_preferences
+//
+// returns:
+//      An array of date ID's with tags corresponding to these preferences
+//      NULL on error
+//
+// contraints:
+//      None
+//
+// Note:
+//      This should not be called outside of generate_dates. It is a helper function
+function get_date_ids($preferences) {
+    $arr = array();
+
+    // For every category
+    foreach ($preferences as $category => $vals) {
+        // For every tag in this category
+        foreach ($vals as $tag => $enabled) {
+            // print("Handling tag: " . $tag . "\n");
+            if ($enabled && $tag != "cost" && $tag != "length" && $tag != "distance") {
+                // Get all rows from the Date_tags table with this tag
+                $query = "SELECT * FROM Date_tags WHERE tag=?";
+                $data = [$tag];
+                $result = exec_query($query, $data);
+
+                // Make sure we retrieved at least 1 row
+                if ($result == NULL) {
+                    print("Failed to exec_query in get_date_ids\n");
+                    return NULL;
+                }
+
+                // For every row we found, add the date ID to the array of date IDs
+                $row = $result->fetch_assoc();
+                while ($row != NULL) {
+                    if (!in_array($row["date_id"], $arr)) {
+                        // print("Adding to array\nMatching tag: $tag\n");
+                        array_push($arr, $row["date_id"]);
+                    }
+                    $row = $result->fetch_assoc();
+                }
+            }
+        }
+    }
+    return $arr;
+}
+
+// Generate an array of date ideas for two users
+//
+// parameter: user_a    [int]
+//      The user ID of one of the users
+//
+// parameter: user_b    [int]
+//      The user ID of the other user
+//
+// returns:
+//      An array of date idea ID's that are compatible with both users' preferences
+//      NULL if either user doesn't exist
+//      NULL if any other error occured
+//
+// constraints:
+//      Both users MUST exist
+function generate_dates($user_a, $user_b) {
+    if (!user_exists($user_a) || !user_exists($user_b)) {
+        print("User doesn't exist in generate_dates\n");
+        return NULL;
+    }
+
+    // Get the preferences for both users, as associative arrays
+    $ua_prefs = get_preferences($user_a);
+    $ub_prefs = get_preferences($user_b);
+    if ($ua_prefs == 0 || $ub_prefs == 0) {
+        print("Couldn't get preferences in generate_dates\n");
+        return NULL;
+    }
+
+    // Get date ID's for each users' tags
+    $ua_dids = get_date_ids($ua_prefs);
+    $ub_dids = get_date_ids($ub_prefs);
+
+    // Get date ideas with tags matching for the second user
+    $compatible_dates = array();
+    foreach ($ua_dids as $ua) {
+        foreach ($ub_dids as $ub) {
+            if ($ua === $ub && !in_array($ua, $compatible_dates)) {
+                array_push($compatible_dates, $ua);
+            }
+        }
+    }
+
+    // Return overlapping date ideas
+    return $compatible_dates;
+}
+
+// Get information about the date with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date whose information we want
+//
+// returns:
+//      An associative array of information for this date
+//      NULL if no date with this ID exists
+//
+// constraints:
+//      A date with this ID MUST exist
+function get_date_information($date_id) {
+    if (!date_exists($date_id)) {
+        return NULL;
+    }
+
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_information\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in get_date_information\n");
+        return NULL;
+    }
+
+    return $result->fetch_assoc();
+}
+
+// Add an entry to the Date_tags table that tags this date with this tag
+//
+// parameter: date_id   [int]
+//      The ID of the date that we're tagging
+//
+// parameter: tag       [string]
+//      The tag to add
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A date with this ID MUST exist
+//      The tag should be a column name from one of the preferences tables
+//          e.g. "restaurant", "concerts", "morning", etc.
+function add_tag($date_id, $tag) {
+    if (!date_exists($date_id)) {
+        print("Date doesn't exist in add_tag\n");
+        return 0;
+    }
+
+    $query = "INSERT INTO Date_tags (date_id, tag) VALUES (?, ?)";
+    $date = [$date_id, $tag];
+    $result = exec_query($query, $date);
+    
+    if ($result == NULL) {
+        print("Couldn't exec_query in add_tag\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Calculate the distance between this date location and this user's location
+//
+// parameter: date_id   [int]
+//      The ID of the date to check the distance against
+//
+// parameter: user_id   [int]
+//      The ID of the user to check the distance against
+//
+// returns:
+//      The distance between this user and the date location, on success
+//      NULL on failure
+//
+// constraints:
+//      A date with this ID MUST exist
+//      A user with this ID MUST exist
+//
+// Note:
+//      This is a hard problem. For now, if the date and user exist, this
+//      function will always return 10
+function calc_distance($date_id, $user_id) {
+    if (!date_exists($date_id) || !user_exists($user_id)) {
+        print("Date or user doesn't exist in calc_distancen\n");
+        return NULL;
+    }
+    return 10;
+}
+
+// Get the ID of the date with this name
+//
+// parameter: name  [int]
+//      The name of the date whose ID we are retrieving
+//
+// returns:
+//      The ID of the date with this name, if it exists
+//      NULL otherwise
+//
+// constraints:
+//      There MUST be a date with this name in Date_ideas
+function get_date_id($name) {
+    $query = "SELECT * FROM Date_ideas WHERE name=?";
+    $data = [$name];
+    $result = exec_query($query, $data);
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_id\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No dates with this name in get_date_id\n");
+        return NULL;
+    }
+    return $result->fetch_assoc()["id"];
 }
