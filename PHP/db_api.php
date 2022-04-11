@@ -669,17 +669,30 @@ function get_preferences($user_id) {
         return 0;
     }
 
-    $preferences = [];
-    $preferences_categories = array('Food', 'Entertainment', 'Venue', 'Date_time', 'Date_preferences');
-    
-    foreach($preferences_categories as $cat){
-        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $cat);
-        $result = exec_query($query, [$user_id]);
-        if(!$result || $result->num_rows == 0){
-            echo "Records don't exist\n";
-            return [];
+    $categories = array("Food", "Entertainment", "Venue", "Date_time",
+        "Date_preferences");
+
+    $preferences = array(
+        "Food" => array(),
+        "Entertainment" => array(),
+        "Venue" => array(),
+        "Date_time" => array(),
+        "Date_preferences" => array()
+    );
+
+    foreach ($categories as $category) {
+        $query = sprintf("SELECT * FROM %s WHERE user_id=?", $category);
+        $data = [$user_id];
+        $result = exec_query($query, $data);
+        if ($result == NULL) {
+            print("Couldn't exec_query in get_preferences\n");
+            return 0;
         }
-        $preferences[$cat] = $result->fetch_assoc();
+
+        $row = $result->fetch_assoc();
+        foreach ($row as $k => $v) {
+            $preferences[$category][$k] = $v;
+        }
     }
 
     return $preferences;
@@ -712,7 +725,6 @@ function update_preferences($user_id, $preferences) {
                 return 0;
             }
             $query = sprintf("UPDATE %s SET %s=? WHERE user_id=?", $cat, $sub_cat);
-            print("Query: $query\n");
             $result = exec_query($query, [$value, $user_id]);
             if (!$result){
                 echo 'No executed\n';
