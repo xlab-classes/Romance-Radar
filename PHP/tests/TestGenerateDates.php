@@ -265,6 +265,9 @@ final class TestGenerateDates extends TestCase
             }
             else {
                 print("checking key: $k\n");
+                foreach ($v as $d) {
+                    print("\tVal: $d\n");
+                }
                 // a and d match all but 1
                 $this->assertEquals(5, sizeof($v));
             }
