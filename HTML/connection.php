@@ -115,8 +115,12 @@ if($user['partner'] == $user['id']){
     </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
 
-    // If the 
-    $display = sprintf('
+    // if privacy settings result is 1
+    if($partner_privacy == 1){
+        // preferences_html will be empty
+        $preferences_html = ''; 
+    }
+            $display = sprintf('
     <div class="row pt-5 gx-5 gy-5">
             %s
             <div class="col">
