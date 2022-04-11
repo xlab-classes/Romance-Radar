@@ -249,6 +249,10 @@ final class TestGenerateDates extends TestCase
             $this->assertNotNull($dates, "Date generated null");
         }
 
+        foreach ($ad as $da) {
+            print("In ad: $da\n");
+        }
+
         // NOTE: 'indoors' tag is ... useless
 
         // none of the matches with 'a' should be empty
