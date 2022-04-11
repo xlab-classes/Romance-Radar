@@ -36,7 +36,7 @@ final class TestGetDateInformation extends TestCase
         $this->assertEquals($coffee["location"], "Lackawanna, NY");
 
         $this->assertEquals($goodbar["name"], "Mr.Goodbar");
-        $this->assertEquals($goodbar["picture"], "../assets/beer.jp");
+        $this->assertEquals($goodbar["picture"], "../assets/beer.jpg");
         $this->assertEquals($goodbar["location"], "Buffalo, NY");
 
         $this->assertEquals($chefs["name"], "Chef's");
