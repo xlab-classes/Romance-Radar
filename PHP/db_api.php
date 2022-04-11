@@ -845,7 +845,7 @@ function get_date_ids($preferences) {
     foreach ($preferences as $category => $vals) {
         // For every tag in this category
         foreach ($vals as $tag => $enabled) {
-            if ($tag == 0 || $tag == "0") continue 1;
+            print("Handling tag: " . $tag);
 
             // Get all rows from the Date_tags table with this tag
             $query = "SELECT * FROM Date_tags WHERE tag=?";
