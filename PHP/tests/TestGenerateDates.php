@@ -73,13 +73,13 @@ final class TestGenerateDates extends TestCase
         $this->assertGreaterThan(0, $this->id_b, "Error getting ID of user B in setUp() function");
         $this->assertGreaterThan(0, $this->id_c, "Error getting ID of user C in setUp() function");
         $this->assertGreaterThan(0, $this->id_d, "Error getting ID of user D in setUp() function");
-
-        $this->assertNotEqual($this->id_a, $this->id_b);
-        $this->assertNotEqual($this->id_a, $this->id_c);
-        $this->assertNotEqual($this->id_a, $this->id_d);
-        $this->assertNotEqual($this->id_b, $this->id_c);
-        $this->assertNotEqual($this->id_b, $this->id_d);
-        $this->assertNotEqual($this->id_c, $this->id_d);
+s
+        $this->assertNotEquals($this->id_a, $this->id_b);
+        $this->assertNotEquals($this->id_a, $this->id_c);
+        $this->assertNotEquals($this->id_a, $this->id_d);
+        $this->assertNotEquals($this->id_b, $this->id_c);
+        $this->assertNotEquals($this->id_b, $this->id_d);
+        $this->assertNotEquals($this->id_c, $this->id_d);
 
         // Set preferences
         // Alex
