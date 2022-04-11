@@ -3,6 +3,7 @@
 require './db_api.php';
 require './helper.php';
 #Checking request method
+session_start();
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_request'])) {
     $email = $_POST['connection_request'];
     $result = getUser(NULL, $email);
