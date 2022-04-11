@@ -861,26 +861,27 @@ function get_date_ids($preferences) {
         // For every tag in this category
         foreach ($vals as $tag => $enabled) {
             // print("Handling tag: " . $tag . "\n");
+            if ($enabled && $tag != "cost" && $tag != "length" && $tag != "distance") {
+                // Get all rows from the Date_tags table with this tag
+                $query = "SELECT * FROM Date_tags WHERE tag=?";
+                $data = [$tag];
+                $result = exec_query($query, $data);
 
-            // Get all rows from the Date_tags table with this tag
-            $query = "SELECT * FROM Date_tags WHERE tag=?";
-            $data = [$tag];
-            $result = exec_query($query, $data);
-
-            // Make sure we retrieved at least 1 row
-            if ($result == NULL) {
-                print("Failed to exec_query in get_date_ids\n");
-                return NULL;
-            }
-
-            // For every row we found, add the date ID to the array of date IDs
-            $row = $result->fetch_assoc();
-            while ($row != NULL) {
-                if (!in_array($row["date_id"], $arr)) {
-                    // print("Adding to array\nMatching tag: $tag\n");
-                    array_push($arr, $row["date_id"]);
+                // Make sure we retrieved at least 1 row
+                if ($result == NULL) {
+                    print("Failed to exec_query in get_date_ids\n");
+                    return NULL;
                 }
+
+                // For every row we found, add the date ID to the array of date IDs
                 $row = $result->fetch_assoc();
+                while ($row != NULL) {
+                    if (!in_array($row["date_id"], $arr)) {
+                        // print("Adding to array\nMatching tag: $tag\n");
+                        array_push($arr, $row["date_id"]);
+                    }
+                    $row = $result->fetch_assoc();
+                }
             }
         }
     }
