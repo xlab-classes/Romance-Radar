@@ -241,12 +241,12 @@ final class TestGenerateDates extends TestCase
         // c - heather
         // d - adam
 
-        $ab = generate_date($this->id_a, $this->id_b);
-        $ac = generate_date($this->id_a, $this->id_c);
-        $ad = generate_date($this->id_a, $this->id_d);
-        $bc = generate_date($this->id_b, $this->id_c);
-        $bd = generate_date($this->id_b, $this->id_d);
-        $cd = generate_date($this->id_c, $this->id_d);
+        $ab = generate_dates($this->id_a, $this->id_b);
+        $ac = generate_dates($this->id_a, $this->id_c);
+        $ad = generate_dates($this->id_a, $this->id_d);
+        $bc = generate_dates($this->id_b, $this->id_c);
+        $bd = generate_dates($this->id_b, $this->id_d);
+        $cd = generate_dates($this->id_c, $this->id_d);
 
         $date_ideas = array($ab, $ac, $ad, $bc, $bd, $cd);
         foreach ($date_ideas as $dates) {
