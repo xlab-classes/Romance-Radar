@@ -65,7 +65,7 @@ final class TestGetDateIds extends TestCase
                 "indoors" => 1
             ),
             "Date_time" => array(
-                "evening"
+                "evening" => 1
             )
         );
 
