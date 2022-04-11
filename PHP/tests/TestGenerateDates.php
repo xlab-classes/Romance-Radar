@@ -214,4 +214,43 @@ final class TestGenerateDates extends TestCase
         exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->connection_b, $this->email_b]);
     }
 
+    // Set preferences
+    // Alex
+    //      OK with anything, any cost, any distance, etc.
+    //      People connecting with Alex should ALWAYS have a date
+    
+    // Hazel
+    //      Prefers outdoor venues, does not like fast food
+    //      Nothing in the morning, prefers lower cost activities
+
+    // Heather
+    //      More picky, open to less things
+    //      No alcohol or fast food, no concerts
+    //      Indoors, 1-on-1 only
+    //      Afternoon only
+    //      Low cost, close by
+
+    // Adam
+    //      Extremely picky
+    //      Really only wants to go on coffee dates in the morning
+    //      Can only spare an hour
+    function testBasic(): void
+    {
+        // a - alex
+        // b - hazel
+        // c - heather
+        // d - adam
+
+        $ab = generate_date_ideas($this->id_a, $this->id_b);
+        $ac = generate_date_ideas($this->id_a, $this->id_c);
+        $ad = generate_date_ideas($this->id_a, $this->id_d);
+        $bc = generate_date_ideas($this->id_b, $this->id_c);
+        $bd = generate_date_ideas($this->id_b, $this->id_d);
+        $cd = generate_date_ideas($this->id_c, $this->id_d);
+
+        $date_ideas = array($ab, $ac, $ad, $bc, $bd, $cd);
+        foreach ($date_ideas as $dates) {
+            $this->assertNotNull($dates, "Date generated null");
+        }
+    }
 }
