@@ -12,6 +12,7 @@ final class TestGetDateIds extends TestCase
     private $cafe_prefs;
     private $rest_prefs;
     private $hike_prefs;
+    private $adam_prefs;
 
     // This function is run *before every unit test*
     function setUp(): void
@@ -79,6 +80,23 @@ final class TestGetDateIds extends TestCase
             "Date_time" => array(
                 "afternoon" => 1
             )
+        );
+
+        $this->adam_prefs = array(
+            "Food" => array(
+                "cafe" => 1
+            ),
+            "Venue" => array(
+                "indoors" => 1
+            ),
+            "Date_time" => array(
+                "morning" => 1
+            ),
+            "Date_preferences" => array(
+                "cost" => 10,
+                "distance" => 5,
+                "length" => 1
+            ),
         );
     }
 
@@ -164,6 +182,14 @@ final class TestGetDateIds extends TestCase
         $name = "Chestnut Ridge";
         $row = $result->fetch_assoc();
         $this->assertEquals($row["name"], $name, "Wrong date retrieved");
+    }
+
+    // Should match 5 out of 6 dates
+    function testAdam(): void
+    {
+        $ids = get_date_ids($this->adam_prefs);
+        $this->assertNotNull($ids);
+        $this->assertEquals(5, sizeof($ids));
     }
 
 }
