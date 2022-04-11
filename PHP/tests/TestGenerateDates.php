@@ -249,10 +249,6 @@ final class TestGenerateDates extends TestCase
             $this->assertNotNull($dates, "Date generated null");
         }
 
-        foreach($ad as $da) {
-            print("$da\n");
-        }
-
         // NOTE: 'indoors' tag is ... useless
 
         // none of the matches with 'a' should be empty
@@ -268,6 +264,7 @@ final class TestGenerateDates extends TestCase
                 $this->assertEquals(6, sizeof($v));
             }
             else {
+                print("checking key: $k\n");
                 // a and d match all but 1
                 $this->assertEquals(5, sizeof($v));
             }
