@@ -860,7 +860,7 @@ function get_date_ids($preferences) {
             $row = $result->fetch_assoc();
             while ($row != NULL) {
                 if (!in_array($row["date_id"], $arr)) {
-                    print("Adding to array\nMatching tag: $tag\nDate Name: $row["name"]\n");
+                    print("Adding to array\nMatching tag: $tag\nDate Name: " .$row["name"] . "\n");
                     array_push($arr, $row["date_id"]);
                 }
                 $row = $result->fetch_assoc();
