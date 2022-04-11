@@ -845,7 +845,7 @@ function get_date_ids($preferences) {
     foreach ($preferences as $category => $vals) {
         // For every tag in this category
         foreach ($vals as $tag => $enabled) {
-            print("Handling tag: " . $tag);
+            print("Handling tag: " . $tag . "\n");
 
             // Get all rows from the Date_tags table with this tag
             $query = "SELECT * FROM Date_tags WHERE tag=?";
@@ -862,7 +862,7 @@ function get_date_ids($preferences) {
             $row = $result->fetch_assoc();
             while ($row != NULL) {
                 if (!in_array($row["date_id"], $arr)) {
-                    print("Adding to array\nMatching tag: $tag\n");
+                    // print("Adding to array\nMatching tag: $tag\n");
                     array_push($arr, $row["date_id"]);
                 }
                 $row = $result->fetch_assoc();
