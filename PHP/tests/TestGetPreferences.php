@@ -66,15 +66,8 @@ final class TestGetPreferences extends TestCase
         );
 
         $this->assertEquals(1, update_preferences($this->id, $prefs));
-        // $this->assertSame($prefs, get_preferences($this->id));
-
         $setprefs = get_preferences($this->id);
-        foreach ($setprefs as $k => $v) {
-            print("Category: $k\n");
-            foreach ($v as $kv => $vv) {
-                print("Key: $kv, Value: $vv\n");
-            }
-        }
+        $this->assertSame($prefs, get_preferences($this->id));
     }
 
 }
