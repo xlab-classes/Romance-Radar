@@ -888,7 +888,7 @@ function get_date_ids($preferences) {
 // constraints:
 //      Both users MUST exist
 function generate_dates($user_a, $user_b) {
-    if (!user_exists($user_a) || !user_exist($user_b)) {
+    if (!user_exists($user_a) || !user_exists($user_b)) {
         print("User doesn't exist in generate_dates\n");
         return NULL;
     }
