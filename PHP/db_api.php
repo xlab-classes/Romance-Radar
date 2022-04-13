@@ -809,7 +809,7 @@ function getChatMessages($sent_from, $sent_to){
         return 0;
     }
 
-    $query = 'SELECT message, sent_from, sent_to FROM Chat_Messages WHERE (sent_from=? AND sent_to=?) OR (sent_from=? AND sent_to=?) ORDER BY date';
+    $query = 'SELECT message, sent_from, sent_to FROM Chat_Messages WHERE (sent_from=? AND sent_to=?) OR (sent_from=? AND sent_to=?) ORDER BY date DESC';
     $result = exec_query($query, [$sent_from, $sent_to, $sent_to, $sent_from]);
     $return = array();
     while($message = $result->fetch_assoc()){
