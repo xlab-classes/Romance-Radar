@@ -807,6 +807,168 @@ function change_food_preferences($user_id, $current_preferences, $new_preference
     return 1;
 }
 
+function change_entertainment_preferences($user_id, $current_preferences, $new_preferences){
+    // Check if the user exists
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    // Go through every new preference in new preferences
+    foreach($new_preferences as $new_preference){
+        // If the new prefernce is in the current preferences invert the value
+        if(in_array($new_preference, $current_preferences)){
+            // Get the opposite value of the current preference
+            $new_value = currentPreferences[$new_preference] == 1 ? 0 : 1;
+        // Update the new food preference in the database
+        $query = sprintf("UPDATE Entertainment SET %s=? WHERE user_id=?", $new_preference);
+        $result = exec_query($query, [$new_value, $user_id]);
+        if (!$result){
+            echo "Error in execution\n";
+            return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+function change_venue_preferences($user_id, $current_preferences, $new_preferences){
+    // Check if the user exists
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    // Go through every new preference in new preferences
+    foreach($new_preferences as $new_preference){
+        // If the new prefernce is in the current preferences invert the value
+        if(in_array($new_preference, $current_preferences)){
+            // Get the opposite value of the current preference
+            $new_value = currentPreferences[$new_preference] == 1 ? 0 : 1;
+        // Update the new food preference in the database
+        $query = sprintf("UPDATE Venue SET %s=? WHERE user_id=?", $new_preference);
+        $result = exec_query($query, [$new_value, $user_id]);
+        if (!$result){
+            echo "Error in execution\n";
+            return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+function change_date_time_preferences($user_id, $current_preferences, $new_preferences){
+    // Check if the user exists
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    // Go through every new preference in new preferences
+    foreach($new_preferences as $new_preference){
+        // If the new prefernce is in the current preferences invert the value
+        if(in_array($new_preference, $current_preferences)){
+            // Get the opposite value of the current preference
+            $new_value = currentPreferences[$new_preference] == 1 ? 0 : 1;
+        // Update the new food preference in the database
+        $query = sprintf("UPDATE Date_time SET %s=? WHERE user_id=?", $new_preference);
+        $result = exec_query($query, [$new_value, $user_id]);
+        if (!$result){
+            echo "Error in execution\n";
+            return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+function change_date_cost($user_id,$new_cost){
+    // new length has to be an integer
+    if(!is_int($new_length)){
+        echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+    
+    // Get current Date perference cost
+    $query = sprintf("SELECT cost FROM Date_preferences WHERE user_id=?");
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    $current_cost = $result[0]['cost'];
+    // if the current cost is equal to the new cost, erro
+    if($current_cost == $new_cost){
+        echo "Error: The new cost is the same as the current cost\n";
+        return 0;
+    }
+    // Update the cost in the database to the new cost
+    $query = sprintf("UPDATE Date_preferences SET cost=? WHERE user_id=?");
+    $result = exec_query($query, [$new_cost, $user_id]);
+    if (!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    return 1;
+}
+
+function change_date_distance($user_id,$new_distance){
+    // new length has to be an integer
+    if(!is_int($new_length)){
+        echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+    
+    // Get current Date perference distance
+    $query = sprintf("SELECT distance FROM Date_preferences WHERE user_id=?");
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    $current_distance = $result[0]['distance'];
+    // if the current distance is equal to the new distance, erro
+    if($current_distance == $new_distance){
+        echo "Error: The new distance is the same as the current distance\n";
+        return 0;
+    }
+    // Update the distance in the database to the new distance
+    $query = sprintf("UPDATE Date_preferences SET distance=? WHERE user_id=?");
+    $result = exec_query($query, [$new_distance, $user_id]);
+    if (!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    return 1;
+}
+
+function change_date_length($user_id,$new_length){
+    // new length has to be an integer
+    if(!is_int($new_length)){
+        echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+
+    // Get current Date perference length
+    $query = sprintf("SELECT length FROM Date_preferences WHERE user_id=?");
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    $current_length = $result[0]['length'];
+    // if the current length is equal to the new length, erro
+    if($current_length == $new_length){
+        echo "Error: The new length is the same as the current length\n";
+        return 0;
+    }
+    // Update the length in the database to the new length
+    $query = sprintf("UPDATE Date_preferences SET length=? WHERE user_id=?");
+    $result = exec_query($query, [$new_length, $user_id]);
+    if (!$result){
+        echo "Error in execution\n";
+        return 0;
+    }
+    return 1;
+}
+
 function get_question($question_id){
     $query = 'SELECT question FROM Security_questions WHERE id=?';
     $result = exec_query($query, [(int)$question_id]);
