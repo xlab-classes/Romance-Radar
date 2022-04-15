@@ -775,6 +775,37 @@ function initialize_preferences($user_id){
     }
     return 1;
 }
+/* Changes the preferences of the food date ideas that a user might have
+* parameter: user_id   [int]
+*      The user ID whose preferences are being initialized
+* parameter: current_preferences   [array]
+*      The current preferences of the user in relation to food date ideas
+* parameter: new_preferences   [array]
+*      The list of preferences that the user wants to change to
+*/
+function change_food_preferences($user_id, $current_preferences, $new_preferences){
+    // Check if the user exists
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+    // Go through every new preference in new preferences
+    foreach($new_preferences as $new_preference){
+        // If the new prefernce is in the current preferences invert the value
+        if(in_array($new_preference, $current_preferences)){
+            // Get the opposite value of the current preference
+            $new_value = currentPreferences[$new_preference] == 1 ? 0 : 1;
+        // Update the new food preference in the database
+        $query = sprintf("UPDATE Food SET %s=? WHERE user_id=?", $new_preference);
+        $result = exec_query($query, [$new_value, $user_id]);
+        if (!$result){
+            echo "Error in execution\n";
+            return 0;
+            }
+        }
+    }
+    return 1;
+}
 
 function get_question($question_id){
     $query = 'SELECT question FROM Security_questions WHERE id=?';
