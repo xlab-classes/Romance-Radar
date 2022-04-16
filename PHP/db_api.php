@@ -880,9 +880,15 @@ function change_date_time_preferences($user_id, $current_preferences, $new_prefe
 }
 
 function change_date_cost($user_id,$new_cost){
-    // new length has to be an integer
-    if(!is_int($new_length)){
+    // new cost has to be an integer
+    if(!is_int($new_cost)){
         echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+
+    // Ensure new cost is a positive integer
+    if($new_cost < 0){
+        echo "Error: The new length has to be a positive integer\n";
         return 0;
     }
     
@@ -911,8 +917,14 @@ function change_date_cost($user_id,$new_cost){
 
 function change_date_distance($user_id,$new_distance){
     // new length has to be an integer
-    if(!is_int($new_length)){
+    if(!is_int($new_distance)){
         echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+
+    // Ensure new length is a positive integer
+    if($new_distance < 0){
+        echo "Error: The new length has to be a positive integer\n";
         return 0;
     }
     
@@ -943,6 +955,12 @@ function change_date_length($user_id,$new_length){
     // new length has to be an integer
     if(!is_int($new_length)){
         echo "Error: The new length has to be an integer\n";
+        return 0;
+    }
+
+    // Ensure new length is a positive integer
+    if($new_length < 0){
+        echo "Error: The new length has to be a positive integer\n";
         return 0;
     }
 
