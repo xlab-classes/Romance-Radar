@@ -128,7 +128,7 @@ function selectedSubCategory($cat, $sub){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black">Preferred Catagories</h5>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment" <?php echo selectedCategory('Entertainment');?>>
+                            <input class="form-check-input" type="checkbox" value="true" name="Entertainment" id="Entertainment">
                         <label class="form-check-label text-black h6" for="Entertainment">
                         Entertainment
                         </label>
@@ -145,8 +145,8 @@ function selectedSubCategory($cat, $sub){
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="true" name="Bars" id="Bars">
-                        <label class="form-check-label text-black h6" for="Bars" <?php echo selectedSubCategory('Entertainment', 'bar');?>>
+                        <input class="form-check-input" type="checkbox" value="true" name="Bars" id="Bars" <?php echo selectedSubCategory('Entertainment', 'bar');?>>
+                        <label class="form-check-label text-black h6" for="Bars">
                         Bars
                         </label>
                         </div>
@@ -157,7 +157,7 @@ function selectedSubCategory($cat, $sub){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4">    </h5>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="true" name="Food" id="Food" <?php echo selectedCategory('Food');?>>
+                            <input class="form-check-input" type="checkbox" value="true" name="Food" id="Food">
                         <label class="form-check-label text-black h6" for="Food">
                         Food
                         </label>
@@ -192,7 +192,7 @@ function selectedSubCategory($cat, $sub){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="true" name="Venue" id="Venue" <?php echo selectedCategory('Venue');?>>
+                            <input class="form-check-input" type="checkbox" value="true" name="Venue" id="Venue" >
                         <label class="form-check-label text-black h6" for="Venue">
                         Venue
                         </label>
@@ -221,7 +221,7 @@ function selectedSubCategory($cat, $sub){
                     <div class="p-5 bg">
                         <h5 class="font-weight-bold text-black mt-4"></h5>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="true" name="Anytime" id="Anytime" <?php echo selectedCategory('Date_time');?>>
+                            <input class="form-check-input" type="checkbox" value="true" name="Anytime" id="Anytime" >
                         <label class="form-check-label text-black h6" for="Anytime">
                         Anytime
                         </label>
