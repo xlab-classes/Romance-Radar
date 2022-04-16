@@ -153,6 +153,42 @@ final class TestChangePreferences extends TestCase
             change_date_cost($this->id, $expesnive);
             $prefs = get_preferences($this->id);
             $this->assertEquals($expesnive, $prefs["Date_preferences"]["cost"], "cost should be $expesnive");
-        }
+    }
+
+    function testChangeDateDistance(){
+
+        // Date Distance Ranges.
+        $short = 1;
+        $medium = 500;
+        $long = 10000;
+
+        change_date_distance($this->id, $short);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($short, $prefs["Date_preferences"]["distance"], "distance should be $short");
+        change_date_distance($this->id, $medium);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($medium, $prefs["Date_preferences"]["distance"], "distance should be $medium");
+        change_date_distance($this->id, $long);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($long, $prefs["Date_preferences"]["distance"], "distance should be $long");
+    }
+
+    function testChangeDateLength(){
+
+        // Date Length Ranges.
+        $short = 1;
+        $medium = 500;
+        $long = 10000;
+
+        change_date_length($this->id, $short);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($short, $prefs["Date_preferences"]["length"], "length should be $short");
+        change_date_length($this->id, $medium);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($medium, $prefs["Date_preferences"]["length"], "length should be $medium");
+        change_date_length($this->id, $long);
+        $prefs = get_preferences($this->id);
+        $this->assertEquals($long, $prefs["Date_preferences"]["length"], "length should be $long");
+    }
 
 }
