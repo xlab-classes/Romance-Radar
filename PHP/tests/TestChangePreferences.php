@@ -74,6 +74,10 @@ final class TestChangePreferences extends TestCase
         // Check that fast_food and alcohol are now 0
         $this->assertEquals(0, $prefs["Food"]["fast_food"], "fast_food is not 0");
         $this->assertEquals(0, $prefs["Food"]["alcohol"], " Alcohol should be 0");
+
+        // Check that the other preferences haven't chnaged
+        this->assertEquals(1,$prefs["Food"]["cafe"],"Cafe Should be 1");
+        this->assertEquals(1,$prefs["Food"]["restaurant"],"Restaurant should be 1");
         }
 
 }
