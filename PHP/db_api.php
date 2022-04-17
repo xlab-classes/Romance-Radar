@@ -1117,7 +1117,7 @@ function date_suggested($user_id, $date_id) {
     else if ($result->num_rows == 0) {
         $query = "INSERT INTO Date_counts (id, date_id, suggested) VALUES (?, ?, ?)";
         $data = [$user_id, $date_id, 1];
-        $result = exec_query($query, data);
+        $result = exec_query($query, $data);
 
         if ($result == NULL) {
             print("Failed to add date suggestion for user in date_suggested\n");
