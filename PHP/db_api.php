@@ -1115,3 +1115,44 @@ function date_suggested($user_id, $date_id) {
 
     return 1;
 }
+
+// Get the number of times this date was suggested for this user
+//
+// parameter: user_id   [int]
+//      The ID of the user that we want the number of suggestions for
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the number of suggestions for
+//
+//  returns:
+//      The number of times this date has been suggested, on success
+//      -1 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_times_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in get_times_suggested\n");
+        return -1;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in get_times_suggested\n");
+        return -1;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in get_times_suggested\n");
+        return -1;
+    }
+    else if ($result->num_rows <= 0) {
+        return 0;
+    }
+    else {
+        return $result->fetch_assoc()["suggested"];
+    }
+} 
