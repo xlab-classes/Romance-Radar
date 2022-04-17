@@ -1107,7 +1107,7 @@ function date_suggested($user_id, $date_id) {
     }
 
     $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
-    $data = NULL;
+    $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
     if ($result == NULL) {
