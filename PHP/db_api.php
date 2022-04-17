@@ -922,12 +922,25 @@ function generate_dates($user_a, $user_b) {
     $ub_dids = get_date_ids($ub_prefs);
 
     // Get date ideas with tags matching for the second user
-    $compatible_dates = array();
+    $overlapping_dates = array();
     foreach ($ua_dids as $ua) {
         foreach ($ub_dids as $ub) {
-            if ($ua === $ub && !in_array($ua, $compatible_dates)) {
-                array_push($compatible_dates, $ua);
+            if ($ua === $ub && !in_array($ua, $overlapping_dates)) {
+                array_push($overlapping_dates, $ua);
             }
+        }
+    }
+
+
+    // Filter the dates based on the number of times they have been suggested
+    // to each user
+    $compatible_dates = array();
+    foreach ($overlapping_dates as $date) {
+        $ua_suggested = get_times_suggested($user_a, $date);
+        $ub_suggested = get_times_suggested($user_b, $date);
+
+        if ($ua_suggested < 2 && $ub_suggested < 2) {
+            array_push($compatible_dates, $date);
         }
     }
 
@@ -935,19 +948,30 @@ function generate_dates($user_a, $user_b) {
     return $compatible_dates;
 }
 
-// Get information about the date with this ID
+// - Get information about the date with this ID
+// - Increment the number of times this date was seen by this user
 //
 // parameter: date_id   [int]
 //      The ID of the date whose information we want
 //
+// parameter: user_id   [int]
+//      The ID of the user that we're getting this information for
+//
 // returns:
 //      An associative array of information for this date
 //      NULL if no date with this ID exists
+//      NULL if no user with this ID exists
 //
 // constraints:
 //      A date with this ID MUST exist
-function get_date_information($date_id) {
+//      A user with this ID MUST exist
+function get_date_information($user_id, $date_id) {
     if (!date_exists($date_id)) {
+        print("Couldn't find date with this ID in get_date_information\n");
+        return NULL;
+    }
+    else if (!user_exists($user_id)) {
+        print("Couldn't find user with this ID in get_date_information\n");
         return NULL;
     }
 
@@ -963,6 +987,9 @@ function get_date_information($date_id) {
         print("No date with this ID in get_date_information\n");
         return NULL;
     }
+
+    // All good, increment the number of times this date has been seen by this user
+    date_suggested($user_id, $date_id);
 
     return $result->fetch_assoc();
 }
@@ -1053,3 +1080,106 @@ function get_date_id($name) {
     }
     return $result->fetch_assoc()["id"];
 }
+
+// Increment the number of times a user has seen this date in the Date_counts table
+//
+// parameter: user_id   [int]
+//      The ID of the user whose count we want to increment
+//
+// parameter: date_id   [int]
+//      The ID of the date that was suggested to this user
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function date_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in date_suggested\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("Date doesn't exist in date_suggested\n");
+        return 0;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Failed to exec_query in date_suggested\n");
+        return 0;
+    }
+    else if ($result->num_rows == 0) {
+        $query = "INSERT INTO Date_counts (id, date_id, suggested) VALUES (?, ?, ?)";
+        $data = [$user_id, $date_id, 1];
+        $result = exec_query($query, $data);
+
+        if ($result == NULL) {
+            print("Failed to add date suggestion for user in date_suggested\n");
+            return 0;
+        }
+    }
+    else {
+        if ($result->num_rows > 1) {
+            print("Malformed table in date_suggested\n");
+            return 0;
+        }
+
+        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE id=? AND date_id=?";
+        $data = [$user_id, $date_id];
+        $result = exec_query($query, $data);
+
+        if ($result == NULL) {
+            print("Failed to update suggested count in date_suggested\n");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+// Get the number of times this date was suggested for this user
+//
+// parameter: user_id   [int]
+//      The ID of the user that we want the number of suggestions for
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the number of suggestions for
+//
+//  returns:
+//      The number of times this date has been suggested, on success
+//      -1 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_times_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in get_times_suggested\n");
+        return -1;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in get_times_suggested\n");
+        return -1;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in get_times_suggested\n");
+        return -1;
+    }
+    else if ($result->num_rows <= 0) {
+        return 0;
+    }
+    else {
+        return $result->fetch_assoc()["suggested"];
+    }
+} 

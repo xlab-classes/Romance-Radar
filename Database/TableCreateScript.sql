@@ -113,6 +113,16 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
 	FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
+-- Tracks the number of times dates have been suggested to a particular user
+CREATE TABLE IF NOT EXISTS Date_counts(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    suggested INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
 CREATE TABLE IF NOT EXISTS Connection_requests(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
