@@ -39,7 +39,7 @@ final class TestDateSuggested extends TestCase
         $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
         $data = [$this->id, $date_id];
 
-        for(int $i=1; $i<5; $i++) {
+        for($i=1; $i<5; $i++) {
             $this->assertEquals(1, date_suggested($this->id, $date_id), "Couldn't increment");
             
             $result = exec_query($query, $data);
