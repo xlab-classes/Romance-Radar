@@ -948,19 +948,30 @@ function generate_dates($user_a, $user_b) {
     return $compatible_dates;
 }
 
-// Get information about the date with this ID
+// - Get information about the date with this ID
+// - Increment the number of times this date was seen by this user
 //
 // parameter: date_id   [int]
 //      The ID of the date whose information we want
 //
+// parameter: user_id   [int]
+//      The ID of the user that we're getting this information for
+//
 // returns:
 //      An associative array of information for this date
 //      NULL if no date with this ID exists
+//      NULL if no user with this ID exists
 //
 // constraints:
 //      A date with this ID MUST exist
-function get_date_information($date_id) {
+//      A user with this ID MUST exist
+function get_date_information($user_id, $date_id) {
     if (!date_exists($date_id)) {
+        print("Couldn't find date with this ID in get_date_information\n");
+        return NULL;
+    }
+    else if (!user_exists($user_id)) {
+        print("Couldn't find user with this ID in get_date_information\n");
         return NULL;
     }
 
@@ -976,6 +987,9 @@ function get_date_information($date_id) {
         print("No date with this ID in get_date_information\n");
         return NULL;
     }
+
+    // All good, increment the number of times this date has been seen by this user
+    date_suggested($user_id, $date_id);
 
     return $result->fetch_assoc();
 }
