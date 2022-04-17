@@ -58,14 +58,16 @@ final class TestGetTimesSuggested extends TestCase
         // Connect the users
         $this->assertEquals(1, connect_users($this->jon, $this->jane), "Couldn't connect users");
 
-        // Generate dates for Jane and Jon. Should be one date, which is Tim Hortons
+        // Say that this date was suggested twice for Jon
+        $this->assertEquals(1, date_suggested($this->jon, 1), "Couldn't suggest date for Jon");
+        $this->assertEquals(1, date_suggested($this->jon, 1), "Couldn't suggest date for Jon");
+
+        // Generate dates for Jane and Jon. Should be no dates, since the only
+        // compatible date is Tim Hortons, and that was already suggested twice
+        // for Jon
         $dates = generate_dates($this->jon, $this->jane);
         $this->assertNotNull($dates, "Couldn't generate dates");
-        $this->assertEquals(1, sizeof($dates), "More dates than expected");
-        $this->assertEquals(1, $dates[0], "Didn't suggest expected date");
-
-        // Say that this date was suggested for each user
-        
+        $this->assertEquals(0, sizeof($dates), "More dates than expected");
     }
 
 }
