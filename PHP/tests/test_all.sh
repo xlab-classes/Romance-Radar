@@ -51,6 +51,18 @@ echo -e "\n*** TESTING GENERATE DATES ***\n"
 ./phpunit TestGenerateDates.php
 echo "****************************************"
 
+echo -e "\n*** TESTING DATE SUGGESTED ***\n"
+./phpunit TestDateSuggested.php
+echo "****************************************"
+
+echo -e "\n*** TESTING GET TIMES SUGGESTED ***\n"
+./phpunit TestGetTimesSuggested
+echo "****************************************"
+
+echo -e "\n*** TESTING SUGGESTION LIMIT ***\n"
+./phpunit TestSuggestionLimit.php
+echo "****************************************"
+
 # This should be last, since it removes tags from the Date_tags table
 echo -e "\n*** TESTING ADD TAG ***\n"
 ./phpunit TestAddTag.php
