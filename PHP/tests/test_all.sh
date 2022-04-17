@@ -56,7 +56,7 @@ echo -e "\n*** TESTING DATE SUGGESTED ***\n"
 echo "****************************************"
 
 echo -e "\n*** TESTING GET TIMES SUGGESTED ***\n"
-./phpunit TestGetTimesSuggested
+./phpunit TestGetTimesSuggested.php
 echo "****************************************"
 
 echo -e "\n*** TESTING SUGGESTION LIMIT ***\n"

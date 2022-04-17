@@ -937,7 +937,7 @@ function generate_dates($user_a, $user_b) {
     $compatible_dates = array();
     foreach ($overlapping_dates as $date) {
         $ua_suggested = get_times_suggested($user_a, $date);
-        $ub_suggested = get_tiems_suggested($user_b, $date);
+        $ub_suggested = get_times_suggested($user_b, $date);
 
         if ($ua_suggested < 2 && $ub_suggested < 2) {
             array_push($compatible_dates, $date);
