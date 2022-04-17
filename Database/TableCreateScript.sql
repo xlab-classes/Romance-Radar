@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
 CREATE TABLE IF NOT EXISTS Date_counts(
     id INT AUTO_INCREMENT,
     date_id INT NOT NULL,
-    seen_count INT NOT NULL,
+    suggested INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
