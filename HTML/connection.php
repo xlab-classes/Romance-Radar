@@ -20,11 +20,10 @@ if($user['partner'] == $user['id']){
             <div class="col-4">
                 <img src="../assets/cupid.png" class="img-fluid">
             </div>
-
             <div class="col">
                 <div class="row">
                     <p class="col fst-italic fw-light">
-                        Let\'s face it, coming up with a date idea that\'s as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you\'re commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don\'t have a lot of creative juices left over when we\'re done for the day. 
+                        Let\'s face it, coming up with a date idea that\'s as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you\'re commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don\'t have a lot of creative juices left over when we\'re done for the day.
                         <br/><br/>Leave the creativity to us!
                         <br/><br/><br/>Match with your soulmate right now!
                     </p>
@@ -115,7 +114,7 @@ if($user['partner'] == $user['id']){
             <div class="col">
                 <div class="row justify-content-center">
                     <div class="col-6">
-                        <img src="%s" class="img-fluid rounded-circle">  
+                        <img src="%s" class="img-fluid rounded-circle">
                     </div>
                 </div>
                 <div class="row">
@@ -134,7 +133,7 @@ if($user['partner'] == $user['id']){
                         </button>
                     </div>
                 <!-- Button trigger modal -->
-                
+
                 <!-- Modal -->
                 <div class="modal fade" id="moveOnModal" tabindex="-1" aria-labelledby="moveOnModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-custom">
@@ -144,7 +143,7 @@ if($user['partner'] == $user['id']){
                                 <div class="row">
                                     <p class="text-start">
                                         Executing this action will discard all current and previous data from your account and this action is irreversible.
-                                    </p>   
+                                    </p>
                                 </div>
                                 <di class="row">
                                     <div class="col text-center">
@@ -167,6 +166,56 @@ if($user['partner'] == $user['id']){
     ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name']);
 }
 
+        $generate_date_ids = generate_dates($_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
+
+        $get_date_info = get_date_information((int)$_SESSION['generate_date_ids']);
+
+        $display_date_idea = '';
+
+        $display = sprintf('
+        <div class="container py-5">
+  <div class="row justify-content-center">
+  <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="%s" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">%s</h5>
+        <p class="card-text mb-0">
+          %s
+        </p>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="row justify-content-center">
+  <div class="card mask-custom w-100 mt-5" style="max-width: 840px;">
+  <div class="row g-0">
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">%s</h5>
+        <p class="card-text mb-0">
+          %s
+        </p>
+      </div>
+      </div>
+      <div class="col-md-4">
+      <img src="%s" class="img-fluid rounded-start" alt="...">
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+    ', $_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
+
+
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -177,12 +226,12 @@ if($user['partner'] == $user['id']){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    
+
     <style>
         body{
             background-color: #FFC0CB;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            
+
         }
         .rounded-input{
             border-radius: 25px 0 0 25px;
@@ -211,7 +260,16 @@ if($user['partner'] == $user['id']){
         .modal-custom-body{
             border-radius: 40px;
         }
-        
+
+        .mask-custom {
+            background: rgb(255, 255, 255);
+            border-radius: 2em;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            background-clip: padding-box;
+            box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+        }
+
     </style>
 </head>
 <body>
