@@ -1,5 +1,7 @@
 <?php
 
+require_once('../db_api.php');
+
 // This file contains common functions used during testing
 
 // Instantly connect these two users, avoiding constraints of add_connection

@@ -2,6 +2,8 @@
 
 # Import db_api.php
 require_once('../db_api.php');
+require_once('./utility.php');
+
 use PHPUnit\Framework\TestCase;
 
 final class TestGetTimesSuggested extends TestCase
@@ -53,7 +55,7 @@ final class TestGetTimesSuggested extends TestCase
 
     function testBasic(): void
     {
-        
+
     }
 
 }
