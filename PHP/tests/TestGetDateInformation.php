@@ -13,7 +13,7 @@ final class TestGetDateInformation extends TestCase
     function setUp(): void
     {
         $ret = create_user(
-            "Jon Doe", "no@email.com", "n", "n", 1, "1980/12/12"
+            "Jon Doe", "no@email.com", "n", "n", "n", 1, "1980/12/12"
         );
 
         $this->assertNotNull($ret);
