@@ -55,7 +55,7 @@ final class TestGetTimesSuggested extends TestCase
 
     function testBasic(): void
     {
-        $this->assertEquals(0, connect_users($this->jon, $this->jane), "Couldn't connect users");
+        $this->assertEquals(1, connect_users($this->jon, $this->jane), "Couldn't connect users");
     }
 
 }
