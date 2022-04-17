@@ -922,12 +922,25 @@ function generate_dates($user_a, $user_b) {
     $ub_dids = get_date_ids($ub_prefs);
 
     // Get date ideas with tags matching for the second user
-    $compatible_dates = array();
+    $overlapping_dates = array();
     foreach ($ua_dids as $ua) {
         foreach ($ub_dids as $ub) {
-            if ($ua === $ub && !in_array($ua, $compatible_dates)) {
-                array_push($compatible_dates, $ua);
+            if ($ua === $ub && !in_array($ua, $overlapping_dates)) {
+                array_push($overlapping_dates, $ua);
             }
+        }
+    }
+
+
+    // Filter the dates based on the number of times they have been suggested
+    // to each user
+    $compatible_dates = array();
+    foreach ($overlapping_dates as $date) {
+        $ua_suggested = get_times_suggested($user_a, $date);
+        $ub_suggested = get_tiems_suggested($user_b, $date);
+
+        if ($ua_suggested < 2 && $ub_suggested < 2) {
+            array_push($compatible_dates, $date);
         }
     }
 
