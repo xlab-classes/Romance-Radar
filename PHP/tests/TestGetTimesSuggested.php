@@ -40,8 +40,8 @@ final class TestGetTimesSuggested extends TestCase
         // Suggest the date 4 times. Make sure the proper number is returned
         // after every suggestion
         for ($i=1; $i<5; $i++) {
-            $this->assertEqual(1, date_suggested($this->id, 1), "Couldn't record suggestion");
-            $this->assertEqual($i, get_times_suggested($this->id, 1), "Couldn't get times suggested");
+            $this->assertEquals(1, date_suggested($this->id, 1), "Couldn't record suggestion");
+            $this->assertEquals($i, get_times_suggested($this->id, 1), "Couldn't get times suggested");
         }
     }
 
