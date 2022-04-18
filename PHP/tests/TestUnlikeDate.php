@@ -35,4 +35,27 @@ final class TestUnlikeDate extends TestCase
         delete_user($this->id);
     }
 
+    function testBasic(): void
+    {
+        // Like a date then remove the like
+        $this->assertEquals(1, like_date($this->id, 1), "Couldn't like date");
+        $this->assertEquals(1, unlike_date($this->id, 1), "Couldn't unlike date");
+        
+        $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+        $data = [$this->id, 1];
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertEquals(0, $result->num_rows, "Couldn't remove like");
+
+        // Dislike a date, then remove the dislike
+        $this->assertEquals(1, dislike_date($this->id, 1), "Couldn't dislike date");
+        $this->assertEquals(1, unlike_date($this->id, 1), "Couldn't undislike date");
+        
+        $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+        $data = [$this->id, 1];
+        $result = exec_query($query, $data);
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertEquals(0, $result->num_rows, "Couldn't remove dislike");
+    }
+
 }
