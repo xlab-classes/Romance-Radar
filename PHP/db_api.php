@@ -1182,4 +1182,88 @@ function get_times_suggested($user_id, $date_id) {
     else {
         return $result->fetch_assoc()["suggested"];
     }
-} 
+}
+
+// Tell this database that this user likes this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is liking a date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is liking
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function like_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in like_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in like_date\n");
+        return 0;
+    }
+
+}
+
+// Tell this database that this user dislikes this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is disliking a date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is disliking
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function dislike_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in dislike_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in dislike_date\n");
+        return 0;
+    }
+
+}
+
+// Tell this database that this user has no preference on this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is neutral on this date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is neutral on
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+//
+// Note:
+//      This function will remove likes AND dislikes from a date
+function unlike_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in unlike_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in unlike_date\n");
+        return 0;
+    }
+
+}
