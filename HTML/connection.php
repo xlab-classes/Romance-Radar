@@ -3,6 +3,7 @@ include './navigation.php'
 ?>
 <?php
 require_once '../PHP/db_api.php';
+require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
 
 session_start();
@@ -95,6 +96,10 @@ if($user['partner'] == $user['id']){
         }
         $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
     }
+
+    // Display the partner's privacy settings
+    $partner_privacy = get_privacy_settings($user['id']);
+
     $preferences_html = sprintf('
     <div class="ps-5 col-3">
         <div class="row">
@@ -141,7 +146,13 @@ if($user['partner'] == $user['id']){
         </div>
     </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
-    $display = sprintf('
+
+    // if privacy settings result is 1
+    if($partner_privacy == 1){
+        // preferences_html will be empty
+        $preferences_html = ''; 
+    }
+            $display = sprintf('
     <div class="row pt-5 gx-5 gy-5">
             %s
             <div class="col">
