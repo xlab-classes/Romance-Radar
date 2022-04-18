@@ -1333,9 +1333,11 @@ function unlike_date($user_id, $date_id) {
     $opinion = get_opinion($user_id, $date_id);
 
     if ($opinion == 0) {
+        print("OPINION IS NEUTRAL\n");
         return 1;
     }
     else if ($opinion == 1) {
+        print("OPINION IS POSITIVE\n");
         $query = "DELETE FROM Dates_liked WHERE id=?";
         $data = [$user_id];
         $result = exec_query($query, $data);
@@ -1345,6 +1347,7 @@ function unlike_date($user_id, $date_id) {
         }
     }
     else if ($opinion == -1) {
+        print("OPINION IS NEGATIVE\n");
         $query = "DELETE FROM Dates_disliked WHERE id=?";
         $data = [$user_id];
         $result = exec_query($query, $data);
