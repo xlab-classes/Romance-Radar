@@ -133,7 +133,17 @@ function date_exists($date_id) {
     $query = "SELECT * FROM Date_ideas WHERE id=?";
     $data = [$date_id];
     $result = exec_query($query, $data);
-    return ($result != NULL && $result->num_rows > 0);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+    else if ($result->num_rows <= 0) {
+        print("Date doesn't exist in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+
+    return true;
 }
 
 # Check if a $user_id's password matches $password
