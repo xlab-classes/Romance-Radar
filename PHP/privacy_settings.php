@@ -35,8 +35,8 @@ function all_privacy_settings_set($id) {
         }
     }
     return 1; /* If all privacy settings have been set, return 1 */
-
 }
+
 /* Function that hides all the privacy settings for a user. */
 /* Will return 0 if the user doesn not exist else hides all the privacy settings for the user*/
 function hide_all_privacy_settings($id) {
