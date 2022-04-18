@@ -48,4 +48,10 @@ final class TestLikeDate extends TestCase
         $this->assertEquals(1, $result->num_rows, "No entries in dates_liked");
     }
 
+    function testDisliked(): void
+    {
+        $this->assertEquals(1, dislike_date($this->id, 1), "Couldn't dislike date");
+        $this->assertEquals(0, like_date($this->id, 1), "Erroneously liked date");
+    }
+
 }
