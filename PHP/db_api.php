@@ -1367,3 +1367,65 @@ function unlike_date($user_id, $date_id) {
 
     return 1;
 }
+
+// Returns the opinion of this user about this date
+//
+// parameter: user_id   [int]
+//      The ID of the user whose opinion we want
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the opinion of
+//
+// returns:
+//      -1 if the user dislikes this date
+//      0 if the user is neutral on this date
+//      1 if the user likes this date
+//      NULL on error
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_opinion($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_opinion\n");
+        return NULL;
+    }
+    else if (!date_exists($user_id, $date_id)) {
+        print("Date doesn't exist in get_opinion\n");
+        return NULL;
+    }
+
+    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't query Dates_liked in get_opinion\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 1) {
+        return 1;
+    }
+    else if ($result->num_rows >= 1) {
+        print("Dates_liked malformed in get_opinion\n");
+        return NULL;
+    }
+
+    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't query Dates_disliked in get_opinion\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 1) {
+        return -1;
+    }
+    else if($result->num_rows >= 1) {
+        print("Dates_disliked malformed in get_opinion\n");
+        return NULL;
+    }
+
+    return 0;
+}
