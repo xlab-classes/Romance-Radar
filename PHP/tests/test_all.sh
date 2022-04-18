@@ -35,9 +35,6 @@ echo -e "\tremove_connection"
 ./phpunit TestConnections.php
 echo "****************************************"
 
-# Reset for different category of tests
-./reset_database.sh
-
 echo -e "\n*** TESTING GET DATE ID ***\n"
 ./phpunit TestGetDateId.php
 echo "****************************************"
@@ -66,21 +63,21 @@ echo -e "\n*** TESTING SUGGESTION LIMIT ***\n"
 ./phpunit TestSuggestionLimit.php
 echo "****************************************"
 
-echo -e "\n*** TESTING LIKE DATE ***\n"
-./phpunit TestLikeDate.php
-echo "****************************************"
+#echo -e "\n*** TESTING LIKE DATE ***\n"
+#./phpunit TestLikeDate.php
+#echo "****************************************"
 
-echo -e "\n*** TESTING DISLIKE DATE ***\n"
-./phpunit TestDislikeDate.php
-echo "****************************************"
+#echo -e "\n*** TESTING DISLIKE DATE ***\n"
+#./phpunit TestDislikeDate.php
+#echo "****************************************"
 
-echo -e "\n*** TESTING UNLIKE DATE ***\n"
-./phpunit TestUnlikeDate.php
-echo "****************************************"
+#echo -e "\n*** TESTING UNLIKE DATE ***\n"
+#./phpunit TestUnlikeDate.php
+#echo "****************************************"
 
-echo -e "\n*** TESTING GET OPINION ***\n"
-./phpunit TestGetOpinion.php
-echo "****************************************"
+#echo -e "\n*** TESTING GET OPINION ***\n"
+#./phpunit TestGetOpinion.php
+#echo "****************************************"
 
 # This should be last, since it removes tags from the Date_tags table
 echo -e "\n*** TESTING ADD TAG ***\n"
