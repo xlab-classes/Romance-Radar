@@ -1344,7 +1344,7 @@ function unlike_date($user_id, $date_id) {
             return 0;
         }
     }
-    else {
+    else if ($opinion == -1) {
         $query = "DELETE FROM Dates_disliked WHERE id=?";
         $data = [$user_id];
         $result = exec_query($query, $data);
@@ -1352,6 +1352,10 @@ function unlike_date($user_id, $date_id) {
             print("Failed to delete from Dates_disliked in unlike_date\n");
             return 0;
         }
+    }
+    else {
+        print("Couldn't get opinion in unlike_date\n");
+        return 0;
     }
 
     return 1;
