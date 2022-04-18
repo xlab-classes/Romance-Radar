@@ -35,6 +35,9 @@ echo -e "\tremove_connection"
 ./phpunit TestConnections.php
 echo "****************************************"
 
+# Reset for different category of tests
+./reset_database.sh
+
 echo -e "\n*** TESTING GET DATE ID ***\n"
 ./phpunit TestGetDateId.php
 echo "****************************************"
