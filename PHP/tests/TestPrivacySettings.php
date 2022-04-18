@@ -21,6 +21,7 @@ final class TestPrivacySettings extends TestCase
     private $city = "Buffalo";
     private $password = "password";
     private $birthday = "1999-12-12";
+    private $privacy;
 
     // This function is run *before every unit test*
     function setUp(): void
@@ -75,15 +76,21 @@ final class TestPrivacySettings extends TestCase
     }
 
     function testAllPrivacySettings(){
-        all_privacy_settings_set($this->id);
-        
-        $this->assertEquals(0,all_privacy_settings_set($this->id), "Error: all_privacy_settings_set returned 1");
+        // Test whether at least one privacy setting has been set. With 1 being off and 0 being on
+        $settings = all_privacy_settings_set($this->id);
+
+        $this->assertEquals(0,$settings, "The privacy should be set to 0");        
     }
 
     function testUpdatePrivacySettingsToTrue(){
-        update_privacy($this->id, 1);
-        $this->assertEquals(1, "Error: update_privacy_settings returned 0");
-    
+        // Set the privacy settings to be hidden (i.e: 0)
+        update_privacy($this->id, 0);
+
+        // Get the users privacy settings choice
+        $prefs = get_privacy_settings($this->id);
+
+        // Assert that the settings are now at 0
+        $this->assertEquals(0,$prefs, "Error: update_privacy_settings returned 0");
     }
 
 }
