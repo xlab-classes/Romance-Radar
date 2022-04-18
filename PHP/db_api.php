@@ -1387,7 +1387,7 @@ function get_opinion($user_id, $date_id) {
         return NULL;
     }
     else if (!date_exists($user_id, $date_id)) {
-        print("Date doesn't exist in get_opinion\n");
+        print("Date doesn't exist in get_opinion: $date_id\n");
         return NULL;
     }
 
