@@ -1,5 +1,6 @@
 <?php
 
+
 require './db_api.php';
 require './helper.php';
 #Checking request method
