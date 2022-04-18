@@ -3,6 +3,7 @@
 
 # Import db_api.php
 require_once('../db_api.php');
+require_once('../privacy_settings.php');
 use PHPUnit\Framework\TestCase;
 
 // THE CLASS NAME NEEDS TO BE CHANGED
@@ -31,6 +32,7 @@ final class TestPrivacySettings extends TestCase
         // Set the member variable id
         $this->id = get_user_id($this->email);
         $this->assertGreaterThan(0, $this->id, "Error getting ID of user in setUp() function");
+
 
         // Set the member variable prefs
         // Anything with a 1 is "accepted", anything with a 0 in not
@@ -73,11 +75,14 @@ final class TestPrivacySettings extends TestCase
     }
 
     function testAllPrivacySettings(){
-        $this->assertTrue(all_privacy_settings_set($this->id), "Error: all_privacy_settings_set returned false");
+        all_privacy_settings_set($this->id);
+        
+        $this->assertEquals(0,all_privacy_settings_set($this->id), "Error: all_privacy_settings_set returned 1");
     }
 
     function testUpdatePrivacySettingsToTrue(){
-        $this->assertEquals(1, update_privacy_settings($this->id, $this->prefs), "Error: update_privacy_settings returned false");
+        update_privacy($this->id, 1);
+        $this->assertEquals(1, "Error: update_privacy_settings returned 0");
     
     }
 
