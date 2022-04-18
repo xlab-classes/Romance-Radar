@@ -39,7 +39,7 @@ final class TestGetOpinion extends TestCase
         $this->assertEquals(1, like_date($this->id, 1), "Couldn't like date");
         $this->assertEquals(1, get_opinion($this->id, 1), "Opinion not positive");
         $this->assertEquals(1, unlike_date($this->id, 1), "Couldn't unlike date");
-        $this->assertEquals(1, dislike_dat($this->id, 1), "Couldn't dislike date");
+        $this->assertEquals(1, dislike_date($this->id, 1), "Couldn't dislike date");
         $this->assertEquals(-1, get_opinion($this->id, 1), "Opinion not negative");
     }
 
