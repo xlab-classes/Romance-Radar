@@ -68,7 +68,7 @@ final class TestUnitTestSkeleton extends TestCase
     // This function is run *after every unit test*
     function tearDown(): void
     {
-        exec_query("DELETE FROM Users WHERE name=? AND email=?", [$this->name, $this->email]);
+        delete_user($this->id);
     }
 
 }
