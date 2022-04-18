@@ -23,6 +23,19 @@ function console_log($output, $with_script_tags = true) {
 }
 
 if($user['partner'] == $user['id']){
+    $res = "";
+    foreach($connection_requests as $id){
+            $request_user = getUser($id,NULL)->fetch_assoc();
+            $res = $res . "<div class=\"col-3\">
+            <div class=\"card card-block card-body\">
+            <img class=\"card-img-top img-fluid rounded-circle\" style=\"height:60%\" src=\"{$request_user['user_picture']}\" size= alt=\"User image\">
+            <h5 class=\"card-title\">{$request_user['name']}</h5>
+            <div class=\"row\">
+            <img src=\"\assets\icons\accept.png\" onclick='location.href=\"/PHP/modify_connections.php?type=1&from_id=$id&to_id={$user['id']}\"' class=\"col-sm-3 offset-sm-3\"></img>
+            <img src=\"\assets\icons\\reject.png\" onclick='location.href=\"/PHP/modify_connections.php?type=0&from_id=$id\"' class=\"col-sm-3\"></img></div>
+            </div>
+        </div>";
+        }
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -57,7 +70,11 @@ if($user['partner'] == $user['id']){
             </div>
             
         </div>
-    ', $user['user_picture'], $user['name']);
+        <h3 style="margin-left:100px;margin-top:50px">Pending Requests</h3>
+        <div class="scrolling-wrapper row flex-row flex-nowrap mt-4 pb-4 pt-2" style="margin-left: 100px;">
+        %s
+        </div>
+    ', $user['user_picture'], $user['name'], $res);
 }else{
     $partner_preferences = get_preferences((int)$user['partner']);
     $preferences_categories = array(
@@ -248,24 +265,6 @@ if($user['partner'] == $user['id']){
         <?php
         echo $display;
         ?>
-    </div>
-    <h3 style="margin-left:100px;margin-top:50px">Pending Requests</h3>
-    <div class="scrolling-wrapper row flex-row flex-nowrap mt-4 pb-4 pt-2" style="margin-left: 100px;">
-    <?php
-        foreach($connection_requests as $id){
-            $request_user = getUser($id,NULL)->fetch_assoc();
-            echo "<div class=\"col-3\">
-            <div class=\"card card-block card-body\">
-            <img class=\"card-img-top img-fluid rounded-circle\" style=\"height:60%\" src=\"{$request_user['user_picture']}\" size= alt=\"User image\">
-            <h5 class=\"card-title\">{$request_user['name']}</h5>
-            <p class=\"card-text\">Bio here...</p>
-            <div class=\"row\">
-            <img src=\"\assets\icons\accept.png\" onclick='location.href=\"/PHP/modify_connections.php?type=1&from_id=$id&to_id={$user['id']}\"' class=\"col-sm-3 offset-sm-3\"></img>
-            <img src=\"\assets\icons\\reject.png\" onclick='location.href=\"/PHP/modify_connections.php?type=0&from_id=$id\"' class=\"col-sm-3\"></img></div>
-            </div>
-        </div>";
-        }
-    ?>
     </div>
 </body>
 </html>

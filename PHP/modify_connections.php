@@ -45,11 +45,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if($_GET['type']){
         $to_id=$_GET['to_id'];
         $from_id=$_GET['from_id'];
-       add_connection($from_id,$to_id);
+        add_connection($from_id,$to_id);
     }else{
         $from_id=$_GET['from_id'];
         remove_connection_request($from_id);
     }
+    $current_user = getUser($to_id,NULL)->fetch_assoc();
+    $_SESSION['user'] = $current_user;
     header('Location: ../HTML/connection.php');
 }
 ?>
