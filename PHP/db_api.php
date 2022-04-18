@@ -1199,6 +1199,7 @@ function get_times_suggested($user_id, $date_id) {
 // constraints:
 //      A user with this ID MUST exist
 //      A date with this ID MUST exist
+//      This date cannot be disliked by this user
 //
 // Note:
 //      If this date is already liked by this user, nothing will happen
@@ -1209,6 +1210,10 @@ function like_date($user_id, $date_id) {
     }
     else if (!date_exists($date_id)) {
         print("No date with this ID in like_date\n");
+        return 0;
+    }
+    else if (get_opinion($user_id, $date_id) == -1) {
+        print("Can't like a date that a user already dislikes\n");
         return 0;
     }
 
@@ -1263,6 +1268,10 @@ function dislike_date($user_id, $date_id) {
     }
     else if (!date_exists($date_id)) {
         print("No date with this ID in dislike_date\n");
+        return 0;
+    }
+    else if (get_opinion($user_id, $date_id) == 1) {
+        print("Can't dislike date that user already likes\n");
         return 0;
     }
 
@@ -1320,16 +1329,13 @@ function unlike_date($user_id, $date_id) {
         print("No date with this ID in unlike_date\n");
         return 0;
     }
+    
+    $opinion = get_opinion($user_id, $date_id);
 
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
-    $data = [$user_id, $date_id];
-    $result = exec_query($query, $data);
-
-    if ($result == NULL) {
-        print("Couldn't query Dates_liked in unlike_date\n");
-        return 0;
+    if ($opinion == 0) {
+        return 1;
     }
-    else if ($result->num_rows == 1) {
+    else if ($opinion == 1) {
         $query = "DELETE FROM Dates_liked WHERE id=?";
         $data = [$user_id];
         $result = exec_query($query, $data);
@@ -1338,20 +1344,7 @@ function unlike_date($user_id, $date_id) {
             return 0;
         }
     }
-    else if ($result->num_rows > 1) {
-        print("Dates_liked is malformed in unlike_date\n");
-        return 0;
-    }
-
-    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
-    $data = [$user_id, $date_id];
-    $result = exec_query($query, $data);
-
-    if ($result == NULL) {
-        print("Couldn't query Dates_disliked in unlike_date\n");
-        return 0;
-    }
-    else if ($result->num_rows == 1) {
+    else {
         $query = "DELETE FROM Dates_disliked WHERE id=?";
         $data = [$user_id];
         $result = exec_query($query, $data);
@@ -1359,10 +1352,6 @@ function unlike_date($user_id, $date_id) {
             print("Failed to delete from Dates_disliked in unlike_date\n");
             return 0;
         }
-    }
-    else if ($result->num_rows > 1) {
-        print("Dates_disliked is malformed in unlike_date\n");
-        return 0;
     }
 
     return 1;
