@@ -1199,6 +1199,9 @@ function get_times_suggested($user_id, $date_id) {
 // constraints:
 //      A user with this ID MUST exist
 //      A date with this ID MUST exist
+//
+// Note:
+//      If this date is already liked by this user, nothing will happen
 function like_date($user_id, $date_id) {
     if (!user_exists($user_id)) {
         print("No user with this ID in like_date\n");
@@ -1209,6 +1212,30 @@ function like_date($user_id, $date_id) {
         return 0;
     }
 
+    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in like_date\n");
+        return 0;
+    }
+    else if ($result->num_rows == 1) {
+        return 1;
+    }
+    else if ($result->num_rows > 1) {
+        print("Malformed table in like_date\n");
+        return 0;
+    }
+
+    $query = "INSERT INTO Dates_liked (id, date_id) VALUES (?, ?)";
+    $result = exec_query($query, $data);
+    if ($result == NULL) {
+        print("Couldn't insert into Dates_liked in like_date\n");
+        return 0;
+    }
+
+    return 1;
 }
 
 // Tell this database that this user dislikes this date
@@ -1226,6 +1253,9 @@ function like_date($user_id, $date_id) {
 // constraints:
 //      A user with this ID MUST exist
 //      A date with this ID MUST exist
+//
+// Note:
+//      If this date is already disliked by this user, nothing will happen
 function dislike_date($user_id, $date_id) {
     if (!user_exists($user_id)) {
         print("No user with this ID in dislike_date\n");
@@ -1256,6 +1286,7 @@ function dislike_date($user_id, $date_id) {
 //
 // Note:
 //      This function will remove likes AND dislikes from a date
+//      If this date is already neutral by this user, nothing will happen
 function unlike_date($user_id, $date_id) {
     if (!user_exists($user_id)) {
         print("No user with this ID in unlike_date\n");
