@@ -35,4 +35,17 @@ final class TestLikeDate extends TestCase
         delete_user($this->id);
     }
 
+    function testBasic(): void
+    {
+        $this->assertEquals(1, like_date($this->id, 1), "Couldn't like date");
+        $this->assertEquals(1, like_date($this->id, 1), "Couldn't re-like date");
+        
+        $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+        $data = [$this->id, 1];
+        $result = exec_query($query, $data);
+
+        $this->assertNotNull($result, "Couldn't exec_query");
+        $this->assertEquals(1, $result->num_rows, "No entries in dates_liked");
+    }
+
 }
