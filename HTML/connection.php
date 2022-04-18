@@ -3,6 +3,7 @@ require_once '../PHP/db_api.php';
 require_once '../PHP/helper.php';
 
 session_start();
+
 if(!isset($_SESSION['user'])){
     echo 'Please Login!!';
     header('./login.html');
@@ -10,6 +11,16 @@ if(!isset($_SESSION['user'])){
 }
 
 $user = $_SESSION['user'];
+$connection_requests = get_requests($user['id']);
+
+function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+}
 
 if($user['partner'] == $user['id']){
     $display = sprintf('
@@ -44,6 +55,7 @@ if($user['partner'] == $user['id']){
                 <div class="row"><div class="col"><img src="%s" class="img-fluid rounded-circle"></div></div>
                 <div class="row"><div class="col text-center">%s</div></div>
             </div>
+            
         </div>
     ', $user['user_picture'], $user['name']);
 }else{
@@ -211,7 +223,24 @@ if($user['partner'] == $user['id']){
         .modal-custom-body{
             border-radius: 40px;
         }
-        
+        .scrolling-wrapper{
+	overflow-x: auto;
+}
+.card-block{
+	height: 500px;
+	background-color: #fff;
+	border: none;
+	background-position: center;
+	background-size: cover;
+	transition: all 0.2s ease-in-out !important;
+	border-radius: 24px;
+	&:hover{
+		transform: translateY(-5px);
+		box-shadow: none;
+		opacity: 0.9;
+	}
+
+}
     </style>
 </head>
 <body>
@@ -219,6 +248,24 @@ if($user['partner'] == $user['id']){
         <?php
         echo $display;
         ?>
+    </div>
+    <h3 style="margin-left:100px;margin-top:50px">Pending Requests</h3>
+    <div class="scrolling-wrapper row flex-row flex-nowrap mt-4 pb-4 pt-2" style="margin-left: 100px;">
+    <?php
+        foreach($connection_requests as $id){
+            $request_user = getUser($id,NULL)->fetch_assoc();
+            echo "<div class=\"col-3\">
+            <div class=\"card card-block card-body\">
+            <img class=\"card-img-top img-fluid rounded-circle\" style=\"height:60%\" src=\"{$request_user['user_picture']}\" size= alt=\"User image\">
+            <h5 class=\"card-title\">{$request_user['name']}</h5>
+            <p class=\"card-text\">Bio here...</p>
+            <div class=\"row\">
+            <img src=\"\assets\icons\accept.png\" onclick='location.href=\"/PHP/modify_connections.php?type=1&from_id=$id&to_id={$user['id']}\"' class=\"col-sm-3 offset-sm-3\"></img>
+            <img src=\"\assets\icons\\reject.png\" onclick='location.href=\"/PHP/modify_connections.php?type=0&from_id=$id\"' class=\"col-sm-3\"></img></div>
+            </div>
+        </div>";
+        }
+    ?>
     </div>
 </body>
 </html>

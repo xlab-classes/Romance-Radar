@@ -40,4 +40,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_request'])) 
     }
     header('Location: ../HTML/connection.php');
 }
+if($_SERVER['REQUEST_METHOD'] == 'GET'){
+    if($_GET['type']){
+        $to_id=$_GET['to_id'];
+        $from_id=$_GET['from_id'];
+       add_connection($from_id,$to_id);
+    }else{
+        $from_id=$_GET['from_id'];
+        remove_connection_request($from_id);
+    }
+    header('Location: ../HTML/connection.php');
+}
 ?>
