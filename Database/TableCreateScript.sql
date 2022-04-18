@@ -123,6 +123,24 @@ CREATE TABLE IF NOT EXISTS Date_counts(
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
+-- Tracks which dates users have liked
+CREATE TABLE IF NOT EXISTS Dates_liked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks which dates users have disliked
+CREATE TABLE IF NOT EXISTS Dates_disliked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
 CREATE TABLE IF NOT EXISTS Connection_requests(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
