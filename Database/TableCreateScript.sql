@@ -71,7 +71,17 @@ CREATE TABLE IF NOT EXISTS Date_ideas(
     picture VARCHAR(100) NOT NULL,
     time DATETIME NOT NULL,
     location VARCHAR(100) NOT NULL,
+    est_cost INT NOT NULL,      -- Estimated cost
+    est_length INT NOT NULL,    -- Estimated date length
     PRIMARY KEY (id)
+    );
+
+CREATE TABLE IF NOT EXISTS Date_tags(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,       -- ID of date to tag
+    tag VARCHAR(50) NOT NULL,   -- String name of tag
+    PRIMARY KEY (id),
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS Date_liked(
@@ -101,6 +111,34 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
     FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (partner_id_1) REFERENCES Users(id) ON DELETE CASCADE,
 	FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks the number of times dates have been suggested to a particular user
+CREATE TABLE IF NOT EXISTS Date_counts(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    suggested INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks which dates users have liked
+CREATE TABLE IF NOT EXISTS Dates_liked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks which dates users have disliked
+CREATE TABLE IF NOT EXISTS Dates_disliked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS Connection_requests(
@@ -134,7 +172,7 @@ CREATE TABLE IF NOT EXISTS User_security_questions(
     FOREIGN KEY (question_id_3) REFERENCES Security_questions(id) ON DELETE SET NULL
 );
 
-CREATE TABLE Chat_Messages(
+CREATE TABLE IF NOT EXISTS Chat_Messages(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
     sent_to INT NOT NULL,
