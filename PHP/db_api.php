@@ -273,7 +273,12 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $result = exec_query($query, [$id, $id]);
 
     if (!initialize_preferences($id)) {
-        echo "Couldn't initialize preferences for new user!\n";
+        echo "Couldn't initialize preferences for new user!</br>";
+        return 0;
+    }
+    if (initialize_privacy_settings($id)){
+        echo "Couldn't initialize privacy settings for new user!</br";
+        return 0;
     }
 
     return 1;
@@ -1431,4 +1436,85 @@ function get_opinion($user_id, $date_id) {
     }
 
     return 0;
+}
+
+// Initialize privacy settings
+
+function initialize_privacy_settings($user_id){
+    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo 'Something went wrong while executing query (privacy settings)!!';
+        return 0;
+    }
+    return 1;
+
+}
+
+function update_privacy($id, $privacy_setting_choice) {
+    if (empty($id) || empty($privacy_setting_choice)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    print_r($id);
+    $user_exists = user_exists((int)$id);
+    
+    if (!$user_exists) {
+        echo 'User does not exist';
+        return 0;
+    }            // User must exist
+    
+    else {
+        // We are doing an either or on the privacy settings, so you either can see all or you can't
+        $query = "UPDATE Privacy_settings SET max_cost=?, max_distance=?, date_len=?, date_of_birth=?, time_pref=?, food_pref=?, ent_pref=?, venue_pref=? WHERE user_id=?";
+        
+        $data = [
+            $privacy_setting_choice['max_cost'],
+            $privacy_setting_choice['max_distance'],
+            $privacy_setting_choice['date_len'],
+            $privacy_setting_choice['date_of_birth'],
+            $privacy_setting_choice['time_pref'],
+            $privacy_setting_choice['food_pref'], 
+            $privacy_setting_choice['ent_pref'], 
+            $privacy_setting_choice['venue_pref'], 
+            $id];
+        $result = exec_query($query, $data);
+        
+        if (!$result) {
+            echo 'Query not executed';
+            return 0;
+        
+        }
+        
+        $_SESSION['user']['privacy_settings'] = $privacy_setting_choice;
+        
+        return 1;
+    }
+}
+
+function get_privacy_settings($id){
+
+    if (empty($id)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    $query = 'SELECT * FROM Privacy_settings WHERE user_id=?';
+    $result = exec_query($query, [$id]);
+
+    if ($result == NULL) {
+        echo "Couldn't exec query in get privacy settings</br>";
+        return 0;
+    }
+    else if ($result->num_rows <= 0) {
+        echo "Date doesn't exist in get privacy</br>";
+        return 0;
+    }
+
+    if(!$return = $result->fetch_assoc()){
+        echo 'Error in fetch privacy';
+        return 0;
+    }
+    return $return;
 }

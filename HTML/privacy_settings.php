@@ -1,3 +1,15 @@
+<?php include './navigation.php';?>
+<?php
+session_start();
+if(!isset($_SESSION['user'])){
+  header('Location: ./login.html');
+}
+
+function chk($cat){
+  return $_SESSION['user']['privacy_settings'][$cat]==1?'checked':'';
+}
+
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -51,25 +63,25 @@
             <div class="col">
              <div class="p-3 bg">
                  <div class="form-check">
-                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxCost" id="MaxCost">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxCost" id="MaxCost" <?php echo chk('max_cost')?>>
                   <label class="form-check-label text-black h6 m-2" for="MaxCost">
                   Max Cost
                   </label>
                   </div>
                   <div class="form-check">
-                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxDistance" id="MaxDistance">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxDistance" id="MaxDistance" <?php echo chk('max_distance')?>>
                   <label class="form-check-label text-black h6 m-2" for="MaxDistance">
                   Max Distance
                   </label>
                   </div>
                   <div class="form-check">
-                  <input class="form-check-input m-2" type="checkbox" value="" name="DateLen" id="DateLen">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="DateLen" id="DateLen" <?php echo chk('date_len')?>>
                   <label class="form-check-label text-black h6 m-2" for="DateLen">
                   Date Length
                   </label>
                   </div>
                   <div class="form-check">
-                  <input class="form-check-input m-2" type="checkbox" value="true" name="DOB" id="DOB">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="DOB" id="DOB" <?php echo chk('date_of_birth')?>>
                   <label class="form-check-label text-black h6 m-2" for="DOB">
                   Date of Birth
                   </label>
@@ -79,25 +91,25 @@
             <div class="col">
              <div class="p-3 bg">
                  <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="true" name="TimePref" id="TimePref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="TimePref" id="TimePref" <?php echo chk('time_pref')?>>
                         <label class="form-check-label text-black h6 m-2" for="TimePref">
                         Time Preferences
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="true" name="EntPref" id="EntPref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="EntPref" id="EntPref" <?php echo chk('ent_pref')?>>
                         <label class="form-check-label text-black h6 m-2" for="EntPref">
                         Entertain. Pref.
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="true" name="VenuePref" id="VenuePref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="VenuePref" id="VenuePref" <?php echo chk('venue_pref')?>>
                         <label class="form-check-label text-black h6 m-2" for="VenuePref">
                         Venue Preferences
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="true" name="FoodPref" id="FoodPref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="FoodPref" id="FoodPref" <?php echo chk('food_pref')?>>
                         <label class="form-check-label text-black h6 m-2" for="FoodPref">
                         Food Preferences
                         </label>

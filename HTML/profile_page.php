@@ -121,6 +121,7 @@ function selectedSubCategory($cat, $sub){
                         ?>
                         <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
+                        <input class='btn btn-primary' type='button' onclick="window.location='./privacy_settings.php';" value='Privacy Settings'>
                     </div>
                     </div>
                 </div>

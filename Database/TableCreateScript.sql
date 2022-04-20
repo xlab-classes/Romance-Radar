@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS Chat_Messages(
 
 CREATE TABLE IF NOT EXISTS Privacy_settings(
     id INT AUTO_INCREMENT,
-    user_id INT NOT NULL
+    user_id INT NOT NULL,
     max_cost BIT NOT NULL DEFAULT 0,
     max_distance BIT NOT NULL DEFAULT 0,
     date_len BIT NOT NULL DEFAULT 0,
