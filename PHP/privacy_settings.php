@@ -122,25 +122,7 @@ function show_all_privacy_settings($id) {
     }
     }
 
-    /* Function that takes in a user id and from that returns -1 if null and the respective privacy chocie.
-     * otherwise with 1 being all choices chsoen and 0  being no chocies chosen 
-    */
-function get_privacy_settings($id) {
-    $user_exists = user_exists($id);
-    if ($user_exists == false) {
-           return 0;
-    }
-    $query = "SELECT * FROM Privacy_settings WHERE id=?";
-    $data = [$id];
-    $result = exec_query($query,$data);
-    if (!$result) {
-        return -1;
-    }
 
-    // Get all the result records
-    $result_array = $result->fetch_all(MYSQLI_ASSOC);
-
-    // Get the value of max_value from the result array 
-    $privacy_choice = $result_array[1];
-    return $privacy_choice;
-    }
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    print_r($_POST);
+}

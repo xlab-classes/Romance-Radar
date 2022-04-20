@@ -51,53 +51,53 @@
             <div class="col">
              <div class="p-3 bg">
                  <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="MaxCost" id="MaxCost">
-                        <label class="form-check-label text-black h6 m-2" for="MaxCost">
-                        Max Cost
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="MaxDistance" id="MaxDistance">
-                        <label class="form-check-label text-black h6 m-2" for="MaxDistance">
-                        Max Distance
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="DateLen" id="DateLen">
-                        <label class="form-check-label text-black h6 m-2" for="DateLen">
-                        Date Length
-                        </label>
-                        </div>
-                        <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="DOB" id="DOB">
-                        <label class="form-check-label text-black h6 m-2" for="DOB">
-                        Date of Birth
-                        </label>
-                        </div>
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxCost" id="MaxCost">
+                  <label class="form-check-label text-black h6 m-2" for="MaxCost">
+                  Max Cost
+                  </label>
+                  </div>
+                  <div class="form-check">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="MaxDistance" id="MaxDistance">
+                  <label class="form-check-label text-black h6 m-2" for="MaxDistance">
+                  Max Distance
+                  </label>
+                  </div>
+                  <div class="form-check">
+                  <input class="form-check-input m-2" type="checkbox" value="" name="DateLen" id="DateLen">
+                  <label class="form-check-label text-black h6 m-2" for="DateLen">
+                  Date Length
+                  </label>
+                  </div>
+                  <div class="form-check">
+                  <input class="form-check-input m-2" type="checkbox" value="true" name="DOB" id="DOB">
+                  <label class="form-check-label text-black h6 m-2" for="DOB">
+                  Date of Birth
+                  </label>
+                  </div>
              </div>
             </div>
             <div class="col">
              <div class="p-3 bg">
                  <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="TimePref" id="TimePref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="TimePref" id="TimePref">
                         <label class="form-check-label text-black h6 m-2" for="TimePref">
                         Time Preferences
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="EntPref" id="EntPref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="EntPref" id="EntPref">
                         <label class="form-check-label text-black h6 m-2" for="EntPref">
                         Entertain. Pref.
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="VenuePref" id="VenuePref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="VenuePref" id="VenuePref">
                         <label class="form-check-label text-black h6 m-2" for="VenuePref">
                         Venue Preferences
                         </label>
                         </div>
                         <div class="form-check">
-                        <input class="form-check-input m-2" type="checkbox" value="" name="FoodPref" id="FoodPref">
+                        <input class="form-check-input m-2" type="checkbox" value="true" name="FoodPref" id="FoodPref">
                         <label class="form-check-label text-black h6 m-2" for="FoodPref">
                         Food Preferences
                         </label>
@@ -109,19 +109,19 @@
      </div>
     </div>
     <!-- User verification -->
-    <div class="col">
-     <div class="p-3 bg">
-        <h3 class="text-center">Additional Settings</h3>
-        <h5 class="text-center">User verification</h5>
-        <div class="d-grid gap-2 col-4 mx-auto">
-            <button class="btn btn-primary" type="button">Verify User</button>
-        </div>
-     </div>
-    </div>
+            <div class="col">
+            <div class="p-3 bg">
+                <h3 class="text-center">Additional Settings</h3>
+                <h5 class="text-center">User verification</h5>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <button class="btn btn-primary" type="button">Verify User</button>
+                </div>
+            </div>
+            </div>
   </div>
   <div class="d-grid gap-2 col-2 mx-auto">
-  <button class="btn btn-success" type="button">Save Changes</button>
-</div>
+    <button class="btn btn-success" type="submit">Save Changes</button>
+  </div>
  </form>
 </div>
     </section>
