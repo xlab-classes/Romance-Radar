@@ -113,6 +113,34 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
 	FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
+-- Tracks the number of times dates have been suggested to a particular user
+CREATE TABLE IF NOT EXISTS Date_counts(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    suggested INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks which dates users have liked
+CREATE TABLE IF NOT EXISTS Dates_liked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
+-- Tracks which dates users have disliked
+CREATE TABLE IF NOT EXISTS Dates_disliked(
+    id INT AUTO_INCREMENT,
+    date_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+    );
+
 CREATE TABLE IF NOT EXISTS Connection_requests(
     id INT AUTO_INCREMENT,
     sent_from INT NOT NULL,
@@ -157,13 +185,15 @@ CREATE TABLE IF NOT EXISTS Chat_Messages(
 
 CREATE TABLE IF NOT EXISTS Privacy_settings(
     id INT AUTO_INCREMENT,
-    max_cost BIT NOT NULL DEFAULT 1,
-    max_distance BIT NOT NULL DEFAULT 1,
-    date_len BIT NOT NULL DEFAULT 1,
-    date_of_birth BIT NOT NULL DEFAULT 1,
-    time_pref BIT NOT NULL DEFAULT 1,
-    food_pref BIT NOT NULL DEFAULT 1,
-    ent_pref BIT NOT NULL DEFAULT 1,
-    venue_pref BIT NOT NULL DEFAULT 1,
-    PRIMARY KEY (id)
+    user_id INT NOT NULL,
+    max_cost BIT NOT NULL DEFAULT 0,
+    max_distance BIT NOT NULL DEFAULT 0,
+    date_len BIT NOT NULL DEFAULT 0,
+    date_of_birth BIT NOT NULL DEFAULT 0,
+    time_pref BIT NOT NULL DEFAULT 0,
+    food_pref BIT NOT NULL DEFAULT 0,
+    ent_pref BIT NOT NULL DEFAULT 0,
+    venue_pref BIT NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );

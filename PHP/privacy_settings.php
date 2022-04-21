@@ -5,36 +5,6 @@ require_once 'db_api.php';
 
 session_start();
 
-/* This function will take a user id and update its privacy settings to either all true or all false */
-function update_privacy($id, $privacy_setting_choice) {
-    if (empty($id) || empty($privacy_setting_choice)) {
-        return 0;       // Can't have empty inputs
-    }
-
-    $user_exists = user_exists($id);
-    if ($user_exists == false) {return 0;}            // User must exist
-    else {
-        // We are doing an either or on the privacy settings, so you either can see all or you can't
-        $query = "UPDATE Privacy_settings SET max_cost=? max_distance=? date_len=? date_of_birth=? time_pref=? food_pref=? ent_pref=?, venue_pref=?, WHERE id=?";
-        $data = [
-            $privacy_setting_choice,
-            $privacy_setting_choice,
-            $privacy_setting_choice,
-            $privacy_setting_choice,
-            $privacy_setting_choice,
-            $privacy_setting_choice, 
-            $privacy_setting_choice, 
-            $privacy_setting_choice, 
-            $id];
-        $result = exec_query($query, $data);
-        if ($result == NULL) {
-            return 0;
-         } // Failed to execute query
-         $_SESSION['user']['privacy_settings'] = $privacy_setting_choice;
-         return 1;
-    }
-}
-
 /* Function that chjecks if privacy settings have been set */
 function all_privacy_settings_set($id) {
     // An array of the privacy settings
@@ -65,7 +35,7 @@ function hide_all_privacy_settings($id) {
     
     if($privacy_setting == 1) {
         // Create a javascript script to hide all elemnts with the the resepctive id
-        ?>
+        echo '
         <script language="javascript">
             document.getElementById("MaxCost").style.display = "none";
             document.getElementById("MaxDistance").style.display = "none";
@@ -76,7 +46,7 @@ function hide_all_privacy_settings($id) {
             document.getElementById("EntPref").style.display = "none";
             document.getElementById("VenuePref").style.display = "none";
         </script>
-        <?
+        ';
         return update_privacy($id, $privacy_setting);
         }
     else{
@@ -103,7 +73,7 @@ function show_all_privacy_settings($id) {
     
     if($privacy_setting == 0){
         // Create a javascript script to show all elemnts with the the resepctive id
-        ?>
+        echo '
         <script language="javascript">
             document.getElementById("MaxCost").style.display = "block";
             document.getElementById("MaxDistance").style.display = "block";
@@ -114,33 +84,33 @@ function show_all_privacy_settings($id) {
             document.getElementById("EntPref").style.display = "block";
             document.getElementById("VenuePref").style.display = "block";
         </script>
-        <?
+        ';
         return update_privacy($id, $privacy_setting);
         }
     else{
         return hide_all_privacy_settings($id);
     }
+}
+
+
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $categories = array(
+    'MaxCost'=>'max_cost',
+    'MaxDistance'=>'max_distance',
+    'DateLen'=>'date_len',
+    'DOB'=>'date_of_birth',
+    'TimePref'=>'time_pref',
+    'FoodPref'=>'food_pref',
+    'EntPref'=>'ent_pref',
+    'VenuePref'=>'venue_pref');
+    $selected_settings = array();
+    foreach($categories as $cat=>$alias){
+        $selected_settings[$alias] = isset($_POST[$cat])?1:0;
     }
 
-    /* Function that takes in a user id and from that returns -1 if null and the respective privacy chocie.
-     * otherwise with 1 being all choices chsoen and 0  being no chocies chosen 
-    */
-function get_privacy_settings($id) {
-    $user_exists = user_exists($id);
-    if ($user_exists == false) {
-           return 0;
+    if(!update_privacy((int)$_SESSION['user']['id'], $selected_settings)){
+        echo 'Settings not updated';
+        exit();
     }
-    $query = "SELECT * FROM Privacy_settings WHERE id=?";
-    $data = [$id];
-    $result = exec_query($query,$data);
-    if (!$result) {
-        return -1;
-    }
-
-    // Get all the result records
-    $result_array = $result->fetch_all(MYSQLI_ASSOC);
-
-    // Get the value of max_value from the result array 
-    $privacy_choice = $result_array[1];
-    return $privacy_choice;
-    }
+    header('Location: ../HTML/privacy_settings.php');
+}

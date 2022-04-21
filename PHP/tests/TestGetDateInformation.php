@@ -7,16 +7,25 @@ use PHPUnit\Framework\TestCase;
 final class TestGetDateInformation extends TestCase
 {
 
+    private $id;
+
     // This function is run *before every unit test*
     function setUp(): void
     {
-        // No setup needed
+        $ret = create_user(
+            "Jon Doe", "no@email.com", "n", "n", "n", 1, "1980/12/12"
+        );
+
+        $this->assertNotNull($ret);
+        $this->id = get_user_id("no@email.com");
+        $this->assertGreaterThan(0, $this->id);
     }
 
     // This function is run *after every unit test*
     function tearDown(): void
     {
         // No teardown needed
+        delete_user($this->id);
     }
 
     // This relies on the database being formatted a certain way
@@ -24,10 +33,10 @@ final class TestGetDateInformation extends TestCase
     function testAll(): void
     {
         // Test with three date IDs that we know exist
-        $coffee = get_date_information(1);
-        $goodbar = get_date_information(2);
-        $chefs = get_date_information(3);
-        $bad = get_date_information(-1);
+        $coffee = get_date_information($this->id, 1);
+        $goodbar = get_date_information($this->id, 2);
+        $chefs = get_date_information($this->id, 3);
+        $bad = get_date_information($this->id, -1);
 
         $this->assertNull($bad, "Erroneously retrieved date information");
 
