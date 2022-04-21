@@ -34,11 +34,16 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
+    // $host = 'oceanus.cse.buffalo.edu';
+    // $user = 'jjgrant';
+    // $db = 'cse442_2022_spring_team_j_db';
+    // $password = 50276673;
     
-    $host = 'oceanus.cse.buffalo.edu';
-    $user = 'jjgrant';
-    $db = 'cse442_2022_spring_team_j_db';
-    $password = 50276673;
+
+    $host = 'localhost';
+    $user = 'root';
+    $db = 'romanceradar';
+    $password = '';
     
     $connection = new mysqli($host, $user, $password, $db);
     
@@ -836,14 +841,14 @@ function addSecurityQuestions($user_id, $data){
     return 1;
 }
 
-function get_captcha_image($captcha_id){
-    $query = 'SELECT image FROM Captcha WHERE id=?';
+function get_captcha($captcha_id){
+    $query = 'SELECT * FROM Captcha WHERE id=?';
     $result = exec_query($query, [(int)$captcha_id]);
 
     if(!$result || !$result->num_rows){
         exit('No capcha Found');
     }
-    return $result->fetch_assoc()['image'];
+    return $result->fetch_assoc();
 }
 
 function getChatMessages($sent_from, $sent_to){
