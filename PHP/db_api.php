@@ -34,11 +34,16 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
+    // $host = 'oceanus.cse.buffalo.edu';
+    // $user = 'jjgrant';
+    // $db = 'cse442_2022_spring_team_j_db';
+    // $password = 50276673;
     
-    $host = 'oceanus.cse.buffalo.edu';
-    $user = 'jjgrant';
-    $db = 'cse442_2022_spring_team_j_db';
-    $password = 50276673;
+
+    $host = 'localhost';
+    $user = 'root';
+    $db = 'romanceradar';
+    $password = '';
     
     $connection = new mysqli($host, $user, $password, $db);
     
@@ -713,8 +718,36 @@ function get_preferences($user_id) {
     }
 
     return $preferences;
-
 }
+
+/* Get verification status */
+function verify_user($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $query = "UPDATE Users SET verified=1 WHERE id=?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if (!$result) {
+        echo "Couldn't get verification status\n";
+        return 0;
+    }
+    
+    return 1;
+}
+
+function get_captcha($captcha_id){
+    $query = 'SELECT * FROM Captcha WHERE id=?';
+    $result = exec_query($query, [(int)$captcha_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No capcha Found');
+    }
+    return $result->fetch_assoc();
+}
+
 
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
@@ -1508,7 +1541,7 @@ function get_privacy_settings($id){
         return 0;
     }
     else if ($result->num_rows <= 0) {
-        echo "Date doesn't exist in get privacy</br>";
+        echo "Settings doesn't exist in get privacy</br>";
         return 0;
     }
 

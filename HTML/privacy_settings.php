@@ -1,9 +1,14 @@
 <?php include './navigation.php';?>
 <?php
+require_once '../PHP/db_api.php';
 session_start();
 if(!isset($_SESSION['user'])){
-  header('Location: ./login.html');
+    echo 'Not logged in';
+    header('Location: ./login.html');
+    exit();
 }
+
+$_SESSION['captcha'] = get_captcha(rand(1,3));
 
 function chk($cat){
   return $_SESSION['user']['privacy_settings'][$cat]==1?'checked':'';
@@ -11,6 +16,7 @@ function chk($cat){
 
 ?>
 <!doctype html>
+
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -57,7 +63,7 @@ function chk($cat){
     <div class="col">
      <div class="p-3 bg">
         <h3 class="text-center">Privacy Settings</h3>
-        <h5>Select what you would like to share with your connections</h5>
+        <h5 class="text-center">Select what you would like to hide from your connection</h5>
     <div class="container px-4">
           <div class="row gx-5">
             <div class="col">
@@ -120,22 +126,34 @@ function chk($cat){
     </div>
      </div>
     </div>
+  
     <!-- User verification -->
-            <div class="col">
-            <div class="p-3 bg">
-                <h3 class="text-center">Additional Settings</h3>
-                <h5 class="text-center">User verification</h5>
-                <div class="d-grid gap-2 col-4 mx-auto">
-                    <button class="btn btn-primary" type="button">Verify User</button>
-                </div>
-            </div>
-            </div>
+    <!-- This section should only be visible to the user if they are not verified -->
   </div>
   <div class="d-grid gap-2 col-2 mx-auto">
     <button class="btn btn-success" type="submit">Save Changes</button>
   </div>
  </form>
 </div>
+<div class="p-3 bg">
+        <h3 class="text-center">Additional Settings</h3>
+        <h5 class="text-center">User verification</h5>
+        <div class="text-center">Current Status: <?php echo $_SESSION['user']['verified']?'Verified':'Not Verified'; ?></div>
+        <!-- Generate a random capcha image from the database--> 
+        <img src="<?php echo $_SESSION['captcha']['image'];?>" alt="captcha" class="mx-auto d-block">
+        <div class="d-grid gap-2 col-4 mx-auto">
+          <!-- There should be an input form the enter the capcha-->
+          <div class="p-3 bg">
+            <h5 class="text-center">Enter the captcha</h5>
+            <form  action="../PHP/captcha.php" method="post" enctype="multipart/form-data">
+              <div class="form-group">
+                <input type="text" class="form-control" id="captcha" name="captcha" placeholder="Enter the captcha">
+              </div>
+              <button class="btn btn-primary" type="submit" name="VerifyBtn">Verify User</button>
+            </form>
+          </div>
+     </div>
+    </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
