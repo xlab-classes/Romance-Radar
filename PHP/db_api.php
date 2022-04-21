@@ -560,8 +560,8 @@ function get_requests($user_id) {
         echo "No user with this ID\n";
         return 0;
     }
-    $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
-    $result = exec_query($query, [$user_id]);
+    $query = "SELECT * FROM Connection_requests WHERE sent_to=? AND sent_from!=?";
+    $result = exec_query($query, [$user_id, $user_id]);
     if ($result == NULL) {
         print("Couldn't SELECT from Connection_requests in get_requests\n");
         return 0;
