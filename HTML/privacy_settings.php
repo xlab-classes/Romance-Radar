@@ -63,7 +63,7 @@ function chk($cat){
     <div class="col">
      <div class="p-3 bg">
         <h3 class="text-center">Privacy Settings</h3>
-        <h5>Select what you would like to share with your connections</h5>
+        <h5 class="text-center">Select what you would like to hide from your connection</h5>
     <div class="container px-4">
           <div class="row gx-5">
             <div class="col">
@@ -138,6 +138,7 @@ function chk($cat){
 <div class="p-3 bg">
         <h3 class="text-center">Additional Settings</h3>
         <h5 class="text-center">User verification</h5>
+        <div class="text-center">Current Status: <?php echo $_SESSION['user']['verified']?'Verified':'Not Verified'; ?></div>
         <!-- Generate a random capcha image from the database--> 
         <img src="<?php echo $_SESSION['captcha']['image'];?>" alt="captcha" class="mx-auto d-block">
         <div class="d-grid gap-2 col-4 mx-auto">

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Users(
     birthday DATE NOT NULL,
     partner INT,
     city VARCHAR(100) NOT NULL,
-    verified BIT NOT NULL,
+    verified BIT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
     );

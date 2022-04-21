@@ -721,21 +721,31 @@ function get_preferences($user_id) {
 }
 
 /* Get verification status */
-function get_verification_status($user_id) {
+function verify_user($user_id) {
     if (!user_exists($user_id)) {
         echo "No user with this ID\n";
         return 0;
     }
 
-    $query = "SELECT * FROM Users WHERE id = ?";
+    $query = "UPDATE Users SET verified=1 WHERE id=?";
     $data = [$user_id];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't get verification status\n";
         return 0;
     }
-    $row = $result->fetch_assoc();
-    return $row['verified'];
+    
+    return 1;
+}
+
+function get_captcha($captcha_id){
+    $query = 'SELECT * FROM Captcha WHERE id=?';
+    $result = exec_query($query, [(int)$captcha_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No capcha Found');
+    }
+    return $result->fetch_assoc();
 }
 
 
@@ -839,16 +849,6 @@ function addSecurityQuestions($user_id, $data){
     }
 
     return 1;
-}
-
-function get_captcha($captcha_id){
-    $query = 'SELECT * FROM Captcha WHERE id=?';
-    $result = exec_query($query, [(int)$captcha_id]);
-
-    if(!$result || !$result->num_rows){
-        exit('No capcha Found');
-    }
-    return $result->fetch_assoc();
 }
 
 function getChatMessages($sent_from, $sent_to){
