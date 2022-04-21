@@ -61,6 +61,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
 }else{
-    header("Location: ../HTML/registration.php");
+    header("Location: ../HTML/login.html");
     exit();
 }
