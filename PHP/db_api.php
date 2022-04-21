@@ -1541,7 +1541,7 @@ function get_privacy_settings($id){
         return 0;
     }
     else if ($result->num_rows <= 0) {
-        echo "Date doesn't exist in get privacy</br>";
+        echo "Settings doesn't exist in get privacy</br>";
         return 0;
     }
 
