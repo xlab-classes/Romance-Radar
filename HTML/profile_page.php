@@ -126,27 +126,16 @@ function selectedSubCategory($cat, $sub){
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
 
                         <!--Status dropdown -->
-                        <!-- <div class="dropdown">
+                        <div class="dropdown">
                           <button class="btn btn-secondary dropdown-toggle" type="buttonStatus" id="dropdownStatus" data-bs-toggle="dropdown" aria-expanded="false">
                             Status:
                           </button>
                           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" href="#">Busy</a></li>
-                            <li><a class="dropdown-item" href="#">Happy</a></li>
-                            <li><a class="dropdown-item" href="#">Idle</a></li>
-                            <li><a class="dropdown-item" href="#">Chilling</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Busy">Busy</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Happy">Happy</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Idle">Idle</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Chilling">Chilling</a></li>
                           </ul>
-                        </div> -->
-
-                        <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown button
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
                         </div>
 
                         <p class="text-center text-black"><h5>Current status: <?php get_status($_SESSION['user']['id'])?></h5></p>
