@@ -34,16 +34,10 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
-    // $host = 'oceanus.cse.buffalo.edu';
-    // $user = 'jjgrant';
-    // $db = 'cse442_2022_spring_team_j_db';
-    // $password = 50276673;
-    
-
-    $host = 'localhost';
-    $user = 'root';
-    $db = 'romanceradar';
-    $password = '';
+    $host = 'oceanus.cse.buffalo.edu';
+    $user = 'jjgrant';
+    $db = 'cse442_2022_spring_team_j_db';
+    $password = 50276673;
     
     $connection = new mysqli($host, $user, $password, $db);
     
@@ -258,8 +252,10 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO Users ";
+	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city) ";
+	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
@@ -281,7 +277,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
         echo "Couldn't initialize preferences for new user!</br>";
         return 0;
     }
-    if (initialize_privacy_settings($id)){
+    if (!initialize_privacy_settings($id)){
         echo "Couldn't initialize privacy settings for new user!</br";
         return 0;
     }
@@ -1550,4 +1546,89 @@ function get_privacy_settings($id){
         return 0;
     }
     return $return;
+}
+
+// Get this user's status
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want
+//
+// returns:
+//		The status of the user as a string on success
+//		NULL on failure
+//
+// constraints:
+//		This user must exist
+//
+// Note:
+// 		If this user has no status set, this function will return an empty
+//	string
+function get_status($user_id) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in get_status\n");
+		return NULL;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in get_status\n");
+		return NULL;
+	}
+	else if ($result->num_rows == 0) {
+		return "";
+	}
+	else {
+		return $result->fetch_assoc()["user_status"];
+	}
+}
+
+// Set the status of this user
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want to set
+//
+// parameter: status	[string]
+//		The status to set, as a string
+//
+// returns:
+//		1 on success
+//		0 on failure
+//
+// constraints:
+//		This user must exist
+//		The status must be a string, although it can be empty
+function set_status($user_id, $status) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in set_status\n");
+		return 0;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't query User_status in set_status\n");
+		return 0;
+	}
+	else if ($result->num_rows == 0) {
+		$query = "INSERT INTO User_status (id, user_status) VALUES (?, ?)";
+		$data = [$user_id, $status];
+	}
+	else {
+		$query = "UPDATE User_status set user_status=? WHERE id=?";
+		$data = [$status, $user_id];
+	}
+
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in set_status\n");
+		return 0;
+	}
+	
+	return 1;
 }

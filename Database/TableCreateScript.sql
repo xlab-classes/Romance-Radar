@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS Users(
     partner INT,
     city VARCHAR(100) NOT NULL,
     verified BIT NOT NULL DEFAULT 0,
+	signup_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
     );
@@ -201,14 +202,23 @@ CREATE TABLE IF NOT EXISTS Privacy_settings(
 
 /* Create a table for capcha images */
 CREATE TABLE IF NOT EXISTS Captcha(
-    id INT  NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     image VARCHAR(100) NOT NULL,
     code VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO Captcha (id,image, code) VALUES 
-(1,'../assets/Captcha/captcha_1.png', '2cegf'),
-(2,'../assets/Captcha/captcha_2.png', '24f6w'),
-(3,'../assets/Captcha/captcha_3.png', '226md');
+
+CREATE TABLE IF NOT EXISTS User_status(
+	id INT AUTO_INCREMENT,
+	user_status VARCHAR(50),
+	FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+
+INSERT INTO Captcha (image, code) VALUES 
+('../assets/Captcha/captcha_1.png', '2cegf'),
+('../assets/Captcha/captcha_2.png', '24f6w'),
+('../assets/Captcha/captcha_3.png', '226md');
+
 
