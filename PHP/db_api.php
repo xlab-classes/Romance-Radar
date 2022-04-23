@@ -256,7 +256,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city) ";
 	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, 0, $today];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
