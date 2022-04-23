@@ -244,10 +244,10 @@ SET @pizza_id = (SELECT id FROM Date_ideas WHERE name="Gino's NY Pizza");
 SET @mediteranean_id = (SELECT id FROM Date_ideas WHERE name="Bengali Grill");
 SET @sushi_id = (SELECT id FROM Date_ideas WHERE name="Sushi Express");
 SET @winery_id = (SELECT id FROM Date_ideas WHERE name="Honeymoon Trail Winery");
-SET @comic_id = (SELECT id FROM Date_ideas WHERE name="Comic Con");
+SET @comic_con_id = (SELECT id FROM Date_ideas WHERE name="Comic Con");
 SET @anime_id = (SELECT id FROM Date_ideas WHERE name="Watch Anime Together");
-SET @game_id = (SELECT id FROM Date_ideas WHERE name="Game Night");
-SET @sky_id = (SELECT id FROM Date_ideas WHERE name="Western New York Skydiving");
+SET @game_night_id = (SELECT id FROM Date_ideas WHERE name="Game Night");
+SET @skydiving_id = (SELECT id FROM Date_ideas WHERE name="Western New York Skydiving");
 SET @escape_room_id = (SELECT id FROM Date_ideas WHERE name="Escape Room");
 SET @art_class_id = (SELECT id FROM Date_ideas WHERE name="Art Class");
 SET @lasertron_id = (SELECT id FROM Date_ideas WHERE name="Lasertron");
@@ -596,3 +596,196 @@ INSERT INTO Date_tags
 (date_id, tag)
 VALUES
 (@lasertron_id, "evening");
+
+-- Tags for Winery: entertainment, bar, indoors, outdoors, social_events, evening,afternoon
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "bar");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "indoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "outdoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "social_events");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "evening");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@winery_id, "afternoon");
+
+-- Tags for Comic Con: entertainment, indoors, outdoors, social_events, evening,afternoon,morning,fast_food
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "indoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "outdoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "social_events");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "evening");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "afternoon");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "morning");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@comic_con_id, "fast_food");
+
+-- Tags for watching Anime: entertainment, indoors, evening,afternoon,morning
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@anime_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@anime_id, "indoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@anime_id, "evening");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@anime_id, "afternoon");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@anime_id, "morning");
+
+-- Tags for Game Night: food,entertainment, indoors, social_events, evening,afternoon
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "food");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "indoors");
+
+INSERT  INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "social_events");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "evening");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@game_night_id, "afternoon");
+
+-- Tags for Skydiving: entertainment, outdoors, social_events, morning,afternoon
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@skydiving_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@skydiving_id, "outdoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@skydiving_id, "social_events");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@skydiving_id, "morning");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@skydiving_id, "afternoon");
+
+-- Tags for Escape Room: entertainment, indoors, social_events, evening,afternoon
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@escape_room_id, "entertainment");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@escape_room_id, "indoors");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@escape_room_id, "social_events");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@escape_room_id, "evening");
+
+INSERT INTO Date_tags
+(date_id, tag)
+VALUES
+(@escape_room_id, "afternoon");
+
