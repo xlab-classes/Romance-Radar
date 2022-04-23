@@ -49,6 +49,7 @@ final class TestCreateUser extends TestCase
         $this->assertSame($arr["street_address"], $this->address);
         $this->assertSame($arr["zipcode"], $this->zipcode);
         $this->assertSame($arr["birthday"], $this->birthday);
+		$this->assertSame($arr["signup_date"], getdate(), "Dates do not match");
     }
 
     // Ensure that we cannot create a new user when one with the same email

@@ -1,67 +1,79 @@
 -- Insert a date idea for coffee
 INSERT INTO Date_ideas
-(name, description, picture, time, location) 
+(name, description, picture, time, location, est_cost, est_length) 
 VALUES
 (   "Tim Hortons",                      -- Cafe name
     "Share a chat over some warm joe",  -- Description
     "../assets/coffee.jpg",             -- Image
     "2022-06-01 10:00:00",              -- Time
-    "Lackawanna, NY"                    -- Address
+    "Lackawanna, NY",                   -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a bar
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Mr.Goodbar",                       -- Bar name
     "Share a chat over some cold beer", -- Description
     "../assets/beer.jpg",               -- Image
     "2022-06-01 20:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a dinner date
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Chef's",                           -- Restaurant name
     "Open up over wine and pasta",      -- Description
     "../assets/steak.jpg",              -- Image
     "2022-06-01 18:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a concert
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Red Hot Chili Peppers",            -- Band name
     "Chill out with a classic band",    -- Description
     "../assets/chili_peppers.jpg",      -- Image
     "2022-06-01 18:00:00",              -- Time
-    "Alden, NY"                         -- Address
+    "Alden, NY",                        -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a hike
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Chestnut Ridge",                   -- Park name
     "Stay moving while you connect",    -- Description
     "../assets/chestnut_ridge.jpg",     -- Image
     "2022-06-01 14:00:00",              -- Time
-    "Orchard Park, NY"                  -- Address
+    "Orchard Park, NY",                 -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a club
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Venu",                             -- Club name
     "Dance to EDM then Uber home",      -- Description
     "../asssets/venu.jpg",              -- Image
     "2022-06-01 22:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 
