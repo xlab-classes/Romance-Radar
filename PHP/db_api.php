@@ -255,8 +255,9 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	$today = getdate();
-	$today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
+	// $today = getdate();
+	// $today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
+	$today = "2022-04-23";
 
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, $today];
     $result = exec_query($query, $data);
