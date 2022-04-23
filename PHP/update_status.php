@@ -13,7 +13,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         exit();
     }     // User not logged in
 
-    print("STATUS: $_GET['status']\n");
+    echo "STATUS: $_GET['status']\n";
 
 }
 
