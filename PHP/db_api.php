@@ -275,11 +275,11 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 
     if (!initialize_preferences($id)) {
         echo "Couldn't initialize preferences for new user!</br>";
-        // return 0;
+        return 0;
     }
-    if (initialize_privacy_settings($id)){
+    if (!initialize_privacy_settings($id)){
         echo "Couldn't initialize privacy settings for new user!</br";
-        // return 0;
+        return 0;
     }
 
     return 1;
