@@ -1604,7 +1604,7 @@ function set_status($user_id, $status) {
 		return 0;
 	}
 
-	$query = "INSERT INTO User_status (status) VALUES (?) WHERE id=?";
+	$query = "INSERT INTO User_status (user_status) VALUES (?) WHERE id=?";
 	$data = [$status, $user_id];
 	$result = exec_query($query, $data);
 
