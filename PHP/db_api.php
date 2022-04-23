@@ -1581,7 +1581,7 @@ function get_status($user_id) {
 		return "";
 	}
 	else {
-		return $result->fetch_assoc()["status"];
+		return $result->fetch_assoc()["user_status"];
 	}
 }
 
@@ -1622,7 +1622,7 @@ function set_status($user_id, $status) {
 		$query = "UPDATE User_status set user_status=? WHERE id=?";
 		$data = [$status, $user_id];
 	}
-	
+
 	$result = exec_query($query, $data);
 
 	if ($result == NULL) {
