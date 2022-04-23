@@ -254,7 +254,527 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     # Attempt to create this user
     $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, getdate()];
+
+	$today = getdate();
+	$today = getdate()["year"] . getdate()[""]
+
+function getTypes($data){
+    $retString = '';
+
+    foreach ($data as &$value) {
+        $retString .= gettype($value)[0];
+    }
+    unset($value);
+    return $retString;
+}
+
+function getUser($user_id, $email){
+    $query = "";
+    $data = [];
+    if($user_id){
+        $query = "SELECT * FROM Users WHERE id=?";
+        $data = [$user_id];
+    }else if($email){
+        $query = "SELECT * FROM Users WHERE email=?";
+        $data = [$email];
+    }else{
+        return NULL;
+    }
+
+    $result = exec_query($query, $data);
+    return $result;
+}
+
+# Helper function. Not part of the API
+# Takes in a SQL statement to execute.
+# Returns:
+# * The mysqli_result object of the SQL statement if executed successfully
+# * NULL if there was a problem executing the SQL statement
+function exec_query($query, $data) {
+
+    $host = 'oceanus.cse.buffalo.edu';
+    $user = 'jjgrant';
+    $db = 'cse442_2022_spring_team_j_db';
+    $password = 50276673;
+    
+    $connection = new mysqli($host, $user, $password, $db);
+    
+    # Error connecting, return NULL
+    if ($connection->connect_error) {
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error . "\n";
+        return NULL;
+    }
+
+    # If there is data to be concatenated into the query, do it here
+    if($data) {
+
+        if (gettype($data) != "array") {
+            echo "Mismatched data given to exec_query function\n";
+            return NULL;
+        }
+        
+        # Returns false on error
+        $stmt = $connection->prepare($query);
+        if (!$stmt) {   # prepare() call failed
+            echo "Couldn't prepare SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $stmt->bind_param(getTypes($data), ...$data);
+        if (!$stmt) {    # bind_param() call failed
+            echo "Couldn't bind parameters to prepared SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $result_execute = $stmt->execute(); 
+        if ($result_execute) {  # True if successful
+            
+            if($query[0] != 'S'){
+                return $result_execute;
+            }
+
+            $result = $stmt->get_result();
+
+            if (!$result) {  # Failed
+                echo "Couldn't get result from statement execution\n";
+                $connection->close();
+                return NULL;
+            }
+            else{
+                $connection->close();
+                return $result;
+            }
+        }
+
+        # execute() call failed
+        else {
+            echo "Couldn't execute prepared statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+    # Otherwise, just execute the query
+    } else {
+        $result = $connection->query($query);
+        if (!$result) {  # False if failed
+            echo "Couldn't execute non-prepared query\n";
+            $connection->close();
+            return NULL;
+        }
+    }
+
+    $connection->close();
+    return $result; // returns Object, True, False
+}
+
+# Check if there is an existing account with this user_id
+function user_exists($user_id) {
+    $result = getUser($user_id, NULL);
+    if ($result == NULL) return false;
+    else return $result->num_rows > 0;
+}
+
+// Check if there is a date in Date_ideas with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date to check for existence
+//
+// returns:
+//      true if a date with this ID exists
+//      false otherwise
+function date_exists($date_id) {
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+    else if ($result->num_rows <= 0) {
+        print("Date doesn't exist in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+
+    return true;
+}
+
+# Check if a $user_id's password matches $password
+function check_password($user_id, $password) {
+    if (!user_exists($user_id)) return 1;           // User doesn't exist
+    
+    $result = exec_query("SELECT * FROM Users WHERE $user_id=? AND $password=?",
+        [$user_id, password_hash($password)]);
+
+    if ($result == NULL) return 1;                  // Err executing sql
+    else if ($result->num_rows == 0) return -1;     // No matching user id and password
+    else return 0;                                  // Password matches
+}
+
+# Get this user's ID by their email
+function get_user_id($email) {
+    
+    $result = getUser(NULL, $email);
+    
+    if (!$result->num_rows) {
+        return 0;
+    }
+
+    # $answer can be false or null, which will trigger the else
+    if ($answer = $result->fetch_assoc()) {
+        return $answer["id"];
+    }
+    else {
+        echo "Failed to get results of user ID query\n";
+        return 0;
+    }
+}
+
+
+# Attempt to sign in the user whose email is `email` and whose password is
+# `password`
+function sign_in($email, $password) {
+    # Get the current online status of the select user with the given email
+    $result = getUser(NULL, $email);
+    $row = $result->fetch_assoc();
+    if (!$row) {
+        echo "Couldn't find user with email $email\n";
+    }
+    else if (!$result->num_rows) {
+        echo "No results for sign_in. User does exist\n";
+        return 0;
+    }
+    else if (password_verify($password, $row['password'])) {
+        // NEED TO SET TO ONLINE. Jesus swastik.
+        return 1;
+    }
+    # Couldn't get results from query
+    else {
+        echo "Failed to get results of sign-in query\n";
+        return 0;
+    }
+}
+
+
+# Attempt to change the password of the user with ID `user_id`
+function update_password($user_id, $old_pwd, $new_pwd) {
+    $user = getUser($user_id, NULL);
+    $user = $user->fetch_assoc();
+    #If eitheir old or new password is empty, return -1
+    if(empty($old_pwd) || empty($new_pwd)) {
+        echo "Passwords cannot be empty\n";
+        return 0;
+    }else if ($old_pwd == $new_pwd){
+        echo "Passwords are the same\n";
+        return 0;
+    }
+    else if (!user_exists($user_id)) {
+        echo "User doesn't exist in update_password\n";
+        return 0;
+    }else if ($user['password'] != $old_pwd){
+        echo "Password is wrong\n";
+        return 0;
+    }else {
+        $query = "UPDATE Users SET password =?  WHERE id =? AND password =?";
+        $data = [$new_pwd, $user_id, $old_pwd];
+        $update = exec_query($query, $data);
+        echo $update;
+        if (!$update) {
+            echo "Couldn't execute query to update password\n";
+            return 0;
+        }
+        return 1;
+    }
+}
+
+
+# Creates a new user and stores their data in the database. This function will
+# create a unique user ID for the new user
+function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
+    # Make sure none of the required fields are empty
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($city) || empty($zipcode) || empty($bday)) {
+        echo "Missing required fields in create_user\n";
+        return 0;
+    }
+
+    # Make sure this email isn't being used
+    $email_used = get_user_id($email);
+    
+    if ($email_used != 0) {
+        echo "User already exists\n";
+        return 0;
+    }
+
+    # Attempt to create this user
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	$today = getdate();
+	$today = getdate()["year"] . getdate()[""]
+
+function getTypes($data){
+    $retString = '';
+
+    foreach ($data as &$value) {
+        $retString .= gettype($value)[0];
+    }
+    unset($value);
+    return $retString;
+}
+
+function getUser($user_id, $email){
+    $query = "";
+    $data = [];
+    if($user_id){
+        $query = "SELECT * FROM Users WHERE id=?";
+        $data = [$user_id];
+    }else if($email){
+        $query = "SELECT * FROM Users WHERE email=?";
+        $data = [$email];
+    }else{
+        return NULL;
+    }
+
+    $result = exec_query($query, $data);
+    return $result;
+}
+
+# Helper function. Not part of the API
+# Takes in a SQL statement to execute.
+# Returns:
+# * The mysqli_result object of the SQL statement if executed successfully
+# * NULL if there was a problem executing the SQL statement
+function exec_query($query, $data) {
+
+    $host = 'oceanus.cse.buffalo.edu';
+    $user = 'jjgrant';
+    $db = 'cse442_2022_spring_team_j_db';
+    $password = 50276673;
+    
+    $connection = new mysqli($host, $user, $password, $db);
+    
+    # Error connecting, return NULL
+    if ($connection->connect_error) {
+        echo "Connection failed: (" . $connection->errno . ") ." . $connection->error . "\n";
+        return NULL;
+    }
+
+    # If there is data to be concatenated into the query, do it here
+    if($data) {
+
+        if (gettype($data) != "array") {
+            echo "Mismatched data given to exec_query function\n";
+            return NULL;
+        }
+        
+        # Returns false on error
+        $stmt = $connection->prepare($query);
+        if (!$stmt) {   # prepare() call failed
+            echo "Couldn't prepare SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $stmt->bind_param(getTypes($data), ...$data);
+        if (!$stmt) {    # bind_param() call failed
+            echo "Couldn't bind parameters to prepared SQL statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+        # Returns false on failure
+        $result_execute = $stmt->execute(); 
+        if ($result_execute) {  # True if successful
+            
+            if($query[0] != 'S'){
+                return $result_execute;
+            }
+
+            $result = $stmt->get_result();
+
+            if (!$result) {  # Failed
+                echo "Couldn't get result from statement execution\n";
+                $connection->close();
+                return NULL;
+            }
+            else{
+                $connection->close();
+                return $result;
+            }
+        }
+
+        # execute() call failed
+        else {
+            echo "Couldn't execute prepared statement\n";
+            $connection->close();
+            return NULL;
+        }
+
+    # Otherwise, just execute the query
+    } else {
+        $result = $connection->query($query);
+        if (!$result) {  # False if failed
+            echo "Couldn't execute non-prepared query\n";
+            $connection->close();
+            return NULL;
+        }
+    }
+
+    $connection->close();
+    return $result; // returns Object, True, False
+}
+
+# Check if there is an existing account with this user_id
+function user_exists($user_id) {
+    $result = getUser($user_id, NULL);
+    if ($result == NULL) return false;
+    else return $result->num_rows > 0;
+}
+
+// Check if there is a date in Date_ideas with this ID
+//
+// parameter: date_id   [int]
+//      The ID of the date to check for existence
+//
+// returns:
+//      true if a date with this ID exists
+//      false otherwise
+function date_exists($date_id) {
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+    else if ($result->num_rows <= 0) {
+        print("Date doesn't exist in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+
+    return true;
+}
+
+# Check if a $user_id's password matches $password
+function check_password($user_id, $password) {
+    if (!user_exists($user_id)) return 1;           // User doesn't exist
+    
+    $result = exec_query("SELECT * FROM Users WHERE $user_id=? AND $password=?",
+        [$user_id, password_hash($password)]);
+
+    if ($result == NULL) return 1;                  // Err executing sql
+    else if ($result->num_rows == 0) return -1;     // No matching user id and password
+    else return 0;                                  // Password matches
+}
+
+# Get this user's ID by their email
+function get_user_id($email) {
+    
+    $result = getUser(NULL, $email);
+    
+    if (!$result->num_rows) {
+        return 0;
+    }
+
+    # $answer can be false or null, which will trigger the else
+    if ($answer = $result->fetch_assoc()) {
+        return $answer["id"];
+    }
+    else {
+        echo "Failed to get results of user ID query\n";
+        return 0;
+    }
+}
+
+
+# Attempt to sign in the user whose email is `email` and whose password is
+# `password`
+function sign_in($email, $password) {
+    # Get the current online status of the select user with the given email
+    $result = getUser(NULL, $email);
+    $row = $result->fetch_assoc();
+    if (!$row) {
+        echo "Couldn't find user with email $email\n";
+    }
+    else if (!$result->num_rows) {
+        echo "No results for sign_in. User does exist\n";
+        return 0;
+    }
+    else if (password_verify($password, $row['password'])) {
+        // NEED TO SET TO ONLINE. Jesus swastik.
+        return 1;
+    }
+    # Couldn't get results from query
+    else {
+        echo "Failed to get results of sign-in query\n";
+        return 0;
+    }
+}
+
+
+# Attempt to change the password of the user with ID `user_id`
+function update_password($user_id, $old_pwd, $new_pwd) {
+    $user = getUser($user_id, NULL);
+    $user = $user->fetch_assoc();
+    #If eitheir old or new password is empty, return -1
+    if(empty($old_pwd) || empty($new_pwd)) {
+        echo "Passwords cannot be empty\n";
+        return 0;
+    }else if ($old_pwd == $new_pwd){
+        echo "Passwords are the same\n";
+        return 0;
+    }
+    else if (!user_exists($user_id)) {
+        echo "User doesn't exist in update_password\n";
+        return 0;
+    }else if ($user['password'] != $old_pwd){
+        echo "Password is wrong\n";
+        return 0;
+    }else {
+        $query = "UPDATE Users SET password =?  WHERE id =? AND password =?";
+        $data = [$new_pwd, $user_id, $old_pwd];
+        $update = exec_query($query, $data);
+        echo $update;
+        if (!$update) {
+            echo "Couldn't execute query to update password\n";
+            return 0;
+        }
+        return 1;
+    }
+}
+
+
+# Creates a new user and stores their data in the database. This function will
+# create a unique user ID for the new user
+function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
+    # Make sure none of the required fields are empty
+    if (empty($name) || empty($email) || empty($pwd) || empty($addr) || empty($city) || empty($zipcode) || empty($bday)) {
+        echo "Missing required fields in create_user\n";
+        return 0;
+    }
+
+    # Make sure this email isn't being used
+    $email_used = get_user_id($email);
+    
+    if ($email_used != 0) {
+        echo "User already exists\n";
+        return 0;
+    }
+
+    # Attempt to create this user
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	$today = getdate();
+	$today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
+
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, $today];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
