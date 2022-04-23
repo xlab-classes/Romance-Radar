@@ -10,7 +10,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     $user_id = (int) $_SESSION["user"]["id"];
     if (!$user_id) {
         print("NO USER WITH THIS ID\n");
-        exit();
+        // exit();
     }     // User not logged in
 
     echo "STATUS: $_GET['status']\n";
