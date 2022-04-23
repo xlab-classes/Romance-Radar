@@ -202,14 +202,14 @@ CREATE TABLE IF NOT EXISTS Privacy_settings(
 
 /* Create a table for capcha images */
 CREATE TABLE IF NOT EXISTS Captcha(
-    id INT  NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL AUTO_INCREMENT,
     image VARCHAR(100) NOT NULL,
     code VARCHAR(100) NOT NULL,
     PRIMARY KEY (id)
 );
 
 INSERT INTO Captcha (id,image, code) VALUES 
-(1,'../assets/Captcha/captcha_1.png', '2cegf'),
-(2,'../assets/Captcha/captcha_2.png', '24f6w'),
-(3,'../assets/Captcha/captcha_3.png', '226md');
+('../assets/Captcha/captcha_1.png', '2cegf'),
+('../assets/Captcha/captcha_2.png', '24f6w'),
+('../assets/Captcha/captcha_3.png', '226md');
 
