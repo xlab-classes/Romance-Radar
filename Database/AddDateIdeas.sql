@@ -6,7 +6,9 @@ VALUES
     "Share a chat over some warm joe",  -- Description
     "../assets/coffee.jpg",             -- Image
     "2022-06-01 10:00:00",              -- Time
-    "Lackawanna, NY"                    -- Address
+    "Lackawanna, NY",                   -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a bar
@@ -17,7 +19,9 @@ VALUES
     "Share a chat over some cold beer", -- Description
     "../assets/beer.jpg",               -- Image
     "2022-06-01 20:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a dinner date
@@ -28,7 +32,9 @@ VALUES
     "Open up over wine and pasta",      -- Description
     "../assets/steak.jpg",              -- Image
     "2022-06-01 18:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a concert
@@ -39,7 +45,9 @@ VALUES
     "Chill out with a classic band",    -- Description
     "../assets/chili_peppers.jpg",      -- Image
     "2022-06-01 18:00:00",              -- Time
-    "Alden, NY"                         -- Address
+    "Alden, NY",                        -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a hike
@@ -50,7 +58,9 @@ VALUES
     "Stay moving while you connect",    -- Description
     "../assets/chestnut_ridge.jpg",     -- Image
     "2022-06-01 14:00:00",              -- Time
-    "Orchard Park, NY"                  -- Address
+    "Orchard Park, NY",                 -- Address
+	10,
+	10
 );
 
 -- Insert a date idea for a club
@@ -61,7 +71,9 @@ VALUES
     "Dance to EDM then Uber home",      -- Description
     "../asssets/venu.jpg",              -- Image
     "2022-06-01 22:00:00",              -- Time
-    "Buffalo, NY"                       -- Address
+    "Buffalo, NY",                      -- Address
+	10,
+	10
 );
 
 
