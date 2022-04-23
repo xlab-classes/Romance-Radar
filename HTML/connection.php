@@ -1,8 +1,12 @@
 <?php
+include './navigation.php'
+?>
+<?php
 require_once '../PHP/db_api.php';
+require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
 
-session_start();
+
 if(!isset($_SESSION['user'])){
     echo 'Please Login!!';
     header('./login.html');
@@ -10,8 +14,32 @@ if(!isset($_SESSION['user'])){
 }
 
 $user = $_SESSION['user'];
+$connection_requests = get_requests($user['id']);
+
+// function console_log($output, $with_script_tags = true) {
+//     $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+// ');';
+//     if ($with_script_tags) {
+//         $js_code = '<script>' . $js_code . '</script>';
+//     }
+//     echo $js_code;
+// }
 
 if($user['partner'] == $user['id']){
+    $res = "";
+    foreach($connection_requests as $id){
+            $request_user = getUser($id,NULL)->fetch_assoc();
+            $res = $res . 
+        "<div class='col-3'>
+            <div class='card card-block card-body'>
+            <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
+            <h5 class='card-title'>".$request_user['name']."</h5>
+            <div class='row'>
+            <img src='../assets/icons/accept.png' onclick='location.href="."../PHP/modify_connections.php?type=1&from_id=".strval($id)."&to_id=".strval($user['id'])."' class='col-sm-3 offset-sm-3'></img>
+            <img src='../assets/icons/reject.png' onclick='location.href="."../PHP/modify_connections.php?type=0&from_id=".strval($id)."' class='col-sm-3'></img></div>
+            </div>
+        </div>";
+    }
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -20,10 +48,11 @@ if($user['partner'] == $user['id']){
             <div class="col-4">
                 <img src="../assets/cupid.png" class="img-fluid">
             </div>
+
             <div class="col">
                 <div class="row">
                     <p class="col fst-italic fw-light">
-                        Let\'s face it, coming up with a date idea that\'s as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you\'re commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don\'t have a lot of creative juices left over when we\'re done for the day.
+                        Let\'s face it, coming up with a date idea that\'s as fun and unique as your relationship can be just as hard as finding someone to date in the first place. Whether you\'re commuting to work or traveling 20 steps from your bed to your desk and back again, most of us just don\'t have a lot of creative juices left over when we\'re done for the day. 
                         <br/><br/>Leave the creativity to us!
                         <br/><br/><br/>Match with your soulmate right now!
                     </p>
@@ -43,8 +72,13 @@ if($user['partner'] == $user['id']){
                 <div class="row"><div class="col"><img src="%s" class="img-fluid rounded-circle"></div></div>
                 <div class="row"><div class="col text-center">%s</div></div>
             </div>
+            
         </div>
-    ', $user['user_picture'], $user['name']);
+        <h3 style="margin-left:100px;margin-top:50px">Pending Requests</h3>
+        <div class="scrolling-wrapper row flex-row flex-nowrap mt-4 pb-4 pt-2" style="margin-left: 100px;">
+        %s
+        </div>
+    ', $user['user_picture'], $user['name'], $res);
 }else{
     $partner_preferences = get_preferences((int)$user['partner']);
     $preferences_categories = array(
@@ -52,15 +86,24 @@ if($user['partner'] == $user['id']){
         'Entertainment' => array('concerts' => 'Concerts', 'hiking'=>'Hiking', 'bar'=>'Bar'),
         'Venue' => array('indoors'=>'Indoors', 'outdoors'=>'Outdoors', 'social_events'=>'Social Events'),
         'Date_time' => array('morning'=>'Morning', 'afternoon'=>'Afternoon', 'evening'=>'Afternoon'));
+    $privacy_settings = array(
+        'Food' => 'food_pref',
+        'Entertainment' => 'ent_pref',
+        'Venue' => 'venue_pref',
+        'Date_time' => 'time_pref');    
     $selected_preferences = array();
     foreach($preferences_categories as $cat => $sub_cats){
         $selected_preferences[$cat] = '';
-        foreach($sub_cats as $sub_cat => $value){
-            if($partner_preferences[$cat][$sub_cat]){
-                $selected_preferences[$cat] .= sprintf('%s, ', $value);
+        if($_SESSION['partner']['privacy_settings'][$privacy_settings[$cat]] != 1){
+            foreach($sub_cats as $sub_cat => $value){
+                if($partner_preferences[$cat][$sub_cat]){
+                    $selected_preferences[$cat] .= sprintf('%s, ', $value);
+                }
             }
+            $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
+        }else{
+            $selected_preferences[$cat] = 'Hidden';
         }
-        $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
     }
     $preferences_html = sprintf('
     <div class="ps-5 col-3">
@@ -108,13 +151,13 @@ if($user['partner'] == $user['id']){
         </div>
     </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
-    $display = sprintf('
+        $display = sprintf('
     <div class="row pt-5 gx-5 gy-5">
             %s
             <div class="col">
                 <div class="row justify-content-center">
                     <div class="col-6">
-                        <img src="%s" class="img-fluid rounded-circle">
+                        <img src="%s" class="img-fluid rounded-circle">  
                     </div>
                 </div>
                 <div class="row">
@@ -133,7 +176,7 @@ if($user['partner'] == $user['id']){
                         </button>
                     </div>
                 <!-- Button trigger modal -->
-
+                
                 <!-- Modal -->
                 <div class="modal fade" id="moveOnModal" tabindex="-1" aria-labelledby="moveOnModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-custom">
@@ -143,7 +186,7 @@ if($user['partner'] == $user['id']){
                                 <div class="row">
                                     <p class="text-start">
                                         Executing this action will discard all current and previous data from your account and this action is irreversible.
-                                    </p>
+                                    </p>   
                                 </div>
                                 <di class="row">
                                     <div class="col text-center">
@@ -166,14 +209,18 @@ if($user['partner'] == $user['id']){
     ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name']);
 }
 
-        $generate_date_ids = generate_dates($_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
+        $generate_date_ids = generate_dates($user['id'], $user['partner']);
 
-        $get_date_info = get_date_information((int)$_SESSION['generate_date_ids']);
+        $get_date_info = get_date_information($user['id'], $generate_date_ids);
 
-        $display_date_idea = '';
+    foreach ($get_date_info as $elements){
+
+
+
+        #$display_date_idea = '';
 
         $display = sprintf('
-        <div class="container py-5">
+<div class="container py-5">
   <div class="row justify-content-center">
   <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
   <div class="row g-0">
@@ -182,9 +229,9 @@ if($user['partner'] == $user['id']){
     </div>
     <div class="col-md-8">
       <div class="card-body">
-        <h5 class="card-title">%s</h5>
+        <h5 class="card-title"><?php echo $elements?></h5>
         <p class="card-text mb-0">
-          %s
+          <?php echo $elements?>
         </p>
       </div>
       </div>
@@ -210,13 +257,12 @@ if($user['partner'] == $user['id']){
   </div>
 </div>
 </div>
-    ', $_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
+    ', $generate_date_ids, $user['id'], $user['partner']);
+    #$_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
 
 
 
-
-
-
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -226,12 +272,12 @@ if($user['partner'] == $user['id']){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+    
     <style>
         body{
             background-color: #FFC0CB;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
+            
         }
         .rounded-input{
             border-radius: 25px 0 0 25px;
@@ -260,16 +306,24 @@ if($user['partner'] == $user['id']){
         .modal-custom-body{
             border-radius: 40px;
         }
+        .scrolling-wrapper{
+	overflow-x: auto;
+}
+.card-block{
+	height: 500px;
+	background-color: #fff;
+	border: none;
+	background-position: center;
+	background-size: cover;
+	transition: all 0.2s ease-in-out !important;
+	border-radius: 24px;
+	&:hover{
+		transform: translateY(-5px);
+		box-shadow: none;
+		opacity: 0.9;
+	}
 
-        .mask-custom {
-            background: rgb(255, 255, 255);
-            border-radius: 2em;
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            background-clip: padding-box;
-            box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
-        }
-
+}
     </style>
 </head>
 <body>
