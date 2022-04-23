@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS Captcha(
     PRIMARY KEY (id)
 );
 
-INSERT INTO Captcha (id,image, code) VALUES 
+INSERT INTO Captcha (image, code) VALUES 
 ('../assets/Captcha/captcha_1.png', '2cegf'),
 ('../assets/Captcha/captcha_2.png', '24f6w'),
 ('../assets/Captcha/captcha_3.png', '226md');
