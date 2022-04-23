@@ -1,6 +1,6 @@
 -- Insert a date idea for coffee
 INSERT INTO Date_ideas
-(name, description, picture, time, location) 
+(name, description, picture, time, location, est_cost, est_length) 
 VALUES
 (   "Tim Hortons",                      -- Cafe name
     "Share a chat over some warm joe",  -- Description
@@ -13,7 +13,7 @@ VALUES
 
 -- Insert a date idea for a bar
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Mr.Goodbar",                       -- Bar name
     "Share a chat over some cold beer", -- Description
@@ -26,7 +26,7 @@ VALUES
 
 -- Insert a date idea for a dinner date
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Chef's",                           -- Restaurant name
     "Open up over wine and pasta",      -- Description
@@ -39,7 +39,7 @@ VALUES
 
 -- Insert a date idea for a concert
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Red Hot Chili Peppers",            -- Band name
     "Chill out with a classic band",    -- Description
@@ -52,7 +52,7 @@ VALUES
 
 -- Insert a date idea for a hike
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Chestnut Ridge",                   -- Park name
     "Stay moving while you connect",    -- Description
@@ -65,7 +65,7 @@ VALUES
 
 -- Insert a date idea for a club
 INSERT INTO Date_ideas
-(name, description, picture, time, location)
+(name, description, picture, time, location, est_cost, est_length)
 VALUES
 (   "Venu",                             -- Club name
     "Dance to EDM then Uber home",      -- Description
