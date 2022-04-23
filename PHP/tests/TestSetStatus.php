@@ -38,7 +38,6 @@ final class TestSetStatus extends TestCase
 	{
 		$this->assertEquals(1, set_status($this->id, ""), "Couldn't set empty string as status");
 		$this->assertEquals(1, set_status($this->id, "A"), "Couldn't set non-empty string as status");
-		$this->assertEquals(0, set_status($this->id, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"), "Erroneously set long string as status");
 	}
 
 }
