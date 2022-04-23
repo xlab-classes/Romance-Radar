@@ -12,9 +12,9 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     }     // User not logged in
 
     if (!isset($_GET['status'])) {
-        print("NO STATUS SET\n");
+        echo "<html><body><h1>NO STATUS SET\n</h1></body></html>";
     }
 
 }
 
-header("Location: ../HTML/profile_page.php");
+// header("Location: ../HTML/profile_page.php");
