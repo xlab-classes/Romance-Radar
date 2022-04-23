@@ -1,5 +1,7 @@
 <?php
 
+require_once './db_api.php';
+
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Get user ID and make sure user is logged in
@@ -12,9 +14,9 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     }     // User not logged in
 
     if (isset($_GET['status'])) {
-        echo "<html><body><h1>" . $_GET['status'] . "</h1></body></html>";
+        set_status($user_id, $_GET['status']);
     }
 
 }
 
-// header("Location: ../HTML/profile_page.php");
+header("Location: ../HTML/profile_page.php");
