@@ -138,7 +138,7 @@ function selectedSubCategory($cat, $sub){
                           </ul>
                         </div>
 
-                        <p class="text-center text-black"><h5>Current status: <?php get_status($_SESSION['user']['id'])?></h5></p>
+                        <p class="text-center text-black"><h5>Current status: <?php echo get_status($_SESSION["user"]["id"])?></h5></p>
 
                         <input class='btn btn-primary' type='button' onclick="window.location='./privacy_settings.php';" value='Privacy Settings'>
                     </div>

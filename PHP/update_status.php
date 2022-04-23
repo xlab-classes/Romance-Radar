@@ -15,10 +15,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if (isset($_GET['status'])) {
         set_status($user_id, $_GET['status']);
-        $status = get_status($user_id);
-        echo "$status";
     }
 
 }
 
-// header("Location: ../HTML/profile_page.php");
+header("Location: ../HTML/profile_page.php");
