@@ -37,7 +37,8 @@ final class TestGetStatus extends TestCase
 
 	function testBasic(): void
 	{
-		
+		$this->assertEquals(1, set_status($this->id, "Busy"));
+		$this->assertEquals("Busy", get_status($this->id));
 	}
 
 }
