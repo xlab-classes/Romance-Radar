@@ -1588,3 +1588,36 @@ function get_status($user_id) {
 		return $result->fetch_assoc()["status"];
 	}
 }
+
+// Set the status of this user
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want to set
+//
+// parameter: status	[string]
+//		The status to set, as a string
+//
+// returns:
+//		1 on success
+//		0 on failure
+//
+// constraints:
+//		This user must exist
+//		The status must be a string, although it can be empty
+function set_status($user_id, $status) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in set_status\n");
+		return 0;
+	}
+
+	$query = "INSERT INTO User_status (status) VALUES (?) WHERE id=?";
+	$data = [$status, $user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in set_status\n");
+		return 0;
+	}
+	
+	return 1;
+}
