@@ -34,16 +34,10 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
-    // $host = 'oceanus.cse.buffalo.edu';
-    // $user = 'jjgrant';
-    // $db = 'cse442_2022_spring_team_j_db';
-    // $password = 50276673;
-    
-
-    $host = 'localhost';
-    $user = 'root';
-    $db = 'romanceradar';
-    $password = '';
+    $host = 'oceanus.cse.buffalo.edu';
+    $user = 'jjgrant';
+    $db = 'cse442_2022_spring_team_j_db';
+    $password = 50276673;
     
     $connection = new mysqli($host, $user, $password, $db);
     
