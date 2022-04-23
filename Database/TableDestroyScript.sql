@@ -30,6 +30,6 @@ TRUNCATE TABLE Privacy_settings;
 
 TRUNCATE TABLE Date_tags;
 
-DROP TABLE Status;
+DROP TABLE User_status;
 
 SET FOREIGN_KEY_CHECKS=1;

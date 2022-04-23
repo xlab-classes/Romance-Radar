@@ -1551,3 +1551,40 @@ function get_privacy_settings($id){
     }
     return $return;
 }
+
+// Get this user's status
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want
+//
+// returns:
+//		The status of the user as a string on success
+//		NULL on failure
+//
+// constraints:
+//		This user must exist
+//
+// Note:
+// 		If this user has no status set, this function will return an empty
+//	string
+function get_status($user_id) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in get_status\n");
+		return NULL;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in get_status\n");
+		return NULL;
+	}
+	else if ($result->num_rows == 0) {
+		return "";
+	}
+	else {
+		return $result->fetch_assoc()["status"];
+	}
+}
