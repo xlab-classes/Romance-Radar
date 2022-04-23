@@ -11,6 +11,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         exit();
     }     // User not logged in
 
+    if (!isset($_GET['status'])) {
+        print("NO STATUS SET\n");
+    }
+
 }
 
 header("Location: ../HTML/profile_page.php");
