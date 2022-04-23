@@ -252,14 +252,15 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query =
-		"INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date, verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO Users ";
+	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city, verified, signup_date) ";
+	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	// $today = getdate();
 	// $today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
 	$today = "2022-04-04";
 
-    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, $today, 0];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, 0, $today];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
