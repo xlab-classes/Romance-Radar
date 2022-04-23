@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS Users(
     partner INT,
     city VARCHAR(100) NOT NULL,
     verified BIT NOT NULL DEFAULT 0,
+	signup_date DATE NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (partner) REFERENCES Users(id) ON DELETE SET NULL
     );

@@ -258,9 +258,9 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
+    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city, signup_date) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, getdate()];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
