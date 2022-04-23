@@ -207,6 +207,12 @@ CREATE TABLE IF NOT EXISTS Captcha(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS Status(
+	id INT AUTO_INCREMENT,
+	status VARCHAR(50)
+	FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
 INSERT INTO Captcha (id,image, code) VALUES 
 (1,'../assets/Captcha/captcha_1.png', '2cegf'),
 (2,'../assets/Captcha/captcha_2.png', '24f6w'),
