@@ -1606,8 +1606,23 @@ function set_status($user_id, $status) {
 		return 0;
 	}
 
-	$query = "UPDATE User_status set user_status=? WHERE id=?";
-	$data = [$status, $user_id];
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't query User_status in set_status\n");
+		return 0;
+	}
+	else if ($result->num_rows == 0) {
+		$query = "INSERT INTO User_status (id, user_status) VALUES (?, ?)";
+		$data = [$user_id, $status];
+	}
+	else {
+		$query = "UPDATE User_status set user_status=? WHERE id=?";
+		$data = [$status, $user_id];
+	}
+	
 	$result = exec_query($query, $data);
 
 	if ($result == NULL) {
