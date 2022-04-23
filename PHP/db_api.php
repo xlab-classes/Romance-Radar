@@ -258,7 +258,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 	$today = getdate();
 	$today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
 
-    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, ];
+    $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, $today];
     $result = exec_query($query, $data);
     if (!$result) {
         echo "Couldn't insert user into database\n";
