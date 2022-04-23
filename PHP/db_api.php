@@ -253,12 +253,8 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 
     # Attempt to create this user
     $query = "INSERT INTO Users ";
-	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city, signup_date) ";
-	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-	// $today = getdate();
-	// $today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
-	$today = "2022-04-04";
+	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city) ";
+	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, 0, $today];
     $result = exec_query($query, $data);
