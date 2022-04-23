@@ -14,6 +14,9 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     if (!isset($_GET['status'])) {
         echo "<html><body><h1>NO STATUS SET\n</h1></body></html>";
     }
+    else {
+        echo "<html><body><h1>STATUS SET\n</h1></body></html>";
+    }
 
 }
 
