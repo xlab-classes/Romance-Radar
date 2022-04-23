@@ -11,11 +11,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         exit();
     }     // User not logged in
 
-    if (!isset($_GET['status'])) {
-        echo "<html><body><h1>NO STATUS SET\n</h1></body></html>";
-    }
-    else {
-        echo "<html><body><h1>STATUS SET\n</h1></body></html>";
+    if (isset($_GET['status'])) {
+        echo "<html><body><h1>" . $_GET['status'] . "</h1></body></html>";
     }
 
 }
