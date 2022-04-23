@@ -6,7 +6,6 @@ require_once '../PHP/db_api.php';
 require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
 
-session_start();
 
 if(!isset($_SESSION['user'])){
     echo 'Please Login!!';
@@ -17,29 +16,30 @@ if(!isset($_SESSION['user'])){
 $user = $_SESSION['user'];
 $connection_requests = get_requests($user['id']);
 
-function console_log($output, $with_script_tags = true) {
-    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
-');';
-    if ($with_script_tags) {
-        $js_code = '<script>' . $js_code . '</script>';
-    }
-    echo $js_code;
-}
+// function console_log($output, $with_script_tags = true) {
+//     $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+// ');';
+//     if ($with_script_tags) {
+//         $js_code = '<script>' . $js_code . '</script>';
+//     }
+//     echo $js_code;
+// }
 
 if($user['partner'] == $user['id']){
     $res = "";
     foreach($connection_requests as $id){
             $request_user = getUser($id,NULL)->fetch_assoc();
-            $res = $res . "<div class=\"col-3\">
-            <div class=\"card card-block card-body\">
-            <img class=\"card-img-top img-fluid rounded-circle\" style=\"height:60%\" src=\"{$request_user['user_picture']}\" size= alt=\"User image\">
-            <h5 class=\"card-title\">{$request_user['name']}</h5>
-            <div class=\"row\">
-            <img src=\"\assets\icons\accept.png\" onclick='location.href=\"/PHP/modify_connections.php?type=1&from_id=$id&to_id={$user['id']}\"' class=\"col-sm-3 offset-sm-3\"></img>
-            <img src=\"\assets\icons\\reject.png\" onclick='location.href=\"/PHP/modify_connections.php?type=0&from_id=$id\"' class=\"col-sm-3\"></img></div>
+            $res = $res . 
+        "<div class='col-3'>
+            <div class='card card-block card-body'>
+            <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
+            <h5 class='card-title'>".$request_user['name']."</h5>
+            <div class='row'>
+            <img src='../assets/icons/accept.png' onclick='location.href="."../PHP/modify_connections.php?type=1&from_id=".strval($id)."&to_id=".strval($user['id'])."' class='col-sm-3 offset-sm-3'></img>
+            <img src='../assets/icons/reject.png' onclick='location.href="."../PHP/modify_connections.php?type=0&from_id=".strval($id)."' class='col-sm-3'></img></div>
             </div>
         </div>";
-        }
+    }
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -86,20 +86,25 @@ if($user['partner'] == $user['id']){
         'Entertainment' => array('concerts' => 'Concerts', 'hiking'=>'Hiking', 'bar'=>'Bar'),
         'Venue' => array('indoors'=>'Indoors', 'outdoors'=>'Outdoors', 'social_events'=>'Social Events'),
         'Date_time' => array('morning'=>'Morning', 'afternoon'=>'Afternoon', 'evening'=>'Afternoon'));
+    $privacy_settings = array(
+        'Food' => 'food_pref',
+        'Entertainment' => 'ent_pref',
+        'Venue' => 'venue_pref',
+        'Date_time' => 'time_pref');    
     $selected_preferences = array();
     foreach($preferences_categories as $cat => $sub_cats){
         $selected_preferences[$cat] = '';
-        foreach($sub_cats as $sub_cat => $value){
-            if($partner_preferences[$cat][$sub_cat]){
-                $selected_preferences[$cat] .= sprintf('%s, ', $value);
+        if($_SESSION['partner']['privacy_settings'][$privacy_settings[$cat]] != 1){
+            foreach($sub_cats as $sub_cat => $value){
+                if($partner_preferences[$cat][$sub_cat]){
+                    $selected_preferences[$cat] .= sprintf('%s, ', $value);
+                }
             }
+            $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
+        }else{
+            $selected_preferences[$cat] = 'Hidden';
         }
-        $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
     }
-
-    // Display the partner's privacy settings
-    $partner_privacy = get_privacy_settings($user['id']);
-
     $preferences_html = sprintf('
     <div class="ps-5 col-3">
         <div class="row">
@@ -146,13 +151,7 @@ if($user['partner'] == $user['id']){
         </div>
     </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
-
-    // if privacy settings result is 1
-    if($partner_privacy == 1){
-        // preferences_html will be empty
-        $preferences_html = ''; 
-    }
-            $display = sprintf('
+        $display = sprintf('
     <div class="row pt-5 gx-5 gy-5">
             %s
             <div class="col">
