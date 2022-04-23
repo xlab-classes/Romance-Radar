@@ -257,7 +257,7 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
 
 	// $today = getdate();
 	// $today = $today["year"] . "-" . $today["mon"] . "-" . $today["mday"];
-	$today = "2022-04-23";
+	$today = "2022-04-04";
 
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city, $today];
     $result = exec_query($query, $data);
