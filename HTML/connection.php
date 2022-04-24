@@ -36,9 +36,9 @@ if($user['partner'] == $user['id']){
                 <h5 class='card-title'>".$request_user['name']."</h5>
                 <div class='row h-50'>
                     <div class='col'>
-                        <button type='button' class='btn h-50'>
+                        <button type='button' class='btn'>
                             <a href=../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=".strval($user['id']).">
-                                <img src='../assets/icons/accept.png' class='col-sm-3 offset-sm-3'>
+                                <img src='../assets/icons/accept.png' >
                             </a>
                         </button>
                     </div>
