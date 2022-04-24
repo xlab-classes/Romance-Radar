@@ -26,7 +26,7 @@ $connection_requests = get_requests($user['id']);
 // }
 
 if($user['partner'] == $user['id']){
-    $res = "";
+    $res = "<form action='../PHP/display_dates.php' method='post' enctype='multipart/form-data'>";
     foreach($connection_requests as $id){
             $request_user = getUser($id,NULL)->fetch_assoc();
             $res = $res . 
@@ -40,6 +40,8 @@ if($user['partner'] == $user['id']){
             </div>
         </div>";
     }
+    $res .= "</form>";
+    
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
