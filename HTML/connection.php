@@ -35,14 +35,16 @@ if($user['partner'] == $user['id']){
                 <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
                 <h5 class='card-title'>".$request_user['name']."</h5>
                 <div class='row'>
-                    <button type='button' class='btn'
+                    <button type='button' class='btn'>
                         <a href=../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=".strval($user['id']).">
                             <img src='../assets/icons/accept.png' class='col-sm-3 offset-sm-3'>
                         </a>
                     </button>
-                    <a href=../PHP/modify_connections.php?type=0&from_id=" . strval($id) . ">
-                        <img src='../assets/icons/reject.png' class='col-sm-3'>
-                    </a>
+                    <button type='button' class='btn'>
+                        <a href=../PHP/modify_connections.php?type=0&from_id=" . strval($id) . ">
+                            <img src='../assets/icons/reject.png' class='col-sm-3'>
+                        </a>
+                    </button>
                 </div>
             </div>
         </div>";
