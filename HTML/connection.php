@@ -33,7 +33,7 @@ if($user['partner'] == $user['id']){
         "<div class='col-3'>
             <div class='card card-block card-body'>
                 <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
-                <h5 class='card-title'>".$request_user['name']."</h5>
+                <h5 class='card-title text-center'>".$request_user['name']."</h5>
                 <div class='row h-50'>
                     <div class='col-6'>
                         <button type='button' class='btn'>
