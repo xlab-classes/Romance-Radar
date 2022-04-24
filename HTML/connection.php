@@ -207,62 +207,55 @@ if($user['partner'] == $user['id']){
             </div>
         </div>
     ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name']);
-}
+    
+    // Display date ideas
+    /*$generate_date_ids = generate_dates($user['id'], $user['partner']);
+    $get_date_info = get_date_information($user['id'], $generate_date_ids);
 
-        $generate_date_ids = generate_dates($user['id'], $user['partner']);
-
-        $get_date_info = get_date_information($user['id'], $generate_date_ids);
-
-    foreach ($get_date_info as $elements){
-
-
-
-        #$display_date_idea = '';
-
+    foreach ($get_date_info as $elements) {
         $display = sprintf('
-<div class="container py-5">
-  <div class="row justify-content-center">
-  <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="%s" class="img-fluid rounded-start" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title"><?php echo $elements?></h5>
-        <p class="card-text mb-0">
-          <?php echo $elements?>
-        </p>
-      </div>
-      </div>
-    </div>
-  </div>
-</div>
+            <div class="container py-5">
+            <div class="row justify-content-center">
+            <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                <img src="%s" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo $elements?></h5>
+                    <p class="card-text mb-0">
+                    <?php echo $elements?>
+                    </p>
+                </div>
+                </div>
+                </div>
+            </div>
+            </div>
 
-  <div class="row justify-content-center">
-  <div class="card mask-custom w-100 mt-5" style="max-width: 840px;">
-  <div class="row g-0">
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">%s</h5>
-        <p class="card-text mb-0">
-          %s
-        </p>
-      </div>
-      </div>
-      <div class="col-md-4">
-      <img src="%s" class="img-fluid rounded-start" alt="...">
-    </div>
-    </div>
-  </div>
-</div>
-</div>
-    ', $generate_date_ids, $user['id'], $user['partner']);
-    #$_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
+            <div class="row justify-content-center">
+            <div class="card mask-custom w-100 mt-5" style="max-width: 840px;">
+            <div class="row g-0">
+                <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">%s</h5>
+                    <p class="card-text mb-0">
+                    %s
+                    </p>
+                </div>
+                </div>
+                <div class="col-md-4">
+                <img src="%s" class="img-fluid rounded-start" alt="...">
+                </div>
+                </div>
+            </div>
+            </div>
+            </div>
+        ', $generate_date_ids, $user['id'], $user['partner']);
+        #$_SESSION['user_a']['id'], $_SESSION['user_b']['partner']);
 
-
-
-}
+    }  // foreach */
+}  // else -- this user has a connection
 ?>
 <!DOCTYPE html>
 <html lang="en">
