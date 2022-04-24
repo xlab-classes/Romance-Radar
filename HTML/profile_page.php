@@ -124,7 +124,7 @@ function selectedSubCategory($cat, $sub){
                         ?>
                         <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
-
+                        Registered on: <?php echo date("m/d/Y", strtotime($_SESSION['user']['signup_date']));?>
                         <!--Status dropdown -->
                         <div class="dropdown">
                           <button class="btn btn-secondary dropdown-toggle" type="buttonStatus" id="dropdownStatus" data-bs-toggle="dropdown" aria-expanded="false">
@@ -141,6 +141,7 @@ function selectedSubCategory($cat, $sub){
                         <p class="text-center text-black"><h5>Current status: <?php echo get_status($_SESSION["user"]["id"])?></h5></p>
 
                         <input class='btn btn-primary' type='button' onclick="window.location='./privacy_settings.php';" value='Privacy Settings'>
+                   
                     </div>
                     </div>
                 </div>
