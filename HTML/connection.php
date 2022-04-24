@@ -38,14 +38,14 @@ if($user['partner'] == $user['id']){
                     <div class='col-6'>
                         <button type='button' class='btn'>
                             <a href=../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=".strval($user['id']).">
-                                <img src='../assets/icons/accept.png' >
+                                <img src='../assets/heart.svg' class='col-4'>
                             </a>
                         </button>
                     </div>
                     <div class='col-6'>
                         <button type='button' class='btn h-50'>
                             <a href=../PHP/modify_connections.php?type=0&from_id=" . strval($id) . ">
-                                <img src='../assets/icons/reject.png'>
+                                <img src='../assets/broken_heart.svg'>
                             </a>
                         </button>
                     </div>
