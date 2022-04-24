@@ -45,7 +45,7 @@ if($user['partner'] == $user['id']){
                     <div class='col-6'>
                         <button type='button' class='btn h-50'>
                             <a href=../PHP/modify_connections.php?type=0&from_id=" . strval($id) . ">
-                                <img src='../assets/broken_heart.svg'>
+                                <img src='../assets/broken_heart.svg' class='col-4'>
                             </a>
                         </button>
                     </div>
