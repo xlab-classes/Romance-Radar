@@ -26,7 +26,7 @@ $connection_requests = get_requests($user['id']);
 // }
 
 if($user['partner'] == $user['id']){
-    $res = "<form action='../PHP/display_dates.php' method='post' enctype='multipart/form-data'>";
+    $res = "";
     foreach($connection_requests as $id){
             $request_user = getUser($id,NULL)->fetch_assoc();
             $res = $res . 
@@ -35,13 +35,12 @@ if($user['partner'] == $user['id']){
             <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
             <h5 class='card-title'>".$request_user['name']."</h5>
             <div class='row'>
-            <img src='../assets/icons/accept.png' onclick='location.href="."../PHP/modify_connections.php?type=1&from_id=".strval($id)."&to_id=".strval($user['id'])."' class='col-sm-3 offset-sm-3'></img>
+            <a src='../assets/icons/accept.png' onclick='location.href="."../PHP/modify_connections.php?type=1&from_id=".strval($id)."&to_id=".strval($user['id'])."' class='col-sm-3 offset-sm-3'></a>
             <img src='../assets/icons/reject.png' onclick='location.href="."../PHP/modify_connections.php?type=0&from_id=".strval($id)."' class='col-sm-3'></img></div>
             </div>
         </div>";
     }
-    $res .= "</form>";
-    
+
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
