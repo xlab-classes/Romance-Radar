@@ -1,4 +1,7 @@
 <?php
+include './navigation.php'
+?>
+<?php
 
 require_once '../PHP/db_api.php';
 require_once '../PHP/helper.php';

@@ -77,80 +77,106 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     if (!empty($_POST["PreDateLen"])) {
         $prefs['Date_preferences']['length'] = (int)$_POST['PreDateLen'];
     }
-
+    print_r($_POST);
     // Entertainment preferences
     if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
-        $prefs['Entertainment']['concerts'] = true;
-        $prefs['Entertainment']['hiking'] = true;
-        $prefs['Entertainment']['bar'] = true;
+        $prefs['Entertainment']['concerts'] = 1;
+        $prefs['Entertainment']['hiking'] = 1;
+        $prefs['Entertainment']['bar'] = 1;
     }
     else {
         if (!empty($_POST["Concerts"])) {
-            $prefs['Entertainment']['concerts'] = $_POST["Concerts"];
+            $prefs['Entertainment']['concerts'] = 1;
+        }else{
+            $prefs['Entertainment']['concerts'] = 0;
         }
         if (!empty($_POST["Hiking"])) {
-            $prefs['Entertainment']['hiking'] = $_POST["Hiking"];
+            $prefs['Entertainment']['hiking'] = 1;
+        }else{
+            $prefs['Entertainment']['hiking'] = 0;
         }
         if (!empty($_POST["Bars"])) {
-            $prefs['Entertainment']['bar'] = $_POST["Bars"];
+            $prefs['Entertainment']['bar'] = 1;
+        }else{
+            $prefs['Entertainment']['bar'] = 0;
         }
     }
 
     // Food preferences
     if (!empty($_POST["Food"])) {  // If true, allow all food types
-        $prefs["Food"]['resturants'] = true;
-        $prefs["Food"]['cafes'] = true;
-        $prefs["Food"]['fast_food'] = true;
-        $prefs["food"]['alcohol'] = true;
+        $prefs["Food"]['restaurant'] = 1;
+        $prefs["Food"]['cafe'] = 1;
+        $prefs["Food"]['fast_food'] = 1;
+        $prefs["Food"]['alcohol'] = 1;
     }
     else {
         if (!empty($_POST["Restaurant"])) {
-            $prefs["Food"]['resturants'] = $_POST["Restaurant"];
+            $prefs["Food"]['restaurant'] = 1;
+        }else{
+            $prefs["Food"]['restaurant'] = 0;
         }
         if (!empty($_POST["Cafe"])) {
-            $prefs["Food"]['cafes'] = $_POST["Cafe"];
+            $prefs["Food"]['cafe'] = 1;
+        }else{
+            $prefs["Food"]['cafe'] = 0;
         }
         if (!empty($_POST["FastFood"])) {
-            $prefs["Food"]['fast_food'] = $_POST["FastFood"];
+            $prefs["Food"]['fast_food'] = 1;
+        }else{
+            $prefs["Food"]['fast_food'] = 0;
         }
         if (!empty($_POST["Alcohol"])) {
-            $prefs["food"]['alcohol'] = $_POST["Alcohol"];
+            $prefs["Food"]['alcohol'] = 1;
+        }else{
+            $prefs["Food"]['alcohol'] = 0;
         }
     }
     
     // Venue preferences
     if (!empty($_POST["Venue"])) {  // If true, allow all venues
-        $prefs['Venue']['indoors'] = true;
-        $prefs['Venue']['outdoors'] = true;
-        $prefs['Venue']['social_events'] = true;
+        $prefs['Venue']['indoors'] = 1;
+        $prefs['Venue']['outdoors'] = 1;
+        $prefs['Venue']['social_events'] = 1;
     }
     else {
         if (!empty($_POST["Indoors"])) {
-            $prefs['Venue']['indoors'] = $_POST["Indoors"];
+            $prefs['Venue']['indoors'] = 1;
+        }else{
+            $prefs['Venue']['indoors'] = 0;
         }
         if (!empty($_POST["Outdoors"])) {
-            $prefs['Venue']['outdoors'] = $_POST["Outdoors"];
+            $prefs['Venue']['outdoors'] = 1;
+        }else{
+            $prefs['Venue']['outdoors'] = 0;
         }
         if (!empty($_POST["SocialEvents"])) {
-            $prefs['Venue']['social_events'] = $_POST["SocialEvents"];
+            $prefs['Venue']['social_events'] = 1;
+        }else{
+            $prefs['Venue']['social_events'] = 0;
         }
     }
     
     // Time preferences
-    if (!empty($_POST["Date_time"])) {  // If true, allow all times
-        $prefs['Date_time']['morning'] = true;
-        $prefs['Date_time']['afternoon'] = true;
-        $prefs['Date_time']['evening'] = true;
+    if (!empty($_POST["Anytime"])) {  // If true, allow all times
+        $prefs['Date_time']['morning'] = 1;
+        $prefs['Date_time']['afternoon'] = 1;
+        $prefs['Date_time']['evening'] = 1;
     }
     else {
         if (!empty($_POST["Morning"])) {
-            $prefs['Date_time']['morning'] = $_POST["Morning"];
+            $prefs['Date_time']['morning'] = 1;
+        }else{
+            $prefs['Date_time']['morning'] = 0;
         }
         if (!empty($_POST["Afternoon"])) {
-            $prefs['Date_time']['afternoon'] = $_POST["Afternoon"];
+            $prefs['Date_time']['afternoon'] = 1;
+        }else{
+            $prefs['Date_time']['afternoon'] = 0;
         }
         if (!empty($_POST["Evening"])) {
-            $prefs['Date_time']['evening'] = $_POST["Evening"];
+            $prefs['Date_time']['evening'] = 1;
+        }else{
+            $prefs['Date_time']['evening'] = 0;
         }
     }
 

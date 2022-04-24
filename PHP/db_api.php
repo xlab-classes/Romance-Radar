@@ -34,7 +34,6 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
-    
     $host = 'oceanus.cse.buffalo.edu';
     $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
@@ -133,7 +132,17 @@ function date_exists($date_id) {
     $query = "SELECT * FROM Date_ideas WHERE id=?";
     $data = [$date_id];
     $result = exec_query($query, $data);
-    return ($result != NULL && $result->num_rows > 0);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+    else if ($result->num_rows <= 0) {
+        print("Date doesn't exist in date_exists. Date ID: $date_id\n");
+        return false;
+    }
+
+    return true;
 }
 
 # Check if a $user_id's password matches $password
@@ -243,8 +252,10 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO Users ";
+	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city) ";
+	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
@@ -263,7 +274,12 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $result = exec_query($query, [$id, $id]);
 
     if (!initialize_preferences($id)) {
-        echo "Couldn't initialize preferences for new user!\n";
+        echo "Couldn't initialize preferences for new user!</br>";
+        return 0;
+    }
+    if (!initialize_privacy_settings($id)){
+        echo "Couldn't initialize privacy settings for new user!</br";
+        return 0;
     }
 
     return 1;
@@ -545,8 +561,8 @@ function get_requests($user_id) {
         echo "No user with this ID\n";
         return 0;
     }
-    $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
-    $result = exec_query($query, [$user_id]);
+    $query = "SELECT * FROM Connection_requests WHERE sent_to=? AND sent_from!=?";
+    $result = exec_query($query, [$user_id, $user_id]);
     if ($result == NULL) {
         print("Couldn't SELECT from Connection_requests in get_requests\n");
         return 0;
@@ -698,8 +714,36 @@ function get_preferences($user_id) {
     }
 
     return $preferences;
-
 }
+
+/* Get verification status */
+function verify_user($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $query = "UPDATE Users SET verified=1 WHERE id=?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if (!$result) {
+        echo "Couldn't get verification status\n";
+        return 0;
+    }
+    
+    return 1;
+}
+
+function get_captcha($captcha_id){
+    $query = 'SELECT * FROM Captcha WHERE id=?';
+    $result = exec_query($query, [(int)$captcha_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No capcha Found');
+    }
+    return $result->fetch_assoc();
+}
+
 
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
@@ -922,12 +966,25 @@ function generate_dates($user_a, $user_b) {
     $ub_dids = get_date_ids($ub_prefs);
 
     // Get date ideas with tags matching for the second user
-    $compatible_dates = array();
+    $overlapping_dates = array();
     foreach ($ua_dids as $ua) {
         foreach ($ub_dids as $ub) {
-            if ($ua === $ub && !in_array($ua, $compatible_dates)) {
-                array_push($compatible_dates, $ua);
+            if ($ua === $ub && !in_array($ua, $overlapping_dates)) {
+                array_push($overlapping_dates, $ua);
             }
+        }
+    }
+
+
+    // Filter the dates based on the number of times they have been suggested
+    // to each user
+    $compatible_dates = array();
+    foreach ($overlapping_dates as $date) {
+        $ua_suggested = get_times_suggested($user_a, $date);
+        $ub_suggested = get_times_suggested($user_b, $date);
+
+        if ($ua_suggested < 2 && $ub_suggested < 2) {
+            array_push($compatible_dates, $date);
         }
     }
 
@@ -935,19 +992,30 @@ function generate_dates($user_a, $user_b) {
     return $compatible_dates;
 }
 
-// Get information about the date with this ID
+// - Get information about the date with this ID
+// - Increment the number of times this date was seen by this user
 //
 // parameter: date_id   [int]
 //      The ID of the date whose information we want
 //
+// parameter: user_id   [int]
+//      The ID of the user that we're getting this information for
+//
 // returns:
 //      An associative array of information for this date
 //      NULL if no date with this ID exists
+//      NULL if no user with this ID exists
 //
 // constraints:
 //      A date with this ID MUST exist
-function get_date_information($date_id) {
+//      A user with this ID MUST exist
+function get_date_information($user_id, $date_id) {
     if (!date_exists($date_id)) {
+        print("Couldn't find date with this ID in get_date_information\n");
+        return NULL;
+    }
+    else if (!user_exists($user_id)) {
+        print("Couldn't find user with this ID in get_date_information\n");
         return NULL;
     }
 
@@ -963,6 +1031,9 @@ function get_date_information($date_id) {
         print("No date with this ID in get_date_information\n");
         return NULL;
     }
+
+    // All good, increment the number of times this date has been seen by this user
+    date_suggested($user_id, $date_id);
 
     return $result->fetch_assoc();
 }
@@ -1052,4 +1123,512 @@ function get_date_id($name) {
         return NULL;
     }
     return $result->fetch_assoc()["id"];
+}
+
+// Increment the number of times a user has seen this date in the Date_counts table
+//
+// parameter: user_id   [int]
+//      The ID of the user whose count we want to increment
+//
+// parameter: date_id   [int]
+//      The ID of the date that was suggested to this user
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function date_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in date_suggested\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("Date doesn't exist in date_suggested\n");
+        return 0;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Failed to exec_query in date_suggested\n");
+        return 0;
+    }
+    else if ($result->num_rows == 0) {
+        $query = "INSERT INTO Date_counts (id, date_id, suggested) VALUES (?, ?, ?)";
+        $data = [$user_id, $date_id, 1];
+        $result = exec_query($query, $data);
+
+        if ($result == NULL) {
+            print("Failed to add date suggestion for user in date_suggested\n");
+            return 0;
+        }
+    }
+    else {
+        if ($result->num_rows > 1) {
+            print("Malformed table in date_suggested\n");
+            return 0;
+        }
+
+        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE id=? AND date_id=?";
+        $data = [$user_id, $date_id];
+        $result = exec_query($query, $data);
+
+        if ($result == NULL) {
+            print("Failed to update suggested count in date_suggested\n");
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+// Get the number of times this date was suggested for this user
+//
+// parameter: user_id   [int]
+//      The ID of the user that we want the number of suggestions for
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the number of suggestions for
+//
+//  returns:
+//      The number of times this date has been suggested, on success
+//      -1 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_times_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in get_times_suggested\n");
+        return -1;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in get_times_suggested\n");
+        return -1;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in get_times_suggested\n");
+        return -1;
+    }
+    else if ($result->num_rows <= 0) {
+        return 0;
+    }
+    else {
+        return $result->fetch_assoc()["suggested"];
+    }
+}
+
+// Tell this database that this user likes this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is liking a date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is liking
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+//      This date cannot be disliked by this user
+//
+// Note:
+//      If this date is already liked by this user, nothing will happen
+function like_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in like_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in like_date\n");
+        return 0;
+    }
+    else if (get_opinion($user_id, $date_id) == -1) {
+        print("Can't like a date that a user already dislikes\n");
+        return 0;
+    }
+
+    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in like_date\n");
+        return 0;
+    }
+    else if ($result->num_rows == 1) {
+        return 1;
+    }
+    else if ($result->num_rows > 1) {
+        print("Malformed table in like_date\n");
+        return 0;
+    }
+
+    $query = "INSERT INTO Dates_liked (id, date_id) VALUES (?, ?)";
+    $result = exec_query($query, $data);
+    if ($result == NULL) {
+        print("Couldn't insert into Dates_liked in like_date\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Tell this database that this user dislikes this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is disliking a date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is disliking
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+//
+// Note:
+//      If this date is already disliked by this user, nothing will happen
+function dislike_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in dislike_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in dislike_date\n");
+        return 0;
+    }
+    else if (get_opinion($user_id, $date_id) == 1) {
+        print("Can't dislike date that user already likes\n");
+        return 0;
+    }
+
+    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in dislike_date\n");
+        return 0;
+    }
+    else if ($result->num_rows == 1) {
+        return 1;
+    }
+    else if ($result->num_rows > 1) {
+        print("Malformed table in dislike_date\n");
+        return 0;
+    }
+
+    $query = "INSERT INTO Dates_disliked (id, date_id) VALUES (?, ?)";
+    $result = exec_query($query, $data);
+    if ($result == NULL) {
+        print("Couldn't insert into Dates_disliked in dislike_date\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Tell this database that this user has no preference on this date
+//
+// parameter: user_id   [int]
+//      The ID of the user that is neutral on this date
+//
+// parameter: date_id   [int]
+//      The ID of the date that the user is neutral on
+//
+// returns:
+//      1 on success
+//      0 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+//
+// Note:
+//      This function will remove likes AND dislikes from a date
+//      If this date is already neutral by this user, nothing will happen
+function unlike_date($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in unlike_date\n");
+        return 0;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in unlike_date\n");
+        return 0;
+    }
+    
+    $opinion = get_opinion($user_id, $date_id);
+
+    if ($opinion == 0) {
+        return 1;
+    }
+    else if ($opinion == 1) {
+        $query = "DELETE FROM Dates_liked WHERE id=?";
+        $data = [$user_id];
+        $result = exec_query($query, $data);
+        if ($result == NULL) {
+            print("Failed to delete from Dates_liked in unlike_date\n");
+            return 0;
+        }
+    }
+    else if ($opinion == -1) {
+        $query = "DELETE FROM Dates_disliked WHERE id=?";
+        $data = [$user_id];
+        $result = exec_query($query, $data);
+        if ($result == NULL) {
+            print("Failed to delete from Dates_disliked in unlike_date\n");
+            return 0;
+        }
+    }
+    else {
+        print("Couldn't get opinion in unlike_date\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+// Returns the opinion of this user about this date
+//
+// parameter: user_id   [int]
+//      The ID of the user whose opinion we want
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the opinion of
+//
+// returns:
+//      -1 if the user dislikes this date
+//      0 if the user is neutral on this date
+//      1 if the user likes this date
+//      NULL on error
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_opinion($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_opinion\n");
+        return NULL;
+    }
+    else if (!date_exists($date_id)) {
+        print("Date doesn't exist in get_opinion: $date_id\n");
+        return NULL;
+    }
+
+    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't query Dates_liked in get_opinion\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 1) {
+        return 1;
+    }
+    else if ($result->num_rows >= 1) {
+        print("Dates_liked malformed in get_opinion\n");
+        return NULL;
+    }
+
+    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't query Dates_disliked in get_opinion\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 1) {
+        return -1;
+    }
+    else if($result->num_rows >= 1) {
+        print("Dates_disliked malformed in get_opinion\n");
+        return NULL;
+    }
+
+    return 0;
+}
+
+// Initialize privacy settings
+
+function initialize_privacy_settings($user_id){
+    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo 'Something went wrong while executing query (privacy settings)!!';
+        return 0;
+    }
+    return 1;
+
+}
+
+function update_privacy($id, $privacy_setting_choice) {
+    if (empty($id) || empty($privacy_setting_choice)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    print_r($id);
+    $user_exists = user_exists((int)$id);
+    
+    if (!$user_exists) {
+        echo 'User does not exist';
+        return 0;
+    }            // User must exist
+    
+    else {
+        // We are doing an either or on the privacy settings, so you either can see all or you can't
+        $query = "UPDATE Privacy_settings SET max_cost=?, max_distance=?, date_len=?, date_of_birth=?, time_pref=?, food_pref=?, ent_pref=?, venue_pref=? WHERE user_id=?";
+        
+        $data = [
+            $privacy_setting_choice['max_cost'],
+            $privacy_setting_choice['max_distance'],
+            $privacy_setting_choice['date_len'],
+            $privacy_setting_choice['date_of_birth'],
+            $privacy_setting_choice['time_pref'],
+            $privacy_setting_choice['food_pref'], 
+            $privacy_setting_choice['ent_pref'], 
+            $privacy_setting_choice['venue_pref'], 
+            $id];
+        $result = exec_query($query, $data);
+        
+        if (!$result) {
+            echo 'Query not executed';
+            return 0;
+        
+        }
+        
+        $_SESSION['user']['privacy_settings'] = $privacy_setting_choice;
+        
+        return 1;
+    }
+}
+
+function get_privacy_settings($id){
+
+    if (empty($id)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    $query = 'SELECT * FROM Privacy_settings WHERE user_id=?';
+    $result = exec_query($query, [$id]);
+
+    if ($result == NULL) {
+        echo "Couldn't exec query in get privacy settings</br>";
+        return 0;
+    }
+    else if ($result->num_rows <= 0) {
+        echo "Settings doesn't exist in get privacy</br>";
+        return 0;
+    }
+
+    if(!$return = $result->fetch_assoc()){
+        echo 'Error in fetch privacy';
+        return 0;
+    }
+    return $return;
+}
+
+// Get this user's status
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want
+//
+// returns:
+//		The status of the user as a string on success
+//		NULL on failure
+//
+// constraints:
+//		This user must exist
+//
+// Note:
+// 		If this user has no status set, this function will return an empty
+//	string
+function get_status($user_id) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in get_status\n");
+		return NULL;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in get_status\n");
+		return NULL;
+	}
+	else if ($result->num_rows == 0) {
+		return "";
+	}
+	else {
+		return $result->fetch_assoc()["user_status"];
+	}
+}
+
+// Set the status of this user
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want to set
+//
+// parameter: status	[string]
+//		The status to set, as a string
+//
+// returns:
+//		1 on success
+//		0 on failure
+//
+// constraints:
+//		This user must exist
+//		The status must be a string, although it can be empty
+function set_status($user_id, $status) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in set_status\n");
+		return 0;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't query User_status in set_status\n");
+		return 0;
+	}
+	else if ($result->num_rows == 0) {
+		$query = "INSERT INTO User_status (id, user_status) VALUES (?, ?)";
+		$data = [$user_id, $status];
+	}
+	else {
+		$query = "UPDATE User_status set user_status=? WHERE id=?";
+		$data = [$status, $user_id];
+	}
+
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in set_status\n");
+		return 0;
+	}
+	
+	return 1;
 }
