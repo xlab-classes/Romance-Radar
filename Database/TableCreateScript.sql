@@ -215,6 +215,14 @@ CREATE TABLE IF NOT EXISTS User_status(
 	FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
+/*
+CREATE TABLE IF NOT EXISTS Generated_dates(
+    id INT AUTO_INCREMENT,
+    date_id INT,
+    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
+);
+*/
 
 INSERT INTO Captcha (image, code) VALUES 
 ('../assets/Captcha/captcha_1.png', '2cegf'),
