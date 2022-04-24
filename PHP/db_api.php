@@ -38,7 +38,7 @@ function exec_query($query, $data) {
     $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
     $password = 50276673;
-    
+        
     $connection = new mysqli($host, $user, $password, $db);
     
     # Error connecting, return NULL
