@@ -1,12 +1,11 @@
-
 <?php
 
 require '../PHP/db_api.php';
 require '../PHP/helper.php';
 
-$question_id_1 = rand(1,20);
-$question_id_2 = rand(1,20);
-$question_id_3 = rand(1,20);
+$question_id_1 = rand(1, 20);
+$question_id_2 = rand(1, 20);
+$question_id_3 = rand(1, 20);
 
 
 $question_1 = get_question($question_id_1);
@@ -18,6 +17,7 @@ $question_3 = get_question($question_id_3);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,32 +25,55 @@ $question_3 = get_question($question_id_3);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>Registration</title>
     <style>
-        
-        body{
+        body {
             background-color: #FFC0CB;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             color: #9F1111;
         }
-        #Submit{
-            background-color: #C75656;
-            border-color: #C75656;
+
+        .dark-mode {
+            background-color: palevioletred;
         }
-        #Submit:hover{
+
+
+        button:hover {
             background-color: #e76c6c;
             border-color: #e76c6c;
             transition: 0.3s;
         }
-        #top{
-            height: 110px;
-            width: 11   0px;
+
+        #Submit {
+            background-color: #C75656;
+            border-color: #C75656;
         }
-        #bottom{
+
+        #Submit:hover {
+            background-color: #e76c6c;
+            border-color: #e76c6c;
+            transition: 0.3s;
+        }
+
+        #top {
+            height: 110px;
+            width: 11 0px;
+        }
+
+        #bottom {
             height: 200px;
             width: 200px;
         }
     </style>
 </head>
+
 <body>
+    <button onclick="myFunction()">Toggle dark mode</button>
+
+    <script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
     <div class="container-fluid">
         <div class="row">
             <div class="col-2">
@@ -72,35 +95,35 @@ $question_3 = get_question($question_id_3);
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Name" hidden>Full Name</label>
-                            <input name="Name" class="form-control text-center" id="Name" type="text" placeholder="Full Name"/>
+                            <input name="Name" class="form-control text-center" id="Name" type="text" placeholder="Full Name" />
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Address" hidden>Street Address</label>
-                            <input name="Address" class="form-control text-center" id="Address" type="text" placeholder="Street Address"/>
+                            <input name="Address" class="form-control text-center" id="Address" type="text" placeholder="Street Address" />
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-3">
                             <label for="Zip" hidden>Zip Code</label>
-                            <input name="Zip" class="form-control text-center" id="Zip" type="number" placeholder="Zip Code"/>
+                            <input name="Zip" class="form-control text-center" id="Zip" type="number" placeholder="Zip Code" />
                         </div>
                         <div class="col-3">
                             <label for="City" hidden>City</label>
-                            <input name="City" class="form-control text-center" id="City" type="text" placeholder="City"/>
+                            <input name="City" class="form-control text-center" id="City" type="text" placeholder="City" />
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Email" hidden>Email</label>
-                            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email"/>
+                            <input name="Email" class="form-control text-center" id="Email" type="text" placeholder="Email" />
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
                         <div class="col-6">
                             <label for="Password" hidden>Password</label>
-                            <input name="Password" class="form-control text-center" id="Password" type="password" placeholder="Password"/>
+                            <input name="Password" class="form-control text-center" id="Password" type="password" placeholder="Password" />
                         </div>
                     </div>
                     <div class="row justify-content-center m-4">
@@ -137,7 +160,7 @@ $question_3 = get_question($question_id_3);
                     <div class="row justify-content-center m-3">
                         <div class="col-3">
                             <label for="Submit" hidden>Submit</label>
-                            <input class="btn-primary form-control text-center" id="Submit" type="submit"/>
+                            <input class="btn-primary form-control text-center" id="Submit" type="submit" />
                         </div>
                     </div>
                 </form>
@@ -152,4 +175,5 @@ $question_3 = get_question($question_id_3);
         </div>
     </div>
 </body>
+
 </html>

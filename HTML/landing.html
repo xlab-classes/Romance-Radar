@@ -28,92 +28,111 @@
     </div>
     <!-- <button type="button Register-button" id="button1">Register</button>
     <button type="button Login-button" id="button2">Login</button> -->
-    <img src="../assets/couple.png" alt="Couple image" width="500" height="500" allign="left">
-</body>
+    <button onclick="myFunction()">Toggle dark mode</button>
 
-<style>
-    * {
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-        max-width: 100%;
-    }
+    <script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
+    <img src=../sses </body>
 
-
-    body {
-        background: #FFC0CB;
-    }
-
-    h1 {
-        position: absolute;
-        left: 600px;
-        top: 185px;
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
 
 
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 800;
-        font-size: 40px;
-        line-height: 80px;
-
-        color: #9F1111;
-
-    }
-
-    h2 {
+        .dark-mode {
+            background-color: palevioletred;
+        }
 
 
-        position: absolute;
-        left: 600px;
-        top: 260px;
 
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 800;
-        font-size: 40px;
-        line-height: 10px;
+        button:hover {
+            background-color: #e76c6c;
+            border-color: #e76c6c;
+            transition: 0.3s;
+        }
 
-        color: #001011;
-    }
+        body {
+            background: #FFC0CB;
+        }
 
-    p {
-
-        position: absolute;
-        left: 600px;
-        top: 280px;
-
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 100;
-        font-size: 25x;
-        line-height: 40px;
-
-        color: #001011;
-    }
-
-    .buttons {
-        width: auto;
-        margin: 0 auto;
-        display: inline;
-        position: absolute;
-        left: 600px;
-        top: 320px;
-    }
-
-    .action_btn {
-        width: auto;
-        margin: 0 auto;
-        display: inline;
+        h1 {
+            position: absolute;
+            left: 600px;
+            top: 185px;
 
 
-    }
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 800;
+            font-size: 40px;
+            line-height: 80px;
+
+            color: #9F1111;
+
+        }
+
+        h2 {
 
 
-    img {
-        position: absolute;
-        left: 0px;
-        bottom: 0px;
-    }
-</style>
+            position: absolute;
+            left: 600px;
+            top: 260px;
+
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 800;
+            font-size: 40px;
+            line-height: 10px;
+
+            color: #001011;
+        }
+
+        p {
+
+            position: absolute;
+            left: 600px;
+            top: 280px;
+
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 100;
+            font-size: 25x;
+            line-height: 40px;
+
+            color: #001011;
+        }
+
+        .buttons {
+            width: auto;
+            margin: 0 auto;
+            display: inline;
+            position: absolute;
+            left: 600px;
+            top: 320px;
+        }
+
+        .action_btn {
+            width: auto;
+            margin: 0 auto;
+            display: inline;
+
+
+        }
+
+
+        img {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+        }
+    </style>
 
 </html>

@@ -9,6 +9,14 @@
 </head>
 
 <body>
+    <button onclick="myFunction()">Toggle dark mode</button>
+
+    <script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
     <h1> Login</h1>
     <!-- PHP form and method type -->
     <form action="../PHP/login.php" method="post" enctype="multipart/form-data" id="login-form">
@@ -23,6 +31,24 @@
 </body>
 
 <style>
+    .dark-mode {
+        background-color: palevioletred;
+    }
+
+
+    button:hover {
+        background-color: #e76c6c;
+        border-color: #e76c6c;
+        transition: 0.3s;
+    }
+
+
+    button:hover {
+        background-color: #e76c6c;
+        border-color: #e76c6c;
+        transition: 0.3s;
+    }
+
     h1 {
         position: absolute;
         width: 461px;

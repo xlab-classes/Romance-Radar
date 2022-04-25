@@ -265,11 +265,6 @@ if($user['partner'] == $user['id']){
 	background-size: cover;
 	transition: all 0.2s ease-in-out !important;
 	border-radius: 24px;
-	&:hover{
-		transform: translateY(-5px);
-		box-shadow: none;
-		opacity: 0.9;
-	}
 
 }
     </style>

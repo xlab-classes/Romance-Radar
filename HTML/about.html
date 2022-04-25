@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>About Page</title>
+
 </head>
 
 <body>
@@ -19,9 +20,31 @@
 
     <img src="../assets/couple1.png" alt="couple1 image" class="couple">
     <img src="../assets/couple2.png" alt="couple2 image" class="couples">
+
+
+    <button onclick="myFunction()">Toggle dark mode</button>
+
+    <script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
+
 </body>
 
 <style>
+    .dark-mode {
+        background-color: palevioletred;
+    }
+
+
+    button:hover {
+        background-color: #e76c6c;
+        border-color: #e76c6c;
+        transition: 0.3s;
+    }
+
     * {
         padding: 0;
         margin: 0;
@@ -29,10 +52,13 @@
         max-width: 100%;
     }
 
-
     body {
+        padding: 25px;
         background: #FFC0CB;
+        font-size: 25px;
     }
+
+
 
     h1 {
 
