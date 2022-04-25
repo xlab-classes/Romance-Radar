@@ -10,7 +10,7 @@ session_start();
 
 if(!isset($_SESSION['user'])){
     echo 'Please Login!!';
-    header('./login.html');
+    header('./login.html'); 
     exit();
 }
 
