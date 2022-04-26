@@ -1003,6 +1003,13 @@ function generate_dates($user_a, $user_b) {
 //
 // returns:
 //      An associative array of information for this date
+//      Relevant information included will be:
+//          - Date Name
+//          - Date Description
+//          - Date Time
+//          - Date Location
+//          - Date Cost
+//          - Date Length
 //      NULL if no date with this ID exists
 //      NULL if no user with this ID exists
 //
@@ -1036,6 +1043,16 @@ function get_date_information($user_id, $date_id) {
     date_suggested($user_id, $date_id);
 
     return $result->fetch_assoc();
+}
+// Sorts our input date id's by their cost in
+function sort_dates_by_cost($date_ids,$ascending){
+
+    // Check if date_ids are null
+
+    // If ascending is null or true sort it in increasing order
+
+    // if ascending is false sort it in descending order
+
 }
 
 // Add an entry to the Date_tags table that tags this date with this tag
