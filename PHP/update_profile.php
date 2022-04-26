@@ -20,7 +20,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     // update profile picture
     
     if(!empty($_FILES['profile_picture']['name'])) {
-        $extension_array = array('image/jpeg'=>'.jpg', 'image/png'=>'.png','image/gif' => '.gif');
+        $extension_array = array('image/jpeg'=>'.jpg', 'image/png'=>'.png','image/gif'=>'.gif');
         $new_profile_picture = $_FILES['profile_picture'];
         $content = file_get_contents($new_profile_picture['tmp_name']);
         update_profile_picture($user_id, $_SESSION["user"]["user_picture"], $content, $extension_array[$new_profile_picture['type']]);
