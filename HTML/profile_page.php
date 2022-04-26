@@ -23,7 +23,7 @@ function selectedCategory($cat){
 
 function selectedSubCategory($cat, $sub){
     global $p;
-    return $p[$cat][$sub]? "checked":""; 
+    return $p[$cat][$sub]? "checked":"";
 }
 
 ?>
@@ -79,23 +79,23 @@ function selectedSubCategory($cat, $sub){
                     <div class="p-5 bg">
                         <h5>Personal Details</h5>
                         <label for="CngFN">Change your first name</label>
-                        <?php 
+                        <?php
                             $name_split = explode(" ", $_SESSION['user']['name']);
                             echo sprintf('<input value="%s" name="CngFN" class="form-control left-align my-2 p-2" id="CngFN" type="text" placeholder="Change your first name"/>', $name_split[0]);
                         ?>
 
                         <label for="CngLN" >Change your last name</label>
-                        <?php 
+                        <?php
                             $last_name = isset($name_split[1])?$name_split[1]:"";
                             echo sprintf('<input value="%s" name="CngLN" class="form-control left-align my-2 p-2" id="CngLN" type="text"/>', $last_name);
                         ?>
                         <label for="CngZip" >Change your zip code</label>
-                        <?php 
+                        <?php
                             echo sprintf('<input value=%d name="CngZip" class="form-control left-align my-2 p-2" id="CngZip" type="number" placeholder="Change your zip code"/>', $_SESSION['user']['zipcode']);
                         ?>
-                        
+
                         <label for="CngDob">Change your date of birth</label>
-                        <?php 
+                        <?php
                             echo sprintf('<input name="CngDob" value="%s" class="form-control left-align my-2 p-2" id="CngDob" type="date" placeholder="Change your date of birth"/>', $_SESSION['user']['birthday']);
                         ?>
                     </div>
@@ -124,7 +124,24 @@ function selectedSubCategory($cat, $sub){
                         ?>
                         <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
+                        Registered on: <?php echo date("m/d/Y", strtotime($_SESSION['user']['signup_date']));?>
+                        <!--Status dropdown -->
+                        <div class="dropdown">
+                          <button class="btn btn-secondary dropdown-toggle" type="buttonStatus" id="dropdownStatus" data-bs-toggle="dropdown" aria-expanded="false">
+                            Status:
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Busy">Busy</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Happy">Happy</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Idle">Idle</a></li>
+                            <li><a class="dropdown-item" href="../PHP/update_status.php?status=Chilling">Chilling</a></li>
+                          </ul>
+                        </div>
+
+                        <p class="text-center text-black"><h5>Current status: <?php echo get_status($_SESSION["user"]["id"])?></h5></p>
+
                         <input class='btn btn-primary' type='button' onclick="window.location='./privacy_settings.php';" value='Privacy Settings'>
+                   
                     </div>
                     </div>
                 </div>
@@ -266,5 +283,6 @@ function selectedSubCategory($cat, $sub){
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
   </body>
 </html>

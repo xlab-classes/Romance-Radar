@@ -5,7 +5,7 @@ session_start();
 
 if(!isset($_SESSION['user'])){
     echo 'Not logged in';
-    header('Location: ./login.html');
+    header('Location: ../HTML/login.html');
     exit();
 }
 
