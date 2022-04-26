@@ -1055,6 +1055,26 @@ function sort_dates_by_cost($date_ids,$ascending){
 
 }
 
+// Sorts our input date id's by their location
+function sort_dates_by_location($date_ids){
+
+}
+
+// Sort our input date id's by their users favorite venues
+function sort_date_by_venues($date_ids){
+
+}
+
+// Sort our input date id's by their users favorite food types
+function sort_date_by_food($date_ids){
+
+}
+
+// Sort our input date id's by their users favorite time of day
+function sort_date_by_time($date_ids){
+    
+}
+
 // Add an entry to the Date_tags table that tags this date with this tag
 //
 // parameter: date_id   [int]
