@@ -86,24 +86,6 @@ CREATE TABLE IF NOT EXISTS Date_tags(
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
-CREATE TABLE IF NOT EXISTS Date_liked(
-    id INT AUTO_INCREMENT,
-    date_id int NOT NULL,
-    user_id int NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-    );
-
-CREATE TABLE IF NOT EXISTS Date_disliked(
-    id INT AUTO_INCREMENT,
-    date_id int NOT NULL,
-    user_id int NOT NULL,
-    PRIMARY KEY (id),
-    FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-    );
-
 CREATE TABLE IF NOT EXISTS Suggested_dates(
     id INT AUTO_INCREMENT,
     partner_id_1 INT NOT NULL,
@@ -118,28 +100,31 @@ CREATE TABLE IF NOT EXISTS Suggested_dates(
 -- Tracks the number of times dates have been suggested to a particular user
 CREATE TABLE IF NOT EXISTS Date_counts(
     id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
     date_id INT NOT NULL,
     suggested INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
 -- Tracks which dates users have liked
 CREATE TABLE IF NOT EXISTS Dates_liked(
     id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
     date_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
 -- Tracks which dates users have disliked
 CREATE TABLE IF NOT EXISTS Dates_disliked(
     id INT AUTO_INCREMENT,
+    user_id INT NOT NULL,
     date_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (date_id) REFERENCES Date_ideas(id) ON DELETE CASCADE
     );
 
