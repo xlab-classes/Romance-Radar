@@ -1124,29 +1124,123 @@ function sort_dates_by_location($id,$date_ids){
     if(count($date_ids) < 2){
         return $date_ids;
     }
-    
+
 
     $location = get_user_city($id);
 
 }
 
+// Get the date_tag of the date from the date_id
+function get_date_tag($date_id){
+    $query = "SELECT tag FROM Date_tags WHERE date_id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_date_by_entertainment\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in sort_date_by_entertainment\n");
+        return NULL;
+    }
+
+    $row = $result->fetch_assoc();
+    return $row["date_tag"];
+}
+
 // Sort our input date id's by their users favorite entertainment
 function sort_date_by_entertainment($date_ids){
 
+    // Sort the date_ids by their date tag with entertainment having the highest priority
+    usort($date_ids, function($a, $b) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+        if($a_tag == "entertainment" && $b_tag != "entertainment"){
+            return -1;
+        }
+        else if($a_tag != "entertainment" && $b_tag == "entertainment"){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
 }
 
 // Sort our input date id's by their users favorite venues
 function sort_date_by_venues($date_ids){
+
+    $venues = ['indoors','outdoors','social_events'];
+
+// Sort the date_ids by their date tag with venues having the highest priority
+    usort($date_ids, function($a, $b) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+
+        // Check if the date_tag is one of the venues
+        if(in_array($a_tag,$venues) && !in_array($b_tag,$venues)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$venues) && in_array($b_tag,$venues)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
 
 }
 
 // Sort our input date id's by their users favorite food types
 function sort_date_by_food($date_ids){
 
+    $foods = ['restaurant','cafe','fast_food', 'alcohol'];
+
+    // Sort the date_ids by their date tag with food having the highest priority
+
+    usort($date_ids, function($a, $b) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+        // Check if the date_tag is one of the food types
+        if(in_array($a_tag,$foods) && !in_array($b_tag,$foods)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$foods) && in_array($b_tag,$foods)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
 }
 
 // Sort our input date id's by their users favorite time of day
 function sort_date_by_time($date_ids){
+
+    $times = ['morning','afternoon','evening'];
+
+    // Sort the date_ids by their date tag with time having the highest priority
+
+    usort($date_ids, function($a, $b) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+        // Check if the date_tag is one of the time types
+        if(in_array($a_tag,$times) && !in_array($b_tag,$times)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$times) && in_array($b_tag,$times)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
 
 }
 
