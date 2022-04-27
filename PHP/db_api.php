@@ -1114,6 +1114,31 @@ function sort_dates_by_location($id,$date_ids){
         return $row["city"];
     }
 
+    function get_date_city($id){
+        // Get the city of the current date
+        $query = "SELECT location FROM Date_ideas WHERE id=?";
+        $data = [$id];
+        $result = exec_query($query, $data);
+
+        // Check if the query was successful
+        if ($result == NULL) {
+            print("Couldn't exec_query in sort_dates_by_location\n");
+            return NULL;
+        }
+        else if ($result->num_rows <= 0) {
+            print("No date with this ID in sort_dates_by_location\n");
+            return NULL;
+        }
+
+        $row = $result->fetch_assoc();
+
+        $city = $row["city"];
+
+        // split the city into two parts separated by a comma and return the first part
+        $city = explode(",", $city);
+        return $city[0];
+    }
+
     // Check if date_ids are null
     if($date_ids == NULL){
         printf("Error: date_ids is null in sort_dates_by_location\n");
@@ -1125,8 +1150,12 @@ function sort_dates_by_location($id,$date_ids){
         return $date_ids;
     }
 
-
     $location = get_user_city($id);
+
+    // Sort the date_ids by closest city
+    usort($date_ids, function($a, $b) {
+        return (strcmp(get_date_city($a), $location) - strcmp(get_date_city($b), $location));
+    });
 
 }
 
@@ -1157,16 +1186,7 @@ function sort_date_by_entertainment($date_ids){
     usort($date_ids, function($a, $b) {
         $a_tag = get_date_tag($a);
         $b_tag = get_date_tag($b);
-
-        if($a_tag == "entertainment" && $b_tag != "entertainment"){
-            return -1;
-        }
-        else if($a_tag != "entertainment" && $b_tag == "entertainment"){
-            return 1;
-        }
-        else{
-            return 0;
-        }
+        return (strcmp($a_tag, "entertainment") - strcmp($b_tag, "entertainment"));
     });
 }
 
