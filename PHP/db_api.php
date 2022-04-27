@@ -233,6 +233,19 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     }
 }
 
+// Initialize privacy settings
+
+function initialize_privacy_settings($user_id){
+    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo 'Something went wrong while executing query (privacy settings)!!';
+        return 0;
+    }
+    return 1;
+
+}
+
 
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
@@ -932,6 +945,47 @@ function get_date_ids($preferences) {
     return $arr;
 }
 
+// Get the number of times this date was suggested for this user
+//
+// parameter: user_id   [int]
+//      The ID of the user that we want the number of suggestions for
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the number of suggestions for
+//
+//  returns:
+//      The number of times this date has been suggested, on success
+//      -1 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_times_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in get_times_suggested\n");
+        return -1;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in get_times_suggested\n");
+        return -1;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in get_times_suggested\n");
+        return -1;
+    }
+    else if ($result->num_rows <= 0) {
+        return 0;
+    }
+    else {
+        return $result->fetch_assoc()["suggested"];
+    }
+}
+
 // Generate an array of date ideas for two users
 //
 // parameter: user_a    [int]
@@ -1046,7 +1100,7 @@ function get_date_information($user_id, $date_id) {
 }
 
 function get_date_cost($id){
-    $query = "SELECT est_cost FROM Date_ideas WHERE id=?";
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
     $data = [$id];
     $result = exec_query($query, $data);
 
@@ -1059,7 +1113,7 @@ function get_date_cost($id){
         return NULL;
     }
 
-    return $result->fetch_assoc();
+    return $result->fetch_assoc()["est_cost"];
 }
 
 // Sorts our input date id's by their cost in
@@ -1088,6 +1142,7 @@ function sort_dates_by_cost($date_ids,$ascending){
             return get_date_cost($b) - get_date_cost($a);
         });
     }
+    return $date_ids;
 }
 
 // Sorts our input date id's by their location
@@ -1409,47 +1464,6 @@ function date_suggested($user_id, $date_id) {
     return 1;
 }
 
-// Get the number of times this date was suggested for this user
-//
-// parameter: user_id   [int]
-//      The ID of the user that we want the number of suggestions for
-//
-// parameter: date_id   [int]
-//      The ID of the date that we want the number of suggestions for
-//
-//  returns:
-//      The number of times this date has been suggested, on success
-//      -1 on failure
-//
-// constraints:
-//      A user with this ID MUST exist
-//      A date with this ID MUST exist
-function get_times_suggested($user_id, $date_id) {
-    if (!user_exists($user_id)) {
-        print("No user with this ID in get_times_suggested\n");
-        return -1;
-    }
-    else if (!date_exists($date_id)) {
-        print("No date with this ID in get_times_suggested\n");
-        return -1;
-    }
-
-    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
-    $data = [$user_id, $date_id];
-    $result = exec_query($query, $data);
-    
-    if ($result == NULL) {
-        print("Couldn't exec query in get_times_suggested\n");
-        return -1;
-    }
-    else if ($result->num_rows <= 0) {
-        return 0;
-    }
-    else {
-        return $result->fetch_assoc()["suggested"];
-    }
-}
-
 // Tell this database that this user likes this date
 //
 // parameter: user_id   [int]
@@ -1689,19 +1703,6 @@ function get_opinion($user_id, $date_id) {
     return 0;
 }
 
-// Initialize privacy settings
-
-function initialize_privacy_settings($user_id){
-    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
-    $result = exec_query($query, [$user_id]);
-    if(!$result){
-        echo 'Something went wrong while executing query (privacy settings)!!';
-        return 0;
-    }
-    return 1;
-
-}
-
 function update_privacy($id, $privacy_setting_choice) {
     if (empty($id) || empty($privacy_setting_choice)) {
         echo 'input fields cannot be empty';
@@ -1853,4 +1854,5 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
 }
