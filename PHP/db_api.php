@@ -1048,16 +1048,85 @@ function get_date_information($user_id, $date_id) {
 // Sorts our input date id's by their cost in
 function sort_dates_by_cost($date_ids,$ascending){
 
+    function get_date_cost($date_id){
+        $query = "SELECT cost FROM Date_ideas WHERE id=?";
+        $data = [$date_id];
+        $result = exec_query($query, $data);
+
+        if ($result == NULL) {
+            print("Couldn't exec_query in get_date_cost\n");
+            return NULL;
+        }
+        else if ($result->num_rows <= 0) {
+            print("No date with this ID in get_date_cost\n");
+            return NULL;
+        }
+
+        $row = $result->fetch_assoc();
+        return $row["cost"];
+    }
+
     // Check if date_ids are null
+    if($date_ids == NULL){
+        printf("Error: date_ids is null in sort_dates_by_cost\n");
+        return NULL;
+    }
 
+    // Check if date_ids length is  less than 2
+    if(count($date_ids) < 2){
+        return $date_ids;
+    }
     // If ascending is null or true sort it in increasing order
-
+    if($ascending == NULL || $ascending == true){
+        // Sort the date_ids by ascending cost
+        usort($date_ids, function($a, $b) {
+            return get_date_cost($a) - get_date_cost($b);
+        });
+    }
     // if ascending is false sort it in descending order
-
+    else{
+        usort($date_ids, function($a, $b) {
+            return get_date_cost($b) - get_date_cost($a);
+        });
+    }
 }
 
 // Sorts our input date id's by their location
-function sort_dates_by_location($date_ids){
+function sort_dates_by_location($id,$date_ids){
+
+    function get_user_city($id){
+        // Get the city of the current user
+        $query = "SELECT city FROM Users WHERE id=?";
+        $data = [$id];
+        $result = exec_query($query, $data);
+
+        // Check if the query was successful
+        if ($result == NULL) {
+            print("Couldn't exec_query in sort_dates_by_location\n");
+            return NULL;
+        }
+        else if ($result->num_rows <= 0) {
+            print("No user with this ID in sort_dates_by_location\n");
+            return NULL;
+        }
+
+        $row = $result->fetch_assoc();
+        return $row["city"];
+    }
+
+    // Check if date_ids are null
+    if($date_ids == NULL){
+        printf("Error: date_ids is null in sort_dates_by_location\n");
+        return NULL;
+    }
+
+    // Check if date_ids length is  less than 2
+    if(count($date_ids) < 2){
+        return $date_ids;
+    }
+    
+
+    $location = get_user_city($id);
 
 }
 
