@@ -1045,26 +1045,26 @@ function get_date_information($user_id, $date_id) {
     return $result->fetch_assoc();
 }
 
+function get_date_cost($date_id){
+    $query = "SELECT cost FROM Date_ideas WHERE id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_cost\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in get_date_cost\n");
+        return NULL;
+    }
+
+    $row = $result->fetch_assoc();
+    return $row["cost"];
+}
+
 // Sorts our input date id's by their cost in
 function sort_dates_by_cost($date_ids,$ascending){
-
-    function get_date_cost($date_id){
-        $query = "SELECT cost FROM Date_ideas WHERE id=?";
-        $data = [$date_id];
-        $result = exec_query($query, $data);
-
-        if ($result == NULL) {
-            print("Couldn't exec_query in get_date_cost\n");
-            return NULL;
-        }
-        else if ($result->num_rows <= 0) {
-            print("No date with this ID in get_date_cost\n");
-            return NULL;
-        }
-
-        $row = $result->fetch_assoc();
-        return $row["cost"];
-    }
 
     // Check if date_ids are null
     if($date_ids == NULL){
