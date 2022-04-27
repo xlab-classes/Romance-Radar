@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 // THE CLASS NAME NEEDS TO BE CHANGED
 // It should be the same as the name of the file
-final class TestUnitTestSkeleton extends TestCase
+final class TestSortDates extends TestCase
 {
     private $id_a;
     private $connection_a = "Alex";
@@ -220,7 +220,7 @@ final class TestUnitTestSkeleton extends TestCase
         $ab = generate_dates($this->id_a, $this->id_b);
 
         // Sort all the dates by cost
-        $sorted_date_ids = sort_dates_by_cost($ab);
+        $sorted_date_ids = sort_dates_by_cost($ab,NULL);
 
         // A date cannot be less than 0
         $max = -1;
@@ -239,7 +239,7 @@ final class TestUnitTestSkeleton extends TestCase
         $ac = generate_dates($this->id_a, $this->id_c);
 
         // Sort all the dates by cost
-        $sorted_date_ids = sort_dates_by_cost($ac);
+        $sorted_date_ids = sort_dates_by_cost($ac,NULL);
 
         // A date cannot be less than 0
         $max = -1;
@@ -258,7 +258,7 @@ final class TestUnitTestSkeleton extends TestCase
         $ad = generate_dates($this->id_a, $this->id_d);
 
         // Sort all the dates by cost
-        $sorted_date_ids = sort_dates_by_cost($ad);
+        $sorted_date_ids = sort_dates_by_cost($ad,NULL);
 
         // A date cannot be less than 0
         $max = -1;

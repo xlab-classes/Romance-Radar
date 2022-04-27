@@ -1045,9 +1045,9 @@ function get_date_information($user_id, $date_id) {
     return $result->fetch_assoc();
 }
 
-function get_date_cost($date_id){
-    $query = "SELECT cost FROM Date_ideas WHERE id=?";
-    $data = [$date_id];
+function get_date_cost($id){
+    $query = "SELECT est_cost FROM Date_ideas WHERE id=?";
+    $data = [$id];
     $result = exec_query($query, $data);
 
     if ($result == NULL) {
@@ -1059,8 +1059,7 @@ function get_date_cost($date_id){
         return NULL;
     }
 
-    $row = $result->fetch_assoc();
-    return $row["cost"];
+    return $result->fetch_assoc();
 }
 
 // Sorts our input date id's by their cost in
@@ -1110,13 +1109,13 @@ function sort_dates_by_location($id,$date_ids){
             return NULL;
         }
 
-        $row = $result->fetch_assoc();
-        return $row["city"];
+
+        return $result->fetch_assoc();
     }
 
     function get_date_city($id){
         // Get the city of the current date
-        $query = "SELECT location FROM Date_ideas WHERE id=?";
+        $query = "SELECT * FROM Users WHERE id=?";
         $data = [$id];
         $result = exec_query($query, $data);
 
@@ -1174,10 +1173,7 @@ function get_date_tag($date_id){
         print("No date with this ID in sort_date_by_entertainment\n");
         return NULL;
     }
-
-    $row = $result->fetch_assoc();
-    return $row["date_tag"];
-}
+    return  $result->fetch_assoc();
 
 // Sort our input date id's by their users favorite entertainment
 function sort_date_by_entertainment($date_ids){
