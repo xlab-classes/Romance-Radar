@@ -211,7 +211,7 @@ if($user['partner'] == $user['id']){
             <div class="col">
                 <div class="row justify-content-center">
                     <div class="col-6">
-                        <img src="%s" class="img-fluid rounded-circle">  
+                        <img src="%s" class="img-fluid rounded-circle" id="profile_picture">  
                     </div>
                 </div>
                 <div class="row">
@@ -325,6 +325,12 @@ if($user['partner'] == $user['id']){
 	}
 
 }
+#profile_picture{
+    <?php if($_SESSION['partner']['verified']){ ?>
+        box-shadow: 0 0 10px #0000FF;
+    <?php } ?>
+}
+    
     </style>
 </head>
 <body>

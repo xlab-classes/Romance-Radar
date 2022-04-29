@@ -16,5 +16,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
     echo 'Could not verify user: '.strval($_SESSION['user']['id']);
+    
 }
+header('Location: ../HTML/privacy_settings.php');
 ?>
+
