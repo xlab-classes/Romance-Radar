@@ -296,20 +296,8 @@ final class TestSortDates extends TestCase
         }
     }
 
-    function testSortedByEntertainment(){
+    function testSortedByEntertainment() {
 
-        function countTagType($tag_type, $date_ids){
-            // Given a certain type count how many dates have that type
-            $count = 0;
-            foreach($date_ids as $date){
-                $tags = get_date_tag($date);
-                if(in_array($tags,$tag_type)){
-                    $count++;
-                }
-            }
-            return $count;
-        }
-            
             // The dates between Alex and Heather
             $ac = generate_dates($this->id_a, $this->id_c);
 
@@ -318,11 +306,71 @@ final class TestSortDates extends TestCase
             // Sort all the dates by entertainment
             $sorted_date_ids = sort_dates_by_entertainment($ac);
             $count = countTagType($entertainment, $sorted_date_ids);
-            for ($i=0; $i < $count  ; $i++) { 
-                $this->assertEquals(in_array(get_date_tag($sorted_date_ids[$i]),$entertainment), true);
+            for ($i=0; $i < $count  ; $i++) {
+                $current_tag = get_date_tag($sorted_date_ids[$i]);
+                $this->assertEquals(in_array($current_tag,$entertainment), true);
             }
-            for ($i=$count; $i < strlen($sorted_date_ids)  ; $i++) { 
-                $this->assertEquals(in_array(get_date_tag($sorted_date_ids[$i]),$entertainment), false);
-            }
+            for ($i=$count; $i < count($sorted_date_ids)  ; $i++) { 
+                $current_tag = get_date_tag($sorted_date_ids[$i]);
+                $this->assertEquals(in_array($current_tag,$entertainment), false);            }
+    }
+
+    function testSortedByVenue(){
+        
+                // The dates between Alex and Heather
+                $ac = generate_dates($this->id_a, $this->id_c);
+    
+                $venue = ['indoors','outdoors','social_events'];
+        
+                // Sort all the dates by venue
+                $sorted_date_ids = sort_dates_by_venues($ac);
+                $count = countTagType($venue, $sorted_date_ids);
+                for ($i=0; $i < $count  ; $i++) {
+                    $current_tag = get_date_tag($sorted_date_ids[$i]);
+                    $this->assertEquals(in_array($current_tag,$venue), true);
+                }
+                for ($i=$count; $i < count($sorted_date_ids)  ; $i++) { 
+                    $current_tag = get_date_tag($sorted_date_ids[$i]);
+                    $this->assertEquals(in_array($current_tag,$venue), false);                }
+    }
+
+    function testSortedByFood(){
+            
+                // The dates between Alex and Heather
+                $ac = generate_dates($this->id_a, $this->id_c);
+        
+                $food = ['restaurant','cafe','alcohol','fast_food'];
+            
+                // Sort all the dates by food
+                $sorted_date_ids = sort_dates_by_food($ac);
+                $count = countTagType($food, $sorted_date_ids);
+                    for ($i=0; $i < $count  ; $i++) {
+                        $current_tag = get_date_tag($sorted_date_ids[$i]);
+                        $this->assertEquals(in_array($current_tag,$food), true);
+                    }
+                    for ($i=$count; $i < count($sorted_date_ids)  ; $i++) { 
+                        $current_tag = get_date_tag($sorted_date_ids[$i]);
+                        $this->assertEquals(in_array($current_tag,$food), false);                    
+                    }
+    }
+
+    function testSortedByTime(){
+            
+                    // The dates between Alex and Heather
+                    $ac = generate_dates($this->id_a, $this->id_c);
+        
+                    $time = ['morning','afternoon','evening'];
+            
+                    // Sort all the dates by time
+                    $sorted_date_ids = sort_dates_by_time($ac);
+                    $count = countTagType($time, $sorted_date_ids);
+                    for ($i=0; $i < $count  ; $i++) { 
+                        $current_tag = get_date_tag($sorted_date_ids[$i]);
+                        $this->assertEquals(in_array($current_tag,$time), true);                    
+                    }
+                    for ($i=$count; $i < count($sorted_date_ids)  ; $i++) { 
+                        $current_tag = get_date_tag($sorted_date_ids[$i]);
+                        $this->assertEquals(in_array($current_tag,$time), false);
+                    }
     }
 }

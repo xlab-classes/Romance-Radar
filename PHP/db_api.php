@@ -1252,6 +1252,19 @@ function get_date_tag($date_id){
     return  $row["tag"];
 }
 
+function countTagType($tag_type, $date_ids):  int
+{
+    // Given a certain type count how many dates have that type
+    $count = 0;
+    foreach($date_ids as $date){
+        $tags = get_date_tag($date);
+        if(in_array($tags,$tag_type)){
+            $count++;
+        }
+    }
+    return $count;
+}
+
 // Sort our input date id's by their users favorite entertainment
 function sort_dates_by_entertainment($date_ids){
 
@@ -1277,12 +1290,12 @@ function sort_dates_by_entertainment($date_ids){
 }
 
 // Sort our input date id's by their users favorite venues
-function sort_date_by_venues($date_ids){
+function sort_dates_by_venues($date_ids){
 
     $venues = ['indoors','outdoors','social_events'];
 
 // Sort the date_ids by their date tag with venues having the highest priority
-    usort($date_ids, function($a, $b) {
+    usort($date_ids, function($a, $b) use ($venues) {
         $a_tag = get_date_tag($a);
         $b_tag = get_date_tag($b);
 
@@ -1298,17 +1311,17 @@ function sort_date_by_venues($date_ids){
             return 0;
         }
     });
-
+    return $date_ids;
 }
 
 // Sort our input date id's by their users favorite food types
-function sort_date_by_food($date_ids){
+function sort_dates_by_food($date_ids){
 
     $foods = ['restaurant','cafe','fast_food', 'alcohol'];
 
     // Sort the date_ids by their date tag with food having the highest priority
 
-    usort($date_ids, function($a, $b) {
+    usort($date_ids, function($a, $b) use ($foods) {
         $a_tag = get_date_tag($a);
         $b_tag = get_date_tag($b);
 
@@ -1323,16 +1336,17 @@ function sort_date_by_food($date_ids){
             return 0;
         }
     });
+    return $date_ids;
 }
 
 // Sort our input date id's by their users favorite time of day
-function sort_date_by_time($date_ids){
+function sort_dates_by_time($date_ids){
 
     $times = ['morning','afternoon','evening'];
 
     // Sort the date_ids by their date tag with time having the highest priority
 
-    usort($date_ids, function($a, $b) {
+    usort($date_ids, function($a, $b) use ($times) {
         $a_tag = get_date_tag($a);
         $b_tag = get_date_tag($b);
 
@@ -1347,7 +1361,7 @@ function sort_date_by_time($date_ids){
             return 0;
         }
     });
-
+    return $date_ids;
 }
 
 // Add an entry to the Date_tags table that tags this date with this tag
