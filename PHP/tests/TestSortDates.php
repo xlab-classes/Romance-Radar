@@ -228,7 +228,7 @@ final class TestSortDates extends TestCase
         // Check that all the dates are in non-decreasing order
         foreach($sorted_date_ids as $date){
             $cost = get_date_cost($date);
-            $this->assertGreaterThanOrEqual($max, $cost);
+            $this->assertGreaterThanOrEqual($max, $cost, "Error: Dates are not in non-decreasing order");
             $max = $cost;
         }
     }
@@ -247,7 +247,7 @@ final class TestSortDates extends TestCase
         // Check that all the dates are in non-decreasing order
         foreach($sorted_date_ids as $date){
             $cost = get_date_cost($date);
-            $this->assertGreaterThanOrEqual($max, $cost);
+            $this->assertGreaterThanOrEqual($max, $cost, "Cost is less than previous cost");
             $max = $cost;
         }
     }
@@ -266,7 +266,7 @@ final class TestSortDates extends TestCase
         // Check that all the dates are in non-decreasing order
         foreach($sorted_date_ids as $date){
             $cost = get_date_cost($date);
-            $this->assertGreaterThanOrEqual($max, $cost);
+            $this->assertGreaterThanOrEqual($max, $cost, "Cost is less than previous cost");
             $max = $cost;
         }
     }
