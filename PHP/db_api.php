@@ -996,6 +996,7 @@ function get_times_suggested($user_id, $date_id) {
 //
 // returns:
 //      An array of date idea ID's that are compatible with both users' preferences
+//      The array will be sorted by the cost of the date by default
 //      NULL if either user doesn't exist
 //      NULL if any other error occured
 //
@@ -1043,6 +1044,7 @@ function generate_dates($user_a, $user_b) {
     }
 
     // Return overlapping date ideas
+    sort_dates_by_cost($compatible_dates);
     return $compatible_dates;
 }
 
@@ -1099,6 +1101,7 @@ function get_date_information($user_id, $date_id) {
     return $result->fetch_assoc();
 }
 
+// From the date ID, get the date's estimated cost
 function get_date_cost($id){
     $query = "SELECT * FROM Date_ideas WHERE id=?";
     $data = [$id];
@@ -1116,7 +1119,7 @@ function get_date_cost($id){
     return $result->fetch_assoc()["est_cost"];
 }
 
-// Sorts our input date id's by their cost in
+// Sorts our input date id's by their cost in a specfic order depending on the input of ascending variable
 function sort_dates_by_cost($date_ids,$ascending){
 
     // Check if date_ids are null
@@ -1145,6 +1148,7 @@ function sort_dates_by_cost($date_ids,$ascending){
     return $date_ids;
 }
 
+// From the date ID, get the date's city
 function get_date_city($id){
     // Get the city of the current date
     $query = "SELECT * FROM Date_ideas WHERE id=?";
@@ -1174,6 +1178,7 @@ function get_date_city($id){
     return $city;
 }
 
+// From the user ID, get the user's city
 function get_user_city($id){
     // Get the city of the current user
     $query = "SELECT * FROM Users WHERE id=?";
@@ -1252,6 +1257,7 @@ function get_date_tag($date_id){
     return  $row["tag"];
 }
 
+// Given a array of date_ids, count how many have the same tag as the input tag type.
 function countTagType($tag_type, $date_ids):  int
 {
     // Given a certain type count how many dates have that type
