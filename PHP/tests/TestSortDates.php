@@ -279,10 +279,50 @@ final class TestSortDates extends TestCase
         // Sort all the dates by location
         $sorted_date_ids = sort_dates_by_location($this->id_a,$ab);
 
+        $user_city = get_user_city($this->id_a);
+
 
         foreach($sorted_date_ids as $date){
-            // Assert that the date is in the correct location
-            $this->assertEquals("Zimbabwe", get_date_city($date), "Date is not in the correct location");
+            
+            $current_city = get_date_city($sorted_date_ids[0]);
+            // If we are at the beginnig of the list, our user's city is the first city 
+            if($current_city == $user_city){
+                $this->assertEquals($user_city, $current_city);
+            }
+            else{
+                $current_city = get_date_city($date);
+                this->assertNotEquals(0,strcmp($user_city, $current_city));
+            }
         }
+    }
+
+    function testSortedByEntertainment(){
+
+        function countTagType($tag_type, $date_ids){
+            // Given a certain type count how many dates have that type
+            $count = 0;
+            foreach($date_ids as $date){
+                $tags = get_date_tag($date);
+                if(in_array($tags,$tag_type)){
+                    $count++;
+                }
+            }
+            return $count;
+        }
+            
+            // The dates between Alex and Heather
+            $ac = generate_dates($this->id_a, $this->id_c);
+
+            $entertainment = ['entertainment','concerts','hiking','bar'];
+    
+            // Sort all the dates by entertainment
+            $sorted_date_ids = sort_dates_by_entertainment($ac);
+            $count = countTagType($entertainment, $sorted_date_ids);
+            for ($i=0; $i < $count  ; $i++) { 
+                $this->assertEquals(in_array(get_date_tag($sorted_date_ids[$i]),$entertainment), true);
+            }
+            for ($i=$count; $i < strlen($sorted_date_ids)  ; $i++) { 
+                $this->assertEquals(in_array(get_date_tag($sorted_date_ids[$i]),$entertainment), false);
+            }
     }
 }
