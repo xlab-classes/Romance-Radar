@@ -1145,53 +1145,54 @@ function sort_dates_by_cost($date_ids,$ascending){
     return $date_ids;
 }
 
+function get_date_city($id){
+    // Get the city of the current date
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_dates_by_location\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in sort_dates_by_location\n");
+        return NULL;
+    }
+
+    $row = $result->fetch_assoc();
+
+    $city = $row["location"];
+
+    // split the city into two parts separated by a comma and return the first part
+    $city = explode(",", $city);
+    return $city[0];
+}
+
+function get_user_city($id){
+    // Get the city of the current user
+    $query = "SELECT * FROM Users WHERE id=?";
+    $data = [$id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_dates_by_location\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No user with this ID in sort_dates_by_location\n");
+        return NULL;
+    }
+    $row = $result->fetch_assoc();
+    return $row["city"][0];
+}
+
 // Sorts our input date id's by their location
 function sort_dates_by_location($id,$date_ids){
 
-    function get_user_city($id){
-        // Get the city of the current user
-        $query = "SELECT city FROM Users WHERE id=?";
-        $data = [$id];
-        $result = exec_query($query, $data);
-
-        // Check if the query was successful
-        if ($result == NULL) {
-            print("Couldn't exec_query in sort_dates_by_location\n");
-            return NULL;
-        }
-        else if ($result->num_rows <= 0) {
-            print("No user with this ID in sort_dates_by_location\n");
-            return NULL;
-        }
-
-
-        return $result->fetch_assoc();
-    }
-
-    function get_date_city($id){
-        // Get the city of the current date
-        $query = "SELECT * FROM Users WHERE id=?";
-        $data = [$id];
-        $result = exec_query($query, $data);
-
-        // Check if the query was successful
-        if ($result == NULL) {
-            print("Couldn't exec_query in sort_dates_by_location\n");
-            return NULL;
-        }
-        else if ($result->num_rows <= 0) {
-            print("No date with this ID in sort_dates_by_location\n");
-            return NULL;
-        }
-
-        $row = $result->fetch_assoc();
-
-        $city = $row["city"];
-
-        // split the city into two parts separated by a comma and return the first part
-        $city = explode(",", $city);
-        return $city[0];
-    }
+    $location = get_user_city($id);
 
     // Check if date_ids are null
     if($date_ids == NULL){
@@ -1204,13 +1205,24 @@ function sort_dates_by_location($id,$date_ids){
         return $date_ids;
     }
 
-    $location = get_user_city($id);
+    // Filter the date_ids by the location of the user
+    $filtered_date_ids = array();
+    $unfiltered_date_ids = array();
+    foreach($date_ids as $date_id){
+        if(get_date_city($date_id) == $location){
+            array_push($filtered_date_ids, $date_id);
+        }
+        else{
+            array_push($unfiltered_date_ids, $date_id);
+        }
+    }
 
     // Sort the date_ids by closest city
-    usort($date_ids, function($a, $b) {
-        return (strcmp(get_date_city($a), $location) - strcmp(get_date_city($b), $location));
+    usort($unfiltered_date_ids, function($a, $b) {
+        return (strcmp(get_date_city($a),get_date_city($b)));
     });
-
+    // Concatenate the two arrays together
+    return $filtered_date_ids;
 }
 
 // Get the date_tag of the date from the date_id

@@ -271,4 +271,18 @@ final class TestSortDates extends TestCase
         }
     }
 
+    function testSortedByLocationAlexHazel(){
+        
+        // The dates between Alex and Hazel
+        $ab = generate_dates($this->id_a, $this->id_b);
+
+        // Sort all the dates by location
+        $sorted_date_ids = sort_dates_by_location($this->id_a,$ab);
+
+
+        foreach($sorted_date_ids as $date){
+            // Assert that the date is in the correct location
+            $this->assertEquals("Zimbabwe", get_date_city($date), "Date is not in the correct location");
+        }
+    }
 }
