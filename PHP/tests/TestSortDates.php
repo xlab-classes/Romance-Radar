@@ -279,10 +279,9 @@ final class TestSortDates extends TestCase
         // Sort all the dates by location
         $sorted_date_ids = sort_dates_by_location($this->id_a,$ab);
 
-        $user_city = get_user_city($this->id_a);
-
 
         foreach($sorted_date_ids as $date){
+            $user_city = get_user_city($this->id_a);
             
             $current_city = get_date_city($sorted_date_ids[0]);
             // If we are at the beginnig of the list, our user's city is the first city 
