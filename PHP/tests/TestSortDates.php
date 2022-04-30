@@ -291,7 +291,7 @@ final class TestSortDates extends TestCase
             }
             else{
                 $current_city = get_date_city($date);
-                this->assertNotEquals(0,strcmp($user_city, $current_city));
+                $this->assertNotEquals(0,strcmp($user_city, $current_city));
             }
         }
     }
