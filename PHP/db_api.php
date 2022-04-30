@@ -1163,15 +1163,11 @@ function get_date_city($id){
 
     $row = $result->fetch_assoc();
 
-    if($row == NULL){
-        print("Error: row is null in sort_dates_by_location\n");
-        return NULL;
-    }
-    $city =  explode(",",$row["location"],);
+    $city = $row["location"];
 
     // split the city into two parts separated by a comma and return the first part
-    $city = $city[0];
-    return $city;
+    $city = explode(",", $city);
+    return $city[0];
 }
 
 function get_user_city($id){
@@ -1190,7 +1186,7 @@ function get_user_city($id){
         return NULL;
     }
     $row = $result->fetch_assoc();
-    return $row["city"];
+    return $row["city"][0];
 }
 
 // Sorts our input date id's by their location
@@ -1213,7 +1209,7 @@ function sort_dates_by_location($id,$date_ids){
     $filtered_date_ids = array();
     $unfiltered_date_ids = array();
     foreach($date_ids as $date_id){
-        if(strcmp(get_date_city($date_id), $location) == 0){
+        if(get_date_city($date_id) == $location){
             array_push($filtered_date_ids, $date_id);
         }
         else{
@@ -1226,12 +1222,12 @@ function sort_dates_by_location($id,$date_ids){
         return (strcmp(get_date_city($a),get_date_city($b)));
     });
     // Concatenate the two arrays together
-    return array_merge($filtered_date_ids,$unfiltered_date_ids);
+    return $filtered_date_ids;
 }
 
 // Get the date_tag of the date from the date_id
 function get_date_tag($date_id){
-    $query = "SELECT * FROM Date_tags WHERE date_id=?";
+    $query = "SELECT tag FROM Date_tags WHERE date_id=?";
     $data = [$date_id];
     $result = exec_query($query, $data);
 
@@ -1244,13 +1240,7 @@ function get_date_tag($date_id){
         print("No date with this ID in sort_date_by_entertainment\n");
         return NULL;
     }
-    $row = $result->fetch_assoc();
-    if($row == NULL){
-        print("Error: row is null in sort_date_by_entertainment\n");
-        return NULL;
-    }
-    return  $row["tag"];
-}
+    return  $result->fetch_assoc();
 
 function countTagType($tag_type, $date_ids):  int
 {
@@ -1266,27 +1256,14 @@ function countTagType($tag_type, $date_ids):  int
 }
 
 // Sort our input date id's by their users favorite entertainment
-function sort_dates_by_entertainment($date_ids){
-
-    $entertainment = ['entertainment','concerts','hiking','bar'];
+function sort_date_by_entertainment($date_ids){
 
     // Sort the date_ids by their date tag with entertainment having the highest priority
-    usort($date_ids, function($a, $b) use ($entertainment) {
+    usort($date_ids, function($a, $b) {
         $a_tag = get_date_tag($a);
         $b_tag = get_date_tag($b);
-        
-        // Check if the date_tag is one of the venues
-        if(in_array($a_tag,$entertainment) && !in_array($b_tag,$entertainment)){
-            return -1;
-        }
-        else if(!in_array($a_tag,$entertainment) && in_array($b_tag,$entertainment)){
-            return 1;
-        }
-        else{
-            return 0;
-        }
+        return (strcmp($a_tag, "entertainment") - strcmp($b_tag, "entertainment"));
     });
-    return $date_ids;
 }
 
 // Sort our input date id's by their users favorite venues
@@ -1903,4 +1880,5 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
 }
