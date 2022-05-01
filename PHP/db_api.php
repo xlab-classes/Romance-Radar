@@ -1672,6 +1672,6 @@ function get_email($user_id) {
         return NULL;
     }
     else {
-        return $result->fetch_column(0);
+        return $result->fetch_column();
     }
 }
