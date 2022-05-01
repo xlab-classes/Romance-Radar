@@ -1664,12 +1664,12 @@ function set_status($user_id, $status) {
 //      The attribute name MUST be a column in the Users table
 function get_attribute($user_id, $attribute) {
     if (!user_exists($user_id)) {
-        print("User doesn't exist in get_email\n");
+        print("User doesn't exist in get_attribute\n");
         return NULL;
     }
 
-    $query = "SELECT ? FROM Users WHERE id=?";
-    $data = [$attribute, $user_id];
+    $query = sprintf("SELECT %s FROM Users WHERE id=?", $attribute);
+    $data = [$user_id];
     $result = exec_query($query, $data);
 
     if ($result == NULL) {
