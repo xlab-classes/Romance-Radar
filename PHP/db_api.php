@@ -378,6 +378,11 @@ function add_connection($sent_from, $sent_to) {
     // Remove sent connection requests
     remove_connection_request($sent_from);
     remove_connection_request($sent_to);
+
+    // Send an email to sent_from that sent_to has accepted the request
+    /*mail(
+        // ALEX
+    );*/
     
     return 1;
 }
@@ -1635,4 +1640,38 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
+
+// Get the email of this user
+//
+// parameter: user_id   [int]
+//      The ID of the user whose email we want
+//
+// returns:
+//      The email as a string on success
+//      NULL on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+function get_email($user_id) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_email\n");
+        return NULL;
+    }
+
+    $query = "SELECT email FROM Users WHERE id=?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_email\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 0) {
+        print("Error querying Users table in get_email\n");
+        return NULL;
+    }
+    else {
+        return $result;
+    }
 }
