@@ -3,7 +3,7 @@
 require_once('../db_api.php');
 use PHPUnit\Framework\TestCase;
 
-final class TestGetEmail extends TestCase
+final class TestGetAttribute extends TestCase
 {
     private $id;
     private $prefs;
@@ -35,12 +35,19 @@ final class TestGetEmail extends TestCase
 
     function testBasic(): void
     {
-        $email = get_email($this->id);
+        $email = get_attribute($this->id, "email");
         $this->assertNotNull($email, "Email was returned as NULL");
         $this->assertEquals("string", gettype($email),
             "Email was returned as " . gettype($email) . " instead of string");
-        $this->assertEquals("jon_doe@yahoo.co", $email,
+        $this->assertEquals($this->email, $email,
             "Email retrieved was not email set");
+
+        $name = get_attribute($this->id, "name");
+        $this->assertNotNull($name, "Name was returned as NULL");
+        $this->assertEquals("string", gettype($name),
+            "Name was returned as " . gettype($name) . " instead of string");
+        $this->assertEquals($this->name, $name,
+            "Name retrieved was not name set");
     }
 
 }
