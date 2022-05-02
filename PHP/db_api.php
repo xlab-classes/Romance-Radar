@@ -1370,6 +1370,30 @@ function sort_dates_by_time($date_ids){
     return $date_ids;
 }
 
+function get_like_status($id, $date_id){
+    // Create query to check if date represnted by date_id was liked
+    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $data = [$id, $date_id];
+    // Get result of query
+    $result = exec_query($query, $data);
+    // If the query was valid return 1
+    if($result != NULL && $result->num_rows >= 1){
+        return 1;
+    }
+    // If the query was invalid then it's either disliked or not liked
+    else -1;
+}
+
+// Sorts the date_ids by whether or not they were liked
+function sort_dates_by_likes($id, $date_ids){
+    usort($date_ids, function($a, $b) use ($id){
+        $a_status = get_like_status($id,$a);
+        $b_status = get_like_status($id,$b);
+        return($b_status - $a_status);
+    });
+    return $date_ids;
+}
+
 // Add an entry to the Date_tags table that tags this date with this tag
 //
 // parameter: date_id   [int]
