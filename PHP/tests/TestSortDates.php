@@ -86,6 +86,7 @@ final class TestSortDates extends TestCase
         $this->assertNotEquals($this->id_b, $this->id_d);
         $this->assertNotEquals($this->id_c, $this->id_d);
 
+
         // Set preferences
         // Alex - OK with everything (has all preferences)
         $alex_prefs = array(
@@ -371,5 +372,25 @@ final class TestSortDates extends TestCase
                         $current_tag = get_date_tag($sorted_date_ids[$i]);
                         $this->assertEquals(in_array($current_tag,$time), false);
                     }
+    }
+
+    function testSortedByLikes(){
+
+        // The dates between Alex and Heather
+        $ac = generate_dates($this->id_a, $this->id_c);
+
+        // Like the first date
+        for($idx = 0 ; $idx < 1 ; $idx++){
+            like_date($this->id_a,$ac[$idx]);
+        }
+
+        // Saving id of the liked date
+        $liked_date_id = $ac[0];
+
+        $sorted_date_ids = sort_dates_by_likes($this->id_a,$ac);
+
+        for($idx = 0 ; $idx < 1 ; $idx++){
+            $this->assertEquals($liked_date_id,$sorted_date_ids[$idx]);
+        }
     }
 }

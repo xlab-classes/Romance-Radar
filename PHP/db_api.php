@@ -1044,7 +1044,7 @@ function generate_dates($user_a, $user_b) {
     }
 
     // Return overlapping date ideas
-    sort_dates_by_cost($compatible_dates);
+    // sort_dates_by_likes($compatible_dates);
     return $compatible_dates;
 }
 
