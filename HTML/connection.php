@@ -7,9 +7,9 @@ require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
 
 
-if(!isset($_SESSION['user'])){
+if (!isset($_SESSION['user'])) {
     echo 'Please Login!!';
-    header('./login.html'); 
+    header('./login.html');
     exit();
 }
 
@@ -18,19 +18,19 @@ $user = $_SESSION['user'];
 $connection_requests = get_requests($user['id']);
 
 
-if($user['partner'] == $user['id']){
+if ($user['partner'] == $user['id']) {
     $res = "";
-    foreach($connection_requests as $id){
-            $request_user = getUser($id,NULL)->fetch_assoc();
-            $res = $res . 
-        "<div class='col-3'>
+    foreach ($connection_requests as $id) {
+        $request_user = getUser($id, NULL)->fetch_assoc();
+        $res = $res .
+            "<div class='col-3'>
             <div class='card card-block card-body'>
-                <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
-                <h5 class='card-title text-center'>".$request_user['name']."</h5>
+                <img class='card-img-top img-fluid rounded-circle'  src='" . $request_user['user_picture'] . "' alt='User image'>
+                <h5 class='card-title text-center'>" . $request_user['name'] . "</h5>
                 <div class='row h-50'>
                     <div class='col-6'>
                         <button type='button' class='btn'>
-                            <a href='../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=".strval($user['id'])."'>
+                            <a href='../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=" . strval($user['id']) . "'>
                                 <img src='../assets/heart.svg' class='col-4'>
                             </a>
                         </button>
@@ -86,35 +86,38 @@ if($user['partner'] == $user['id']){
         %s
         </div>
     ', $user['user_picture'], $user['name'], $res);
-}else{
+} else {
     $partner_preferences = get_preferences((int)$user['partner']);
     $preferences_categories = array(
-        'Food' => array('restaurant' => 'Restaurant', 'cafe' =>'Cafe', 'fast_food'=>'Fast Food', 'alcohol'=>'Alcohol'),
-        'Entertainment' => array('concerts' => 'Concerts', 'hiking'=>'Hiking', 'bar'=>'Bar'),
-        'Venue' => array('indoors'=>'Indoors', 'outdoors'=>'Outdoors', 'social_events'=>'Social Events'),
-        'Date_time' => array('morning'=>'Morning', 'afternoon'=>'Afternoon', 'evening'=>'Afternoon'));
+        'Food' => array('restaurant' => 'Restaurant', 'cafe' => 'Cafe', 'fast_food' => 'Fast Food', 'alcohol' => 'Alcohol'),
+        'Entertainment' => array('concerts' => 'Concerts', 'hiking' => 'Hiking', 'bar' => 'Bar'),
+        'Venue' => array('indoors' => 'Indoors', 'outdoors' => 'Outdoors', 'social_events' => 'Social Events'),
+        'Date_time' => array('morning' => 'Morning', 'afternoon' => 'Afternoon', 'evening' => 'Afternoon')
+    );
     $privacy_settings = array(
         'Food' => 'food_pref',
         'Entertainment' => 'ent_pref',
         'Venue' => 'venue_pref',
-        'Date_time' => 'time_pref');    
-  
+        'Date_time' => 'time_pref'
+    );
+
     $selected_preferences = array();
-    foreach($preferences_categories as $cat => $sub_cats){
+    foreach ($preferences_categories as $cat => $sub_cats) {
         $selected_preferences[$cat] = '';
-        if($_SESSION['partner']['privacy_settings'][$privacy_settings[$cat]] != 1){
-            foreach($sub_cats as $sub_cat => $value){
-                if($partner_preferences[$cat][$sub_cat]){
+        if ($_SESSION['partner']['privacy_settings'][$privacy_settings[$cat]] != 1) {
+            foreach ($sub_cats as $sub_cat => $value) {
+                if ($partner_preferences[$cat][$sub_cat]) {
                     $selected_preferences[$cat] .= sprintf('%s, ', $value);
                 }
             }
-            $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
-        }else{
+            $selected_preferences[$cat] = $selected_preferences[$cat] == '' ? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
+        } else {
             $selected_preferences[$cat] = 'Hidden';
         }
     }
 
-    $preferences_html = sprintf('
+    $preferences_html = sprintf(
+        '
     <div class="ps-5 col-3">
         <div class="row">
             <div class="col"><h3>%s</h3></div>
@@ -158,21 +161,28 @@ if($user['partner'] == $user['id']){
             </div>
             <div class="col">%d</div>
         </div>
-    </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
-            , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
-    
+    </div>',
+        $_SESSION['partner']['name'],
+        $selected_preferences['Entertainment'],
+        $selected_preferences['Food'],
+        $selected_preferences['Venue'],
+        $selected_preferences['Date_time'],
+        $_SESSION['partner']['zipcode'],
+        $partner_preferences['Date_preferences']['cost']
+    );
+
     $date_ideas = '';
     $generate_date_ids = generate_dates($user['id'], $user['partner']);
-    
-    foreach($generate_date_ids as $date_id){
+
+    foreach ($generate_date_ids as $date_id) {
         $date_info = get_date_information($user['id'], $date_id);
         $user_op = get_opinion($user['id'], $date_id);
         $op = array();
-        $op['liked'] = $user_op == 1?"bg-dark":"";
-        $op['disliked'] = $user_op == -1?"bg-dark":""; 
-        $date_ideas .= 
-        
-        sprintf('<div class="row justify-content-center">
+        $op['liked'] = $user_op == 1 ? "bg-dark" : "";
+        $op['disliked'] = $user_op == -1 ? "bg-dark" : "";
+        $date_ideas .=
+
+            sprintf('<div class="row justify-content-center">
         <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
         <div class="row g-0">
           <div class="col-md-4">
@@ -262,77 +272,104 @@ if($user['partner'] == $user['id']){
             %s
         </div>
     ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name'], $date_ideas);
-}  
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    
+
     <style>
-        body{
+        body {
             background-color: #FFC0CB;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            
+
         }
-        .rounded-input{
+
+        .rounded-input {
             border-radius: 25px 0 0 25px;
         }
-        .rounded-submit{
+
+        .rounded-submit {
             border-radius: 0 25px 25px 0px;
             background-color: #FF4F4F;
         }
-        .font{
+
+        .font {
             font-size: small;
         }
-        .icon{
+
+        .icon {
             height: 30px;
             width: 30px;
         }
-        .btn-custom{
+
+        .btn-custom {
             color: white;
             background-color: #FF4F4F;
             border-radius: 25px;
         }
 
-        .modal-custom{
+        .modal-custom {
             opacity: 0.9;
             width: 400px;
         }
-        .modal-custom-body{
+
+        .modal-custom-body {
             border-radius: 40px;
         }
-        .scrolling-wrapper{
+
+        .scrolling-wrapper {
             overflow-x: auto;
         }
 
-.card-block{
-	height: 500px;
-	background-color: #fff;
-	border: none;
-	background-position: center;
-	background-size: cover;
-	transition: all 0.2s ease-in-out !important;
-	border-radius: 24px;
+        .card-block {
+            height: 500px;
+            background-color: #fff;
+            border: none;
+            background-position: center;
+            background-size: cover;
+            transition: all 0.2s ease-in-out !important;
+            border-radius: 24px;
 
-}
-#profile_picture{
-    <?php if($_SESSION['partner']['verified']){ ?>
-        box-shadow: 0 0 10px #0000FF;
-    <?php } ?>
-}
-    
+        }
+
+        #profile_picture {
+            <?php if ($_SESSION['partner']['verified']) { ?>box-shadow: 0 0 10px #0000FF;
+            <?php } ?>
+        }
+
+        .dark-mode {
+            background-color: palevioletred;
+        }
+
+
+        button:hover {
+            background-color: #e76c6c;
+            border-color: #e76c6c;
+            transition: 0.3s;
+        }
     </style>
 </head>
+
 <body>
+    <button onclick="myFunction()">Toggle dark mode</button>
+    <script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+    </script>
     <div class="container">
         <?php
         echo $display;
         ?>
     </div>
 </body>
+
 </html>

@@ -68,11 +68,7 @@ function selectedSubCategory($cat, $sub)
         }
 
 
-        button:hover {
-            background-color: #e76c6c;
-            border-color: #e76c6c;
-            transition: 0.3s;
-        }
+
     </style>
 
 </head>
