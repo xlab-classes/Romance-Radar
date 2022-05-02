@@ -378,6 +378,14 @@ function add_connection($sent_from, $sent_to) {
     // Remove sent connection requests
     remove_connection_request($sent_from);
     remove_connection_request($sent_to);
+
+    // Send an email to sent_from that sent_to has accepted the request
+    $recipient = get_attribute($sent_from, "email");
+    $subject = "Romance Radar: Your connection was accepted!";
+    $message = "Congratulations " . get_attribute($sent_from, "name") . "! ";
+    $message .= get_attribute($sent_to, "name") . " has accepted your request to connect!";
+    $message .= "\n\n Thanks for using Romance Radar :-)";
+    mail($recipient, $subject, $message);
     
     return 1;
 }
@@ -1635,4 +1643,44 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
+
+// Get some information about this user (email, name, etc.)
+//
+// parameter: user_id   [int]
+//      The ID of the user whose information we want
+//
+// parameter: attribute [string]
+//      The name of the information that we want. This must be a column in the
+//      Users table
+//
+// returns:
+//      The attribute that was requested. The data type matches how it's stored
+//      in the Users table
+//      NULL on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      The attribute name MUST be a column in the Users table
+function get_attribute($user_id, $attribute) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_attribute\n");
+        return NULL;
+    }
+
+    $query = sprintf("SELECT %s FROM Users WHERE id=?", $attribute);
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_attribute\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 0) {
+        print("Error querying Users table in get_attribute\n");
+        return NULL;
+    }
+    else {
+        return $result->fetch_assoc()["$attribute"];
+    }
 }
