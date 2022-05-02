@@ -34,12 +34,11 @@ function getUser($user_id, $email){
 # * NULL if there was a problem executing the SQL statement
 function exec_query($query, $data) {
 
-    
     $host = 'oceanus.cse.buffalo.edu';
     $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
     $password = 50276673;
-    
+
     $connection = new mysqli($host, $user, $password, $db);
     
     # Error connecting, return NULL
@@ -253,8 +252,10 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     }
 
     # Attempt to create this user
-    $query = "INSERT INTO Users (name, email, password, user_picture, street_address, zipcode, birthday, city) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO Users ";
+	$query .= "(name, email, password, user_picture, street_address, ";$query .= "zipcode, birthday, city) ";
+	$query .= "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
     $data = [$name, $email, $pwd, '../assets/generic_profile_picture.jpg', $addr, $zipcode, $bday, $city];
     $result = exec_query($query, $data);
     if (!$result) {
@@ -273,7 +274,12 @@ function create_user($name, $email, $pwd, $addr, $city, $zipcode, $bday) {
     $result = exec_query($query, [$id, $id]);
 
     if (!initialize_preferences($id)) {
-        echo "Couldn't initialize preferences for new user!\n";
+        echo "Couldn't initialize preferences for new user!</br>";
+        return 0;
+    }
+    if (!initialize_privacy_settings($id)){
+        echo "Couldn't initialize privacy settings for new user!</br";
+        return 0;
     }
 
     return 1;
@@ -369,6 +375,10 @@ function add_connection($sent_from, $sent_to) {
         return 0;
     }
 
+    // Remove sent connection requests
+    remove_connection_request($sent_from);
+    remove_connection_request($sent_to);
+    
     return 1;
 }
 
@@ -555,8 +565,8 @@ function get_requests($user_id) {
         echo "No user with this ID\n";
         return 0;
     }
-    $query = "SELECT * FROM Connection_requests WHERE sent_to=?";
-    $result = exec_query($query, [$user_id]);
+    $query = "SELECT * FROM Connection_requests WHERE sent_to=? AND sent_from!=?";
+    $result = exec_query($query, [$user_id, $user_id]);
     if ($result == NULL) {
         print("Couldn't SELECT from Connection_requests in get_requests\n");
         return 0;
@@ -708,8 +718,36 @@ function get_preferences($user_id) {
     }
 
     return $preferences;
-
 }
+
+/* Get verification status */
+function verify_user($user_id) {
+    if (!user_exists($user_id)) {
+        echo "No user with this ID\n";
+        return 0;
+    }
+
+    $query = "UPDATE Users SET verified=1 WHERE id=?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if (!$result) {
+        echo "Couldn't get verification status\n";
+        return 0;
+    }
+    
+    return 1;
+}
+
+function get_captcha($captcha_id){
+    $query = 'SELECT * FROM Captcha WHERE id=?';
+    $result = exec_query($query, [(int)$captcha_id]);
+
+    if(!$result || !$result->num_rows){
+        exit('No capcha Found');
+    }
+    return $result->fetch_assoc();
+}
+
 
 # Set the preferences of the user with ID `user_id` to `preferences`
 function update_preferences($user_id, $preferences) {
@@ -949,7 +987,7 @@ function generate_dates($user_a, $user_b) {
         $ua_suggested = get_times_suggested($user_a, $date);
         $ub_suggested = get_times_suggested($user_b, $date);
 
-        if ($ua_suggested < 2 && $ub_suggested < 2) {
+        if ($ua_suggested < 3 && $ub_suggested < 3) {
             array_push($compatible_dates, $date);
         }
     }
@@ -1116,7 +1154,7 @@ function date_suggested($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Date_counts WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1125,7 +1163,7 @@ function date_suggested($user_id, $date_id) {
         return 0;
     }
     else if ($result->num_rows == 0) {
-        $query = "INSERT INTO Date_counts (id, date_id, suggested) VALUES (?, ?, ?)";
+        $query = "INSERT INTO Date_counts (user_id, date_id, suggested) VALUES (?, ?, ?)";
         $data = [$user_id, $date_id, 1];
         $result = exec_query($query, $data);
 
@@ -1140,7 +1178,7 @@ function date_suggested($user_id, $date_id) {
             return 0;
         }
 
-        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE id=? AND date_id=?";
+        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE user_id=? AND date_id=?";
         $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
 
@@ -1178,7 +1216,7 @@ function get_times_suggested($user_id, $date_id) {
         return -1;
     }
 
-    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Date_counts WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
     
@@ -1227,7 +1265,7 @@ function like_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1243,7 +1281,7 @@ function like_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "INSERT INTO Dates_liked (id, date_id) VALUES (?, ?)";
+    $query = "INSERT INTO Dates_liked (user_id, date_id) VALUES (?, ?)";
     $result = exec_query($query, $data);
     if ($result == NULL) {
         print("Couldn't insert into Dates_liked in like_date\n");
@@ -1285,7 +1323,7 @@ function dislike_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_disliked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1301,7 +1339,7 @@ function dislike_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "INSERT INTO Dates_disliked (id, date_id) VALUES (?, ?)";
+    $query = "INSERT INTO Dates_disliked (user_id, date_id) VALUES (?, ?)";
     $result = exec_query($query, $data);
     if ($result == NULL) {
         print("Couldn't insert into Dates_disliked in dislike_date\n");
@@ -1346,8 +1384,8 @@ function unlike_date($user_id, $date_id) {
         return 1;
     }
     else if ($opinion == 1) {
-        $query = "DELETE FROM Dates_liked WHERE id=?";
-        $data = [$user_id];
+        $query = "DELETE FROM Dates_liked WHERE user_id=? AND date_id=?";
+        $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
         if ($result == NULL) {
             print("Failed to delete from Dates_liked in unlike_date\n");
@@ -1355,8 +1393,8 @@ function unlike_date($user_id, $date_id) {
         }
     }
     else if ($opinion == -1) {
-        $query = "DELETE FROM Dates_disliked WHERE id=?";
-        $data = [$user_id];
+        $query = "DELETE FROM Dates_disliked WHERE user_id=? AND date_id=?";
+        $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
         if ($result == NULL) {
             print("Failed to delete from Dates_disliked in unlike_date\n");
@@ -1398,7 +1436,7 @@ function get_opinion($user_id, $date_id) {
         return NULL;
     }
 
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1414,7 +1452,7 @@ function get_opinion($user_id, $date_id) {
         return NULL;
     }
 
-    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_disliked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1431,4 +1469,170 @@ function get_opinion($user_id, $date_id) {
     }
 
     return 0;
+}
+
+// Initialize privacy settings
+
+function initialize_privacy_settings($user_id){
+    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo 'Something went wrong while executing query (privacy settings)!!';
+        return 0;
+    }
+    return 1;
+
+}
+
+function update_privacy($id, $privacy_setting_choice) {
+    if (empty($id) || empty($privacy_setting_choice)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    print_r($id);
+    $user_exists = user_exists((int)$id);
+    
+    if (!$user_exists) {
+        echo 'User does not exist';
+        return 0;
+    }            // User must exist
+    
+    else {
+        // We are doing an either or on the privacy settings, so you either can see all or you can't
+        $query = "UPDATE Privacy_settings SET max_cost=?, max_distance=?, date_len=?, date_of_birth=?, time_pref=?, food_pref=?, ent_pref=?, venue_pref=? WHERE user_id=?";
+        
+        $data = [
+            $privacy_setting_choice['max_cost'],
+            $privacy_setting_choice['max_distance'],
+            $privacy_setting_choice['date_len'],
+            $privacy_setting_choice['date_of_birth'],
+            $privacy_setting_choice['time_pref'],
+            $privacy_setting_choice['food_pref'], 
+            $privacy_setting_choice['ent_pref'], 
+            $privacy_setting_choice['venue_pref'], 
+            $id];
+        $result = exec_query($query, $data);
+        
+        if (!$result) {
+            echo 'Query not executed';
+            return 0;
+        
+        }
+        
+        $_SESSION['user']['privacy_settings'] = $privacy_setting_choice;
+        
+        return 1;
+    }
+}
+
+function get_privacy_settings($id){
+
+    if (empty($id)) {
+        echo 'input fields cannot be empty';
+        return 0;       // Can't have empty inputs
+    }
+
+    $query = 'SELECT * FROM Privacy_settings WHERE user_id=?';
+    $result = exec_query($query, [$id]);
+
+    if ($result == NULL) {
+        echo "Couldn't exec query in get privacy settings</br>";
+        return 0;
+    }
+    else if ($result->num_rows <= 0) {
+        echo "Settings doesn't exist in get privacy</br>";
+        return 0;
+    }
+
+    if(!$return = $result->fetch_assoc()){
+        echo 'Error in fetch privacy';
+        return 0;
+    }
+    return $return;
+}
+
+// Get this user's status
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want
+//
+// returns:
+//		The status of the user as a string on success
+//		NULL on failure
+//
+// constraints:
+//		This user must exist
+//
+// Note:
+// 		If this user has no status set, this function will return an empty
+//	string
+function get_status($user_id) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in get_status\n");
+		return NULL;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in get_status\n");
+		return NULL;
+	}
+	else if ($result->num_rows == 0) {
+		return "";
+	}
+	else {
+		return $result->fetch_assoc()["user_status"];
+	}
+}
+
+// Set the status of this user
+//
+// parameter: user_id	[int]
+//		The ID of the user whose status we want to set
+//
+// parameter: status	[string]
+//		The status to set, as a string
+//
+// returns:
+//		1 on success
+//		0 on failure
+//
+// constraints:
+//		This user must exist
+//		The status must be a string, although it can be empty
+function set_status($user_id, $status) {
+	if (!user_exists($user_id)) {
+		print("User doesn't exist in set_status\n");
+		return 0;
+	}
+
+	$query = "SELECT * FROM User_status WHERE id=?";
+	$data = [$user_id];
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't query User_status in set_status\n");
+		return 0;
+	}
+	else if ($result->num_rows == 0) {
+		$query = "INSERT INTO User_status (id, user_status) VALUES (?, ?)";
+		$data = [$user_id, $status];
+	}
+	else {
+		$query = "UPDATE User_status set user_status=? WHERE id=?";
+		$data = [$status, $user_id];
+	}
+
+	$result = exec_query($query, $data);
+
+	if ($result == NULL) {
+		print("Couldn't exec_query in set_status\n");
+		return 0;
+	}
+	
+	return 1;
 }
