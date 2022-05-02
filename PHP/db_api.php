@@ -38,7 +38,7 @@ function exec_query($query, $data) {
     $user = 'jjgrant';
     $db = 'cse442_2022_spring_team_j_db';
     $password = 50276673;
-        
+
     $connection = new mysqli($host, $user, $password, $db);
     
     # Error connecting, return NULL
@@ -388,6 +388,18 @@ function add_connection($sent_from, $sent_to) {
         return 0;
     }
 
+    // Remove sent connection requests
+    remove_connection_request($sent_from);
+    remove_connection_request($sent_to);
+
+    // Send an email to sent_from that sent_to has accepted the request
+    $recipient = get_attribute($sent_from, "email");
+    $subject = "Romance Radar: Your connection was accepted!";
+    $message = "Congratulations " . get_attribute($sent_from, "name") . "! ";
+    $message .= get_attribute($sent_to, "name") . " has accepted your request to connect!";
+    $message .= "\n\n Thanks for using Romance Radar :-)";
+    mail($recipient, $subject, $message);
+    
     return 1;
 }
 
@@ -945,47 +957,6 @@ function get_date_ids($preferences) {
     return $arr;
 }
 
-// Get the number of times this date was suggested for this user
-//
-// parameter: user_id   [int]
-//      The ID of the user that we want the number of suggestions for
-//
-// parameter: date_id   [int]
-//      The ID of the date that we want the number of suggestions for
-//
-//  returns:
-//      The number of times this date has been suggested, on success
-//      -1 on failure
-//
-// constraints:
-//      A user with this ID MUST exist
-//      A date with this ID MUST exist
-function get_times_suggested($user_id, $date_id) {
-    if (!user_exists($user_id)) {
-        print("No user with this ID in get_times_suggested\n");
-        return -1;
-    }
-    else if (!date_exists($date_id)) {
-        print("No date with this ID in get_times_suggested\n");
-        return -1;
-    }
-
-    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
-    $data = [$user_id, $date_id];
-    $result = exec_query($query, $data);
-    
-    if ($result == NULL) {
-        print("Couldn't exec query in get_times_suggested\n");
-        return -1;
-    }
-    else if ($result->num_rows <= 0) {
-        return 0;
-    }
-    else {
-        return $result->fetch_assoc()["suggested"];
-    }
-}
-
 // Generate an array of date ideas for two users
 //
 // parameter: user_a    [int]
@@ -1038,7 +1009,7 @@ function generate_dates($user_a, $user_b) {
         $ua_suggested = get_times_suggested($user_a, $date);
         $ub_suggested = get_times_suggested($user_b, $date);
 
-        if ($ua_suggested < 2 && $ub_suggested < 2) {
+        if ($ua_suggested < 3 && $ub_suggested < 3) {
             array_push($compatible_dates, $date);
         }
     }
@@ -1506,7 +1477,7 @@ function date_suggested($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Date_counts WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Date_counts WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1515,7 +1486,7 @@ function date_suggested($user_id, $date_id) {
         return 0;
     }
     else if ($result->num_rows == 0) {
-        $query = "INSERT INTO Date_counts (id, date_id, suggested) VALUES (?, ?, ?)";
+        $query = "INSERT INTO Date_counts (user_id, date_id, suggested) VALUES (?, ?, ?)";
         $data = [$user_id, $date_id, 1];
         $result = exec_query($query, $data);
 
@@ -1530,7 +1501,7 @@ function date_suggested($user_id, $date_id) {
             return 0;
         }
 
-        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE id=? AND date_id=?";
+        $query = "UPDATE Date_counts SET suggested=suggested+1 WHERE user_id=? AND date_id=?";
         $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
 
@@ -1541,6 +1512,47 @@ function date_suggested($user_id, $date_id) {
     }
 
     return 1;
+}
+
+// Get the number of times this date was suggested for this user
+//
+// parameter: user_id   [int]
+//      The ID of the user that we want the number of suggestions for
+//
+// parameter: date_id   [int]
+//      The ID of the date that we want the number of suggestions for
+//
+//  returns:
+//      The number of times this date has been suggested, on success
+//      -1 on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      A date with this ID MUST exist
+function get_times_suggested($user_id, $date_id) {
+    if (!user_exists($user_id)) {
+        print("No user with this ID in get_times_suggested\n");
+        return -1;
+    }
+    else if (!date_exists($date_id)) {
+        print("No date with this ID in get_times_suggested\n");
+        return -1;
+    }
+
+    $query = "SELECT * FROM Date_counts WHERE user_id=? AND date_id=?";
+    $data = [$user_id, $date_id];
+    $result = exec_query($query, $data);
+    
+    if ($result == NULL) {
+        print("Couldn't exec query in get_times_suggested\n");
+        return -1;
+    }
+    else if ($result->num_rows <= 0) {
+        return 0;
+    }
+    else {
+        return $result->fetch_assoc()["suggested"];
+    }
 }
 
 // Tell this database that this user likes this date
@@ -1576,7 +1588,7 @@ function like_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1592,7 +1604,7 @@ function like_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "INSERT INTO Dates_liked (id, date_id) VALUES (?, ?)";
+    $query = "INSERT INTO Dates_liked (user_id, date_id) VALUES (?, ?)";
     $result = exec_query($query, $data);
     if ($result == NULL) {
         print("Couldn't insert into Dates_liked in like_date\n");
@@ -1634,7 +1646,7 @@ function dislike_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_disliked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1650,7 +1662,7 @@ function dislike_date($user_id, $date_id) {
         return 0;
     }
 
-    $query = "INSERT INTO Dates_disliked (id, date_id) VALUES (?, ?)";
+    $query = "INSERT INTO Dates_disliked (user_id, date_id) VALUES (?, ?)";
     $result = exec_query($query, $data);
     if ($result == NULL) {
         print("Couldn't insert into Dates_disliked in dislike_date\n");
@@ -1695,8 +1707,8 @@ function unlike_date($user_id, $date_id) {
         return 1;
     }
     else if ($opinion == 1) {
-        $query = "DELETE FROM Dates_liked WHERE id=?";
-        $data = [$user_id];
+        $query = "DELETE FROM Dates_liked WHERE user_id=? AND date_id=?";
+        $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
         if ($result == NULL) {
             print("Failed to delete from Dates_liked in unlike_date\n");
@@ -1704,8 +1716,8 @@ function unlike_date($user_id, $date_id) {
         }
     }
     else if ($opinion == -1) {
-        $query = "DELETE FROM Dates_disliked WHERE id=?";
-        $data = [$user_id];
+        $query = "DELETE FROM Dates_disliked WHERE user_id=? AND date_id=?";
+        $data = [$user_id, $date_id];
         $result = exec_query($query, $data);
         if ($result == NULL) {
             print("Failed to delete from Dates_disliked in unlike_date\n");
@@ -1747,7 +1759,7 @@ function get_opinion($user_id, $date_id) {
         return NULL;
     }
 
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1763,7 +1775,7 @@ function get_opinion($user_id, $date_id) {
         return NULL;
     }
 
-    $query = "SELECT * FROM Dates_disliked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_disliked WHERE user_id=? AND date_id=?";
     $data = [$user_id, $date_id];
     $result = exec_query($query, $data);
 
@@ -1933,4 +1945,44 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
+
+// Get some information about this user (email, name, etc.)
+//
+// parameter: user_id   [int]
+//      The ID of the user whose information we want
+//
+// parameter: attribute [string]
+//      The name of the information that we want. This must be a column in the
+//      Users table
+//
+// returns:
+//      The attribute that was requested. The data type matches how it's stored
+//      in the Users table
+//      NULL on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      The attribute name MUST be a column in the Users table
+function get_attribute($user_id, $attribute) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_attribute\n");
+        return NULL;
+    }
+
+    $query = sprintf("SELECT %s FROM Users WHERE id=?", $attribute);
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_attribute\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 0) {
+        print("Error querying Users table in get_attribute\n");
+        return NULL;
+    }
+    else {
+        return $result->fetch_assoc()["$attribute"];
+    }
 }

@@ -10,9 +10,9 @@ DROP TABLE Date_time;
 
 DROP TABLE Date_preferences;
 
-DROP TABLE Date_liked;
+DROP TABLE Dates_liked;
 
-DROP TABLE Date_disliked;
+DROP TABLE Dates_disliked;
 
 DROP TABLE Suggested_dates;
 
