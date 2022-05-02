@@ -1142,7 +1142,7 @@ function get_date_city($id){
         print("Error: row is null in sort_dates_by_location\n");
         return NULL;
     }
-    $city =  explode(",",$row["location"],);
+    $city =  explode(",",$row["location"]);
 
     // split the city into two parts separated by a comma and return the first part
     $city = $city[0];
