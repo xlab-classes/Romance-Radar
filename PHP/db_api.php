@@ -1016,7 +1016,9 @@ function generate_dates($user_a, $user_b) {
 
     // Return overlapping date ideas
     // sort_dates_by_likes($compatible_dates);
-    return $compatible_dates;
+    // return $compatible_dates;
+
+    return sort_dates_by_likes($user_a, $compatible_dates);
 }
 
 // - Get information about the date with this ID
