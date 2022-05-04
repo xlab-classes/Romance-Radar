@@ -390,7 +390,7 @@ final class TestSortDates extends TestCase
         $sorted_date_ids = sort_dates_by_likes($this->id_a,$ac);
 
         for($idx = 0 ; $idx < 1 ; $idx++){
-            $this->assertEquals($liked_date_id,$sorted_date_ids[$idx]);
+            $this->assertEquals($liked_date_id,$sorted_date_ids[$idx],"Wrong Date ID");
         }
     }
 }
