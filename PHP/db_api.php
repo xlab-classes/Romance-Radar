@@ -1016,7 +1016,8 @@ function generate_dates($user_a, $user_b) {
 
     // Return overlapping date ideas
     // sort_dates_by_likes($compatible_dates);
-    return $compatible_dates;
+    // return $compatible_dates;
+    return sort_dates_by_likes($user_a, $compatible_dates);
 }
 
 // - Get information about the date with this ID
@@ -1343,7 +1344,7 @@ function sort_dates_by_time($date_ids){
 
 function get_like_status($id, $date_id){
     // Create query to check if date represnted by date_id was liked
-    $query = "SELECT * FROM Dates_liked WHERE id=? AND date_id=?";
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
     $data = [$id, $date_id];
     // Get result of query
     $result = exec_query($query, $data);
