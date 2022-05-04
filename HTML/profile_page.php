@@ -77,11 +77,21 @@ function selectedSubCategory($cat, $sub)
     <button onclick="myFunction()">Toggle dark mode</button>
 
     <script>
-        function myFunction() {
-            var element = document.body;
-            element.classList.toggle("dark-mode");
+    if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+    }
+    function myFunction() {
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+        if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+            window.sessionStorage.setItem('theme', 'light');
+        }else{
+            window.sessionStorage.setItem('theme', 'dark');
         }
+    }
     </script>
+
     <section id="propage">
         <div class="container">
             <form action="../PHP/update_profile.php" method="post" enctype="multipart/form-data">

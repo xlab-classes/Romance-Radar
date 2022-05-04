@@ -50,7 +50,6 @@ foreach ($messages as $msg) {
     <style>
         .dark-mode {
             background-color: palevioletred;
-        
         }
 
 
@@ -96,6 +95,23 @@ foreach ($messages as $msg) {
 </head>
 
 <body>
+<button onclick="myFunction()">Toggle dark mode</button>
+
+<script>
+    if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+    }
+    function myFunction() {
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+        if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+            window.sessionStorage.setItem('theme', 'light');
+        }else{
+            window.sessionStorage.setItem('theme', 'dark');
+        }
+    }
+</script>
 
     <section class="chat">
         <div class="container py-5">
@@ -121,15 +137,6 @@ foreach ($messages as $msg) {
             </div>
         </div>
     </section>
-
-    <button onclick="myFunction()">Toggle dark mode</button>
-
-    <script>
-        function myFunction() {
-            var element = document.body;
-            element.classList.toggle("dark-mode");
-        }
-    </script>
 
 </body>
 

@@ -12,11 +12,21 @@
     <button onclick="myFunction()">Toggle dark mode</button>
 
     <script>
-        function myFunction() {
+        if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
             var element = document.body;
             element.classList.toggle("dark-mode");
         }
-    </script>
+        function myFunction() {
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+            if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+                window.sessionStorage.setItem('theme', 'light');
+            }else{
+                window.sessionStorage.setItem('theme', 'dark');
+            }
+        }
+        </script>
+    
     <h1> Login</h1>
     <!-- PHP form and method type -->
     <form action="../PHP/login.php" method="post" enctype="multipart/form-data" id="login-form">

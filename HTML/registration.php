@@ -69,11 +69,21 @@ $question_3 = get_question($question_id_3);
     <button onclick="myFunction()">Toggle dark mode</button>
 
     <script>
-        function myFunction() {
-            var element = document.body;
-            element.classList.toggle("dark-mode");
+    if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+    }
+    function myFunction() {
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+        if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+            window.sessionStorage.setItem('theme', 'light');
+        }else{
+            window.sessionStorage.setItem('theme', 'dark');
         }
+    }
     </script>
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-2">
