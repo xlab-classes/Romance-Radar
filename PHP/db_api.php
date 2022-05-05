@@ -233,6 +233,19 @@ function update_password($user_id, $old_pwd, $new_pwd) {
     }
 }
 
+// Initialize privacy settings
+
+function initialize_privacy_settings($user_id){
+    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
+    $result = exec_query($query, [$user_id]);
+    if(!$result){
+        echo 'Something went wrong while executing query (privacy settings)!!';
+        return 0;
+    }
+    return 1;
+
+}
+
 
 # Creates a new user and stores their data in the database. This function will
 # create a unique user ID for the new user
@@ -378,6 +391,14 @@ function add_connection($sent_from, $sent_to) {
     // Remove sent connection requests
     remove_connection_request($sent_from);
     remove_connection_request($sent_to);
+
+    // Send an email to sent_from that sent_to has accepted the request
+    $recipient = get_attribute($sent_from, "email");
+    $subject = "Romance Radar: Your connection was accepted!";
+    $message = "Congratulations " . get_attribute($sent_from, "name") . "! ";
+    $message .= get_attribute($sent_to, "name") . " has accepted your request to connect!";
+    $message .= "\n\n Thanks for using Romance Radar :-)";
+    mail($recipient, $subject, $message);
     
     return 1;
 }
@@ -946,6 +967,7 @@ function get_date_ids($preferences) {
 //
 // returns:
 //      An array of date idea ID's that are compatible with both users' preferences
+//      The array will be sorted by the cost of the date by default
 //      NULL if either user doesn't exist
 //      NULL if any other error occured
 //
@@ -993,7 +1015,9 @@ function generate_dates($user_a, $user_b) {
     }
 
     // Return overlapping date ideas
-    return $compatible_dates;
+    // sort_dates_by_likes($compatible_dates);
+    // return $compatible_dates;
+    return sort_dates_by_likes($user_a, $compatible_dates);
 }
 
 // - Get information about the date with this ID
@@ -1007,6 +1031,13 @@ function generate_dates($user_a, $user_b) {
 //
 // returns:
 //      An associative array of information for this date
+//      Relevant information included will be:
+//          - Date Name
+//          - Date Description
+//          - Date Time
+//          - Date Location
+//          - Date Cost
+//          - Date Length
 //      NULL if no date with this ID exists
 //      NULL if no user with this ID exists
 //
@@ -1040,6 +1071,299 @@ function get_date_information($user_id, $date_id) {
     date_suggested($user_id, $date_id);
 
     return $result->fetch_assoc();
+}
+
+// From the date ID, get the date's estimated cost
+function get_date_cost($id){
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_date_cost\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in get_date_cost\n");
+        return NULL;
+    }
+
+    return $result->fetch_assoc()["est_cost"];
+}
+
+// Sorts our input date id's by their cost in a specfic order depending on the input of ascending variable
+function sort_dates_by_cost($date_ids,$ascending){
+
+    // Check if date_ids are null
+    if($date_ids == NULL){
+        printf("Error: date_ids is null in sort_dates_by_cost\n");
+        return NULL;
+    }
+
+    // Check if date_ids length is  less than 2
+    if(count($date_ids) < 2){
+        return $date_ids;
+    }
+    // If ascending is null or true sort it in increasing order
+    if($ascending == NULL || $ascending == true){
+        // Sort the date_ids by ascending cost
+        usort($date_ids, function($a, $b) {
+            return get_date_cost($a) - get_date_cost($b);
+        });
+    }
+    // if ascending is false sort it in descending order
+    else{
+        usort($date_ids, function($a, $b) {
+            return get_date_cost($b) - get_date_cost($a);
+        });
+    }
+    return $date_ids;
+}
+
+// From the date ID, get the date's city
+function get_date_city($id){
+    // Get the city of the current date
+    $query = "SELECT * FROM Date_ideas WHERE id=?";
+    $data = [$id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_dates_by_location\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in sort_dates_by_location\n");
+        return NULL;
+    }
+
+    $row = $result->fetch_assoc();
+
+    if($row == NULL){
+        print("Error: row is null in sort_dates_by_location\n");
+        return NULL;
+    }
+    $city =  explode(",",$row["location"]);
+
+    // split the city into two parts separated by a comma and return the first part
+    $city = $city[0];
+    return $city;
+}
+
+// From the user ID, get the user's city
+function get_user_city($id){
+    // Get the city of the current user
+    $query = "SELECT * FROM Users WHERE id=?";
+    $data = [$id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_dates_by_location\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No user with this ID in sort_dates_by_location\n");
+        return NULL;
+    }
+    $row = $result->fetch_assoc();
+    return $row["city"];
+}
+
+// Sorts our input date id's by their location
+function sort_dates_by_location($id,$date_ids){
+
+    $location = get_user_city($id);
+
+    // Check if date_ids are null
+    if($date_ids == NULL){
+        printf("Error: date_ids is null in sort_dates_by_location\n");
+        return NULL;
+    }
+
+    // Check if date_ids length is  less than 2
+    if(count($date_ids) < 2){
+        return $date_ids;
+    }
+
+    // Filter the date_ids by the location of the user
+    $filtered_date_ids = array();
+    $unfiltered_date_ids = array();
+    foreach($date_ids as $date_id){
+        if(strcmp(get_date_city($date_id), $location) == 0){
+            array_push($filtered_date_ids, $date_id);
+        }
+        else{
+            array_push($unfiltered_date_ids, $date_id);
+        }
+    }
+
+    // Sort the date_ids by closest city
+    usort($unfiltered_date_ids, function($a, $b) {
+        return (strcmp(get_date_city($a),get_date_city($b)));
+    });
+    // Concatenate the two arrays together
+    return array_merge($filtered_date_ids,$unfiltered_date_ids);
+}
+
+// Get the date_tag of the date from the date_id
+function get_date_tag($date_id){
+    $query = "SELECT * FROM Date_tags WHERE date_id=?";
+    $data = [$date_id];
+    $result = exec_query($query, $data);
+
+    // Check if the query was successful
+    if ($result == NULL) {
+        print("Couldn't exec_query in sort_date_by_entertainment\n");
+        return NULL;
+    }
+    else if ($result->num_rows <= 0) {
+        print("No date with this ID in sort_date_by_entertainment\n");
+        return NULL;
+    }
+    $row = $result->fetch_assoc();
+    if($row == NULL){
+        print("Error: row is null in sort_date_by_entertainment\n");
+        return NULL;
+    }
+    return  $row["tag"];
+}
+
+// Given a array of date_ids, count how many have the same tag as the input tag type.
+function countTagType($tag_type, $date_ids):  int
+{
+    // Given a certain type count how many dates have that type
+    $count = 0;
+    foreach($date_ids as $date){
+        $tags = get_date_tag($date);
+        if(in_array($tags,$tag_type)){
+            $count++;
+        }
+    }
+    return $count;
+}
+
+// Sort our input date id's by their users favorite entertainment
+function sort_dates_by_entertainment($date_ids){
+
+    $entertainment = ['entertainment','concerts','hiking','bar'];
+
+    // Sort the date_ids by their date tag with entertainment having the highest priority
+    usort($date_ids, function($a, $b) use ($entertainment) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+        
+        // Check if the date_tag is one of the venues
+        if(in_array($a_tag,$entertainment) && !in_array($b_tag,$entertainment)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$entertainment) && in_array($b_tag,$entertainment)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
+    return $date_ids;
+}
+
+// Sort our input date id's by their users favorite venues
+function sort_dates_by_venues($date_ids){
+
+    $venues = ['indoors','outdoors','social_events'];
+
+// Sort the date_ids by their date tag with venues having the highest priority
+    usort($date_ids, function($a, $b) use ($venues) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+
+        // Check if the date_tag is one of the venues
+        if(in_array($a_tag,$venues) && !in_array($b_tag,$venues)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$venues) && in_array($b_tag,$venues)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
+    return $date_ids;
+}
+
+// Sort our input date id's by their users favorite food types
+function sort_dates_by_food($date_ids){
+
+    $foods = ['restaurant','cafe','fast_food', 'alcohol'];
+
+    // Sort the date_ids by their date tag with food having the highest priority
+
+    usort($date_ids, function($a, $b) use ($foods) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+        // Check if the date_tag is one of the food types
+        if(in_array($a_tag,$foods) && !in_array($b_tag,$foods)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$foods) && in_array($b_tag,$foods)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
+    return $date_ids;
+}
+
+// Sort our input date id's by their users favorite time of day
+function sort_dates_by_time($date_ids){
+
+    $times = ['morning','afternoon','evening'];
+
+    // Sort the date_ids by their date tag with time having the highest priority
+
+    usort($date_ids, function($a, $b) use ($times) {
+        $a_tag = get_date_tag($a);
+        $b_tag = get_date_tag($b);
+
+        // Check if the date_tag is one of the time types
+        if(in_array($a_tag,$times) && !in_array($b_tag,$times)){
+            return -1;
+        }
+        else if(!in_array($a_tag,$times) && in_array($b_tag,$times)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    });
+    return $date_ids;
+}
+
+function get_like_status($id, $date_id){
+    // Create query to check if date represnted by date_id was liked
+    $query = "SELECT * FROM Dates_liked WHERE user_id=? AND date_id=?";
+    $data = [$id, $date_id];
+    // Get result of query
+    $result = exec_query($query, $data);
+    // If the query was valid return 1
+    if($result != NULL && $result->num_rows >= 1){
+        return 1;
+    }
+    // If the query was invalid then it's either disliked or not liked
+    else -1;
+}
+
+// Sorts the date_ids by whether or not they were liked
+function sort_dates_by_likes($id, $date_ids){
+    usort($date_ids, function($a, $b) use ($id){
+        $a_status = get_like_status($id,$a);
+        $b_status = get_like_status($id,$b);
+        return($b_status - $a_status);
+    });
+    return $date_ids;
 }
 
 // Add an entry to the Date_tags table that tags this date with this tag
@@ -1471,19 +1795,6 @@ function get_opinion($user_id, $date_id) {
     return 0;
 }
 
-// Initialize privacy settings
-
-function initialize_privacy_settings($user_id){
-    $query = 'INSERT INTO Privacy_settings(user_id) VALUES (?)';
-    $result = exec_query($query, [$user_id]);
-    if(!$result){
-        echo 'Something went wrong while executing query (privacy settings)!!';
-        return 0;
-    }
-    return 1;
-
-}
-
 function update_privacy($id, $privacy_setting_choice) {
     if (empty($id) || empty($privacy_setting_choice)) {
         echo 'input fields cannot be empty';
@@ -1635,4 +1946,44 @@ function set_status($user_id, $status) {
 	}
 	
 	return 1;
+}
+
+// Get some information about this user (email, name, etc.)
+//
+// parameter: user_id   [int]
+//      The ID of the user whose information we want
+//
+// parameter: attribute [string]
+//      The name of the information that we want. This must be a column in the
+//      Users table
+//
+// returns:
+//      The attribute that was requested. The data type matches how it's stored
+//      in the Users table
+//      NULL on failure
+//
+// constraints:
+//      A user with this ID MUST exist
+//      The attribute name MUST be a column in the Users table
+function get_attribute($user_id, $attribute) {
+    if (!user_exists($user_id)) {
+        print("User doesn't exist in get_attribute\n");
+        return NULL;
+    }
+
+    $query = sprintf("SELECT %s FROM Users WHERE id=?", $attribute);
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+
+    if ($result == NULL) {
+        print("Couldn't exec_query in get_attribute\n");
+        return NULL;
+    }
+    else if ($result->num_rows == 0) {
+        print("Error querying Users table in get_attribute\n");
+        return NULL;
+    }
+    else {
+        return $result->fetch_assoc()["$attribute"];
+    }
 }
