@@ -184,7 +184,7 @@ function update_profile_picture($id, $previous_picture, $picture, $ext){
     
 }
 
-function update_biography($id,$new_bio){
+function update_biography($id, $new_bio){
 
     if(empty($id) || empty($new_bio)){
         echo "ID or New Bio cannot be empty";

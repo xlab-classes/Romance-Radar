@@ -63,7 +63,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     // Update biography
     $bio = $_POST['CngBio'];
     if (!empty($bio)) {
-        update_bio($user_id, $bio); // Update biography
+        update_biography($user_id, $bio); // Update biography
     }
 
 
