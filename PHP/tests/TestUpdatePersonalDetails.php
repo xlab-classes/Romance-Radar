@@ -15,6 +15,7 @@ final class TestUpdatePersonalDetails extends TestCase
     private $email = "jdoe@faang.co";
     private $password = "password";
     private $birthday = "1990-01-01";
+    private $biography = "";
     private $id;
 
     function setUp(): void
@@ -163,6 +164,38 @@ final class TestUpdatePersonalDetails extends TestCase
         $user = $user->fetch_assoc();
 
         $this->assertEquals(11368, $user['zipcode'], "The user's address was not updated.");
+    }
+
+    function testUpdateBiography(){
+            
+            # Serach for the user in the database via their user_id.
+            $user = exec_query("SELECT * FROM Users WHERE id =?", [$this->id]);
+        
+            # assert that the query returned a result.
+            $this->assertNotNull($user);
+    
+            # Get a assoc array of the user's information.
+            $user = $user->fetch_assoc();
+    
+            # Assert that the user's info was found.
+            $this->assertNotNull($user, "The user's info was not found.");
+    
+            # Assert that the user's bio is correct.
+            $this->assertEquals($this->biography, $user['biography'], "The user's biography is not correct.");
+    
+            # Update the user's bio.
+            $user = update_biography($this->id, "I am a test user.");
+            
+            # Assert that $user is 1. Indcicating that the user's bio was updated.
+            $this->assertEquals(1, $user, "The user's biography was not updated.");
+    
+            # Serach for the user in the database again via their user_id.
+            $user = exec_query("SELECT * FROM Users WHERE id =?" ,[$this->id]);
+    
+            # Get a assoc array of the user's information.
+            $user = $user->fetch_assoc();
+    
+            $this->assertEquals("I am a test user.", $user['biography'], "The user's biography was not updated.");
     }
 
 }

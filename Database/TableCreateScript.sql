@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Users(
     birthday DATE NOT NULL,
     partner INT,
     city VARCHAR(100) NOT NULL,
+    biography VARCHAR(100) NOT NULL DEFAULT "",
     verified BIT NOT NULL DEFAULT 0,
 	signup_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
