@@ -2,6 +2,9 @@
 include './navigation.php'
 ?>
 <?php
+include './theme_toggle.php'
+?>
+<?php
 
 require_once '../PHP/db_api.php';
 require_once '../PHP/helper.php';
@@ -14,7 +17,7 @@ if(!isset($_SESSION['user'])){
     exit();
 }
 
-if(!$_SESSION['user']['partner']){
+if($_SESSION['user']['partner'] == $_SESSION['user']['id']){
     echo "You don't have a partner to chat with!";
     header('./profile_page.php');
     exit();
