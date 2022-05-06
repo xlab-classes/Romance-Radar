@@ -55,9 +55,29 @@
         left: 0px;
         bottom: 0px;
     }
+    .dark-mode {
+          background-color: palevioletred;
+      }
 </style>
+<script>
+      if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+          var element = document.body;
+          element.classList.toggle("dark-mode");
+      }
+      function myFunction() {
+          var element = document.body;
+          element.classList.toggle("dark-mode");
+          if(window.sessionStorage.getItem('theme') && window.sessionStorage.getItem('theme') == 'dark'){
+              window.sessionStorage.setItem('theme', 'light');
+          }else{
+              window.sessionStorage.setItem('theme', 'dark');
+          }
+      }
+  </script>
+
 
 <body>
+    <button onclick="myFunction()">Toggle dark mode</button>
     <div class="container-fluid">
         <div class="row h-100 align-items-center justify-content-center">
             <div class="col-3">
