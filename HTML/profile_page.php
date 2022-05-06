@@ -2,6 +2,9 @@
 include './navigation.php'
 ?>
 <?php
+include './theme_toggle.php'
+?>
+<?php
 require_once '../PHP/db_api.php';
 session_start();
 if(!isset($_SESSION['user'])){
