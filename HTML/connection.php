@@ -2,6 +2,9 @@
 include './navigation.php'
 ?>
 <?php
+include './theme_toggle.php'
+?>
+<?php
 require_once '../PHP/db_api.php';
 require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
