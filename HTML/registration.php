@@ -42,13 +42,14 @@ $question_3 = get_question($question_id_3);
         }
         #top{
             height: 110px;
-            width: 11   0px;
+            width: 110px;
         }
         #bottom{
             height: 200px;
             width: 200px;
         }
     </style>
+
 </head>
 <body>
     <div class="container-fluid">
