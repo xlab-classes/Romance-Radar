@@ -16,12 +16,14 @@ if(!isset($_SESSION['user'])){
     exit();
 }
 
+//$_SESSION['user'] = getUser($_SESSION['user']['id'],NULL)->fetch_assoc();
+update_session_variables();
 
 $user = $_SESSION['user'];
-$connection_requests = get_requests($user['id']);
 
 
 if($user['partner'] == $user['id']){
+    $connection_requests = get_requests($user['id']);
     $res = "";
     foreach($connection_requests as $id){
             $request_user = getUser($id,NULL)->fetch_assoc();
@@ -335,7 +337,7 @@ if($user['partner'] == $user['id']){
     <?php } ?>
 }
     
-    </style>
+</style>
 </head>
 <body>
     <div class="container">
