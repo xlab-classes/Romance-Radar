@@ -30,6 +30,7 @@ if($user['partner'] == $user['id']){
             <div class='card card-block card-body'>
                 <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
                 <h5 class='card-title text-center'>".$request_user['name']."</h5>
+                <div class = 'fst-italic fw-light text-center'>". $request_user['biography']."</div>
                 <div class='row h-50'>
                     <div class='col-6'>
                         <button type='button' class='btn'>
@@ -124,7 +125,7 @@ if($user['partner'] == $user['id']){
         </div>
         <div class="row">
             <div class="col">
-                <p class="fst-italic fw-light font">“When I need a pick me up, I just think of your laugh and it makes me smile”</p>
+                <p class="fst-italic">“%s”</p>
             </div>
         </div>
         <div class="row p-2">
@@ -161,7 +162,7 @@ if($user['partner'] == $user['id']){
             </div>
             <div class="col">%d</div>
         </div>
-    </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
+    </div>', $_SESSION['partner']['name'], $_SESSION['partner']['biography'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
     
     $date_ideas = '';

@@ -127,6 +127,7 @@ function selectedSubCategory($cat, $sub){
                         ?>
                         <input class="form-control form-control-sm m-2" type="file" name="profile_picture"/>
                         <p class="lead text-center text-black"><h1><?php echo $_SESSION['user']['name']; ?></h1></p>
+                        <textarea name="CngBio" id="" cols="30" rows="3" placeholder='Enter a Bio'><?php echo $_SESSION['user']['biography']; ?></textarea>
                         Registered on: <?php echo date("m/d/Y", strtotime($_SESSION['user']['signup_date']));?>
                         <!--Status dropdown -->
                         <div class="dropdown">
