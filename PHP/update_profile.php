@@ -64,6 +64,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     $bio = $_POST['CngBio'];
     if (!empty($bio)) {
         update_biography($user_id, $bio); // Update biography
+    }else{
+        update_biography($user_id, '');
     }
 
 
@@ -83,7 +85,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
     if (!empty($_POST["PreDateLen"])) {
         $prefs['Date_preferences']['length'] = (int)$_POST['PreDateLen'];
     }
-    print_r($_POST);
+
     // Entertainment preferences
     if (!empty($_POST["Entertainment"])) {  // If true, allow all entertainment types
         $prefs['Entertainment']['concerts'] = 1;
