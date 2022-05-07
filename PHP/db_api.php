@@ -27,6 +27,19 @@ function getUser($user_id, $email){
     return $result;
 }
 
+function getBiography($user_id){
+    $query = "SELECT * FROM Users WHERE id=?";
+    $data = [$user_id];
+    $result = exec_query($query, $data);
+    if($result){
+        $result = $result->fetch_assoc();
+        return $result['biography'];
+    }
+    else{
+        return NULL;
+    }
+}
+
 # Helper function. Not part of the API
 # Takes in a SQL statement to execute.
 # Returns:
