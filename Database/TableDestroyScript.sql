@@ -1,33 +1,35 @@
 SET FOREIGN_KEY_CHECKS=0;
 
-TRUNCATE TABLE Food;
+DROP TABLE Food;
 
-TRUNCATE TABLE Entertainment;
+DROP TABLE Entertainment;
 
-TRUNCATE TABLE Venue;
+DROP TABLE Venue;
 
-TRUNCATE TABLE Date_time;
+DROP TABLE Date_time;
 
-TRUNCATE TABLE Date_preferences;
+DROP TABLE Date_preferences;
 
-TRUNCATE TABLE Date_liked;
+DROP TABLE Dates_liked;
 
-TRUNCATE TABLE Date_disliked;
+DROP TABLE Dates_disliked;
 
-TRUNCATE TABLE Suggested_dates;
+DROP TABLE Suggested_dates;
 
-TRUNCATE TABLE Date_ideas;
+DROP TABLE Date_ideas;
 
-TRUNCATE TABLE Connection_requests;
+DROP TABLE Connection_requests;
 
-TRUNCATE TABLE User_security_questions;
+DROP TABLE User_security_questions;
 
-TRUNCATE TABLE Users;
+DROP TABLE Users;
 
-TRUNCATE TABLE Chat_Messages;
+DROP TABLE Chat_Messages;
 
-TRUNCATE TABLE Privacy_settings;
+DROP TABLE Privacy_settings;
 
-TRUNCATE TABLE Date_tags;
+DROP TABLE Date_tags;
+
+DROP TABLE User_status;
 
 SET FOREIGN_KEY_CHECKS=1;

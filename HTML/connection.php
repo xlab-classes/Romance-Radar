@@ -2,11 +2,13 @@
 include './navigation.php'
 ?>
 <?php
+include './theme_toggle.php'
+?>
+<?php
 require_once '../PHP/db_api.php';
 require_once '../PHP/privacy_settings.php';
 require_once '../PHP/helper.php';
 
-session_start();
 
 if(!isset($_SESSION['user'])){
     echo 'Please Login!!';
@@ -14,32 +16,43 @@ if(!isset($_SESSION['user'])){
     exit();
 }
 
-$user = $_SESSION['user'];
-$connection_requests = get_requests($user['id']);
+//$_SESSION['user'] = getUser($_SESSION['user']['id'],NULL)->fetch_assoc();
+update_session_variables();
 
-function console_log($output, $with_script_tags = true) {
-    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
-');';
-    if ($with_script_tags) {
-        $js_code = '<script>' . $js_code . '</script>';
-    }
-    echo $js_code;
-}
+$user = $_SESSION['user'];
+
 
 if($user['partner'] == $user['id']){
+    $connection_requests = get_requests($user['id']);
     $res = "";
     foreach($connection_requests as $id){
             $request_user = getUser($id,NULL)->fetch_assoc();
-            $res = $res . "<div class=\"col-3\">
-            <div class=\"card card-block card-body\">
-            <img class=\"card-img-top img-fluid rounded-circle\" style=\"height:60%\" src=\"{$request_user['user_picture']}\" size= alt=\"User image\">
-            <h5 class=\"card-title\">{$request_user['name']}</h5>
-            <div class=\"row\">
-            <img src=\"\assets\icons\accept.png\" onclick='location.href=\"/PHP/modify_connections.php?type=1&from_id=$id&to_id={$user['id']}\"' class=\"col-sm-3 offset-sm-3\"></img>
-            <img src=\"\assets\icons\\reject.png\" onclick='location.href=\"/PHP/modify_connections.php?type=0&from_id=$id\"' class=\"col-sm-3\"></img></div>
+            $res = $res . 
+        "<div class='col-3'>
+            <div class='card card-block card-body'>
+                <img class='card-img-top img-fluid rounded-circle'  src='".$request_user['user_picture']."' alt='User image'>
+                <h5 class='card-title text-center'>".$request_user['name']."</h5>
+                <div class = 'fst-italic fw-light text-center'>". $request_user['biography']."</div>
+                <div class='row h-50'>
+                    <div class='col-6'>
+                        <button type='button' class='btn'>
+                            <a href='../PHP/modify_connections.php?type=1&from_id=" . strval($id) . "&to_id=".strval($user['id'])."'>
+                                <img src='../assets/heart.svg' class='col-4'>
+                            </a>
+                        </button>
+                    </div>
+                    <div class='col-6'>
+                        <button type='button' class='btn'>
+                            <a href='../PHP/modify_connections.php?type=0&from_id=" . strval($id) . "'>
+                                <img src='../assets/broken_heart.svg' class='col-4'>
+                            </a>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>";
-        }
+    }
+
     $display = sprintf('
     <div class="row pt-5">
             <div class="col text-center"><h3>What are you waiting for?</h3></div>
@@ -86,19 +99,26 @@ if($user['partner'] == $user['id']){
         'Entertainment' => array('concerts' => 'Concerts', 'hiking'=>'Hiking', 'bar'=>'Bar'),
         'Venue' => array('indoors'=>'Indoors', 'outdoors'=>'Outdoors', 'social_events'=>'Social Events'),
         'Date_time' => array('morning'=>'Morning', 'afternoon'=>'Afternoon', 'evening'=>'Afternoon'));
+    $privacy_settings = array(
+        'Food' => 'food_pref',
+        'Entertainment' => 'ent_pref',
+        'Venue' => 'venue_pref',
+        'Date_time' => 'time_pref');    
+  
     $selected_preferences = array();
     foreach($preferences_categories as $cat => $sub_cats){
         $selected_preferences[$cat] = '';
-        foreach($sub_cats as $sub_cat => $value){
-            if($partner_preferences[$cat][$sub_cat]){
-                $selected_preferences[$cat] .= sprintf('%s, ', $value);
+        if($_SESSION['partner']['privacy_settings'][$privacy_settings[$cat]] != 1){
+            foreach($sub_cats as $sub_cat => $value){
+                if($partner_preferences[$cat][$sub_cat]){
+                    $selected_preferences[$cat] .= sprintf('%s, ', $value);
+                }
             }
+            $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
+        }else{
+            $selected_preferences[$cat] = 'Hidden';
         }
-        $selected_preferences[$cat] = $selected_preferences[$cat]==''? 'None Selected' : rtrim($selected_preferences[$cat], ", ");
     }
-
-    // Display the partner's privacy settings
-    $partner_privacy = get_privacy_settings($user['id']);
 
     $preferences_html = sprintf('
     <div class="ps-5 col-3">
@@ -107,7 +127,7 @@ if($user['partner'] == $user['id']){
         </div>
         <div class="row">
             <div class="col">
-                <p class="fst-italic fw-light font">“When I need a pick me up, I just think of your laugh and it makes me smile”</p>
+                <p class="fst-italic">“%s”</p>
             </div>
         </div>
         <div class="row p-2">
@@ -144,21 +164,60 @@ if($user['partner'] == $user['id']){
             </div>
             <div class="col">%d</div>
         </div>
-    </div>',$_SESSION['partner']['name'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
+    </div>', $_SESSION['partner']['name'], $_SESSION['partner']['biography'], $selected_preferences['Entertainment'], $selected_preferences['Food'], $selected_preferences['Venue'], $selected_preferences['Date_time']
             , $_SESSION['partner']['zipcode'], $partner_preferences['Date_preferences']['cost']);
-
-    // if privacy settings result is 1
-    if($partner_privacy == 1){
-        // preferences_html will be empty
-        $preferences_html = ''; 
+    
+    $date_ideas = '';
+    $generate_date_ids = generate_dates($user['id'], $user['partner']);
+    
+    foreach($generate_date_ids as $date_id){
+        $date_info = get_date_information($user['id'], $date_id);
+        $user_op = get_opinion($user['id'], $date_id);
+        $op = array();
+        $op['liked'] = $user_op == 1?"bg-dark":"";
+        $op['disliked'] = $user_op == -1?"bg-dark":""; 
+        $date_ideas .= 
+        
+        sprintf('<div class="row justify-content-center">
+        <div class="card mask-custom w-100 mt-3" style="max-width: 840px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="%s" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">%s</h5>
+              <p class="card-text mb-0">
+                %s
+              </p>
+              <div class="row p-3">
+              <div class="col">
+                <form action="../PHP/modify_connections.php" method="POST">
+                    <input class="btn btn-primary %s" type = "submit" value = "Like" name="like"/>
+                    <input value="%s" name="date_id" hidden>
+                    <input value="%s" name="opinion" hidden>
+                    </form>
+                </div>
+                <div class="col">
+                <form action="../PHP/modify_connections.php" method="POST">
+                    <input class="btn btn-primary %s" type = "submit" value = "Dislike" name="dislike"/>
+                    <input value="%s" name="date_id" hidden>
+                    <input value="%s" name="opinion" hidden>
+            </form></div
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>', $date_info['picture'], $date_info['name'], $date_info['description'], $op['liked'], $date_id, $user_op, $op['disliked'], $date_id, $user_op);
     }
-            $display = sprintf('
+    $display = sprintf('
     <div class="row pt-5 gx-5 gy-5">
             %s
             <div class="col">
                 <div class="row justify-content-center">
                     <div class="col-6">
-                        <img src="%s" class="img-fluid rounded-circle">  
+                        <img src="%s" class="img-fluid rounded-circle" id="profile_picture">  
                     </div>
                 </div>
                 <div class="row">
@@ -206,11 +265,10 @@ if($user['partner'] == $user['id']){
                 <!-- Modal end -->
                 </div>
             </div>
+            %s
         </div>
-    ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name']);
-}
-
-
+    ', $preferences_html, $_SESSION['partner']['user_picture'], $user['user_picture'], $user['name'], $date_ideas);
+}  
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -255,8 +313,9 @@ if($user['partner'] == $user['id']){
             border-radius: 40px;
         }
         .scrolling-wrapper{
-	overflow-x: auto;
-}
+            overflow-x: auto;
+        }
+
 .card-block{
 	height: 500px;
 	background-color: #fff;
@@ -272,7 +331,13 @@ if($user['partner'] == $user['id']){
 	}
 
 }
-    </style>
+#profile_picture{
+    <?php if($_SESSION['partner']['verified']){ ?>
+        box-shadow: 0 0 10px #0000FF;
+    <?php } ?>
+}
+    
+</style>
 </head>
 <body>
     <div class="container">

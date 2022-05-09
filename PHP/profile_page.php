@@ -183,3 +183,23 @@ function update_profile_picture($id, $previous_picture, $picture, $ext){
     return 1;
     
 }
+
+function update_biography($id, $new_bio){
+
+    if(empty($id)){
+        echo "ID or New Bio cannot be empty";
+        return 0;
+    }
+
+    $query = 'UPDATE Users SET biography=? WHERE id=?';
+
+    $result = exec_query($query, [htmlspecialchars($new_bio), $id]);
+
+    if(!$result){
+        echo 'Could not execute biography update query';
+        return 0;
+    }
+    $_SESSION['user']['biography'] = $new_bio;
+    return 1;
+
+}
